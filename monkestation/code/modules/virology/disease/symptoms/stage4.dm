@@ -7,11 +7,11 @@
 	chance = 10
 	max_chance = 25
 
-/datum/symptom/spaceadapt/activate(mob/living/carbon/mob)
+/datum/symptom/spaceadapt/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	mob.dna.add_mutation(/datum/mutation/human/pressure_adaptation)
 	mob.dna.add_mutation(/datum/mutation/human/temperature_adaptation)
 
-/datum/symptom/spaceadapt/deactivate(mob/living/carbon/mob)
+/datum/symptom/spaceadapt/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	mob.dna.remove_mutation(/datum/mutation/human/pressure_adaptation)
 	mob.dna.remove_mutation(/datum/mutation/human/temperature_adaptation)
 
@@ -21,7 +21,7 @@
 	stage = 4
 	badness = EFFECT_DANGER_HARMFUL
 
-/datum/symptom/minttoxin/activate(mob/living/carbon/mob)
+/datum/symptom/minttoxin/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(istype(mob) && mob.reagents.get_reagent_amount(/datum/reagent/consumable/mintextract) < 5)
 		to_chat(mob, span_notice("You feel a minty freshness"))
 		mob.reagents.add_reagent(/datum/reagent/consumable/mintextract, 5)
@@ -33,7 +33,7 @@
 	max_multiplier = 5
 	badness = EFFECT_DANGER_HINDRANCE
 
-/datum/symptom/deaf/activate(mob/living/carbon/mob)
+/datum/symptom/deaf/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	var/obj/item/organ/internal/ears/ears = mob.get_organ_slot(ORGAN_SLOT_EARS)
 	if(!ears)
 		return //cutting off your ears to cure the deafness: the ultimate own
@@ -48,7 +48,7 @@
 			mob.emote("scream")
 			ADD_TRAIT(mob, TRAIT_DEAF, DISEASE_TRAIT)
 
-/datum/symptom/deaf/deactivate(mob/living/carbon/mob)
+/datum/symptom/deaf/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	REMOVE_TRAIT(mob, TRAIT_DEAF, DISEASE_TRAIT)
 
 
@@ -60,7 +60,7 @@
 	multiplier = 3
 	max_multiplier = 5
 
-/datum/symptom/killertoxins/activate(mob/living/carbon/mob)
+/datum/symptom/killertoxins/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	mob.adjustToxLoss(5*multiplier)
 
 
@@ -70,7 +70,7 @@
 	stage = 4
 	badness = EFFECT_DANGER_DEADLY
 
-/datum/symptom/dna/activate(mob/living/carbon/mob)
+/datum/symptom/dna/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	mob.bodytemperature = max(mob.bodytemperature, 350)
 	scramble_dna(mob, TRUE, TRUE, TRUE, rand(15,45))
 	if(mob.cloneloss <= 50)
@@ -84,7 +84,7 @@
 	badness = EFFECT_DANGER_HELPFUL
 	var/total_healed = 0
 
-/datum/symptom/immortal/activate(mob/living/carbon/mob)
+/datum/symptom/immortal/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(istype(mob, /mob/living/carbon/human))
 		for(var/datum/wound/wound as anything in mob.all_wounds)
 			to_chat(mob, span_notice("You feel the [wound] heal itself."))
@@ -101,7 +101,7 @@
 	mob.adjustFireLoss(-heal_amt)
 	mob.adjustCloneLoss(-heal_amt)
 
-/datum/symptom/immortal/deactivate(mob/living/carbon/mob)
+/datum/symptom/immortal/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(istype(mob, /mob/living/carbon/human))
 		var/mob/living/carbon/human/H = mob
 		to_chat(H, span_warning("You suddenly feel hurt and old..."))
@@ -115,13 +115,13 @@
 	stage = 4
 	badness = EFFECT_DANGER_HINDRANCE
 
-/datum/symptom/bones/activate(mob/living/carbon/mob)
+/datum/symptom/bones/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(istype(mob, /mob/living/carbon/human))
 		var/mob/living/carbon/human/victim = mob
 		for (var/obj/item/bodypart/part in victim.bodyparts)
 			part.wound_resistance -= 10
 
-/datum/symptom/bones/deactivate(mob/living/carbon/mob)
+/datum/symptom/bones/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(istype(mob, /mob/living/carbon/human))
 		var/mob/living/carbon/human/victim = mob
 		for (var/obj/item/bodypart/part in victim.bodyparts)
@@ -133,7 +133,7 @@
 	stage = 4
 	badness = EFFECT_DANGER_FLAVOR
 
-/datum/symptom/fizzle/activate(mob/living/carbon/mob)
+/datum/symptom/fizzle/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	mob.emote("me",1,pick("sniffles...", "clears their throat..."))
 
 /datum/symptom/delightful
@@ -142,7 +142,7 @@
 	stage = 4
 	badness = EFFECT_DANGER_FLAVOR
 
-/datum/symptom/delightful/activate(mob/living/carbon/mob)
+/datum/symptom/delightful/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	to_chat(mob, "<span class = 'notice'>You feel delightful!</span>")
 	if (mob.reagents.get_reagent_amount(/datum/reagent/drug/happiness) < 5)
 		mob.reagents.add_reagent(/datum/reagent/drug/happiness, 10)
@@ -156,7 +156,7 @@
 	var/spawn_type= /mob/living/basic/spider/growing/spiderling/guard
 	var/spawn_name="spiderling"
 
-/datum/symptom/spawn/activate(mob/living/carbon/mob)
+/datum/symptom/spawn/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	playsound(mob.loc, 'sound/effects/splat.ogg', 50, 1)
 	var/mob/living/spawned_mob = new spawn_type(get_turf(mob))
 	mob.emote("me",1,"vomits up a live [spawn_name]!")
@@ -183,7 +183,7 @@
 	max_chance = 25
 	max_multiplier = 4
 
-/datum/symptom/gregarious/activate(mob/living/carbon/mob)
+/datum/symptom/gregarious/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	var/others_count = 0
 	for(var/mob/living/carbon/m in oview(5, mob))
 		others_count += 1
@@ -211,7 +211,7 @@
 	chance = 5
 	max_chance = 20
 
-/datum/symptom/magnitis/activate(mob/living/carbon/mob)
+/datum/symptom/magnitis/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(mob.reagents.has_reagent(/datum/reagent/iron))
 		return
 
@@ -242,7 +242,7 @@
 	var/datum/dna/old_dna
 	var/old_name
 
-/datum/symptom/dnaspread/activate(mob/living/carbon/mob)
+/datum/symptom/dnaspread/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(!activated)
 		to_chat(mob, span_warning("You don't feel like yourself.."))
 		old_dna = new
@@ -261,7 +261,7 @@
 	C.real_name = original_name
 	activated = TRUE
 
-/datum/symptom/dnaspread/deactivate(mob/living/carbon/mob)
+/datum/symptom/dnaspread/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	activated = FALSE
 	if(!old_dna)
 		return
@@ -284,7 +284,7 @@
 	max_count = 1
 	max_chance = 24
 
-/datum/symptom/species/activate(mob/living/carbon/mob)
+/datum/symptom/species/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	var/mob/living/carbon/human/victim = mob
 	if(!ishuman(victim))
 		return
@@ -293,7 +293,7 @@
 		return
 	victim.set_species(new_species)
 
-/datum/symptom/species/deactivate(mob/living/carbon/mob)
+/datum/symptom/species/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	var/mob/living/carbon/human/victim = mob
 	if(!ishuman(victim))
 		return
@@ -404,10 +404,10 @@
 	badness = EFFECT_DANGER_FLAVOR
 	var/biotypes = MOB_MINERAL | MOB_ROBOTIC
 
-/datum/symptom/adaptation/activate(mob/living/carbon/mob, datum/disease/advanced/disease)
+/datum/symptom/adaptation/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick, datum/disease/advanced/disease)
 	disease.infectable_biotypes |= biotypes
 
-/datum/symptom/adaptation/deactivate(mob/living/carbon/mob, datum/disease/advanced/disease)
+/datum/symptom/adaptation/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick, datum/disease/advanced/disease)
 	disease.infectable_biotypes &= ~(biotypes)
 
 /datum/symptom/adaptation/undead
@@ -415,11 +415,11 @@
 	desc = "The virus is able to thrive and act even within dead hosts."
 	biotypes = MOB_UNDEAD
 
-/datum/symptom/adaptation/undead/activate(mob/living/carbon/mob, datum/disease/advanced/disease)
+/datum/symptom/adaptation/undead/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick, datum/disease/advanced/disease)
 	.=..()
 	disease.process_dead = TRUE
 
-/datum/symptom/adaptation/undead/deactivate(mob/living/carbon/mob, datum/disease/advanced/disease)
+/datum/symptom/adaptation/undead/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick, datum/disease/advanced/disease)
 	.=..()
 	disease.process_dead = FALSE
 
@@ -431,7 +431,7 @@
 	badness = EFFECT_DANGER_HELPFUL
 	var/breathing = TRUE
 
-/datum/symptom/oxygen/activate(mob/living/carbon/mob, datum/disease/advanced/disease)
+/datum/symptom/oxygen/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick, datum/disease/advanced/disease)
 	mob.losebreath = max(0, mob.losebreath - multiplier)
 	mob.adjustOxyLoss(-2 * multiplier)
 	if(multiplier >= 4)
@@ -440,7 +440,7 @@
 			breathing = FALSE
 			ADD_TRAIT(mob, TRAIT_NOBREATH, DISEASE_TRAIT)
 
-/datum/symptom/oxygen/deactivate(mob/living/carbon/mob, datum/disease/advanced/disease)
+/datum/symptom/oxygen/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick, datum/disease/advanced/disease)
 	if(!breathing)
 		breathing = TRUE
 		REMOVE_TRAIT(mob, TRAIT_NOBREATH, DISEASE_TRAIT)

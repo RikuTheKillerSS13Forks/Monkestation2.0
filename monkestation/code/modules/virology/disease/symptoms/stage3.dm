@@ -8,7 +8,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 	max_multiplier = 3
 	badness = EFFECT_DANGER_HARMFUL
 
-/datum/symptom/toxins/activate(mob/living/carbon/mob)
+/datum/symptom/toxins/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	mob.adjustToxLoss((2*multiplier))
 
 
@@ -19,7 +19,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 	max_multiplier = 3
 	badness = EFFECT_DANGER_HINDRANCE
 
-/datum/symptom/shakey/activate(mob/living/carbon/mob)
+/datum/symptom/shakey/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	shake_camera(mob, 5*multiplier)
 
 
@@ -30,11 +30,11 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 	max_count = 1
 	badness = EFFECT_DANGER_FLAVOR
 
-/datum/symptom/telepathic/first_activate(mob/living/carbon/mob)
+/datum/symptom/telepathic/first_process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	GLOB.disease_hivemind_users |= mob
 	RegisterSignal(mob, COMSIG_MOB_SAY, PROC_REF(handle_speech))
 
-/datum/symptom/telepathic/deactivate(mob/living/carbon/mob)
+/datum/symptom/telepathic/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	GLOB.disease_hivemind_users -= mob
 	UnregisterSignal(mob, COMSIG_MOB_SAY)
 
@@ -60,7 +60,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 	stage = 3
 	badness = EFFECT_DANGER_HARMFUL
 
-/datum/symptom/mind/activate(mob/living/carbon/mob)
+/datum/symptom/mind/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(istype(mob, /mob/living/carbon/human))
 		var/mob/living/carbon/human/H = mob
 		H.adjustOrganLoss(ORGAN_SLOT_BRAIN, 5, 50)
@@ -73,7 +73,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 	stage = 3
 	badness = EFFECT_DANGER_HINDRANCE
 
-/datum/symptom/hallucinations/activate(mob/living/carbon/mob)
+/datum/symptom/hallucinations/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	mob.adjust_hallucinations(5 SECONDS)
 
 /datum/symptom/giggle
@@ -82,7 +82,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 	stage = 3
 	badness = EFFECT_DANGER_FLAVOR
 
-/datum/symptom/giggle/activate(mob/living/carbon/mob)
+/datum/symptom/giggle/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	mob.emote("giggle")
 
 /datum/symptom/chickenpox
@@ -92,7 +92,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 	badness = EFFECT_DANGER_ANNOYING
 	var/eggspawn = /obj/item/food/egg
 
-/datum/symptom/chickenpox/activate(mob/living/carbon/mob)
+/datum/symptom/chickenpox/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if (prob(30))
 		mob.say(pick("BAWWWK!", "BAAAWWK!", "CLUCK!", "CLUUUCK!", "BAAAAWWWK!"))
 	if (prob(15))
@@ -108,7 +108,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 	max_multiplier = 5
 	max_chance = 15
 
-/datum/symptom/confusion/activate(mob/living/carbon/mob)
+/datum/symptom/confusion/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	to_chat(mob, span_notice("You have trouble telling right and left apart all of a sudden."))
 	mob.adjust_confusion(1 SECONDS * multiplier)
 
@@ -118,7 +118,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 	stage = 3
 	badness = EFFECT_DANGER_FLAVOR
 
-/datum/symptom/groan/activate(mob/living/carbon/mob)
+/datum/symptom/groan/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	mob.emote("groan")
 
 
@@ -128,7 +128,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 	stage = 3
 	badness = EFFECT_DANGER_HINDRANCE
 
-/datum/symptom/sweat/activate(mob/living/carbon/mob)
+/datum/symptom/sweat/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(prob(30))
 		mob.emote("me",1,"is sweating profusely!")
 
@@ -142,7 +142,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 	stage = 3
 	badness = EFFECT_DANGER_HINDRANCE
 
-/datum/symptom/elvis/first_activate(mob/living/carbon/mob)
+/datum/symptom/elvis/first_process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(ismouse(mob))
 		var/mob/living/basic/mouse/mouse = mob
 		mouse.icon_state = "mouse_elvis"
@@ -152,7 +152,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 		return
 	mob.dna.add_mutation(/datum/mutation/human/elvis, MUT_EXTRA)
 
-/datum/symptom/elvis/activate(mob/living/carbon/mob)
+/datum/symptom/elvis/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(!ishuman(mob))
 		return
 
@@ -187,7 +187,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 				victim.facial_hair_color = "#242424"
 				victim.update_body()
 
-/datum/symptom/elvis/deactivate(mob/living/carbon/mob)
+/datum/symptom/elvis/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(ismouse(mob))
 		return
 	/*
@@ -206,7 +206,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 	max_multiplier = 4
 	badness = EFFECT_DANGER_HINDRANCE
 
-/datum/symptom/pthroat/activate(mob/living/carbon/mob)
+/datum/symptom/pthroat/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(ismouse(mob))
 		var/mob/living/basic/mouse/mouse = mob
 		mouse.icon_state = "mouse_clown"
@@ -239,10 +239,10 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 			if(!affected.w_uniform)
 				affected.equip_to_slot(virussuit, ITEM_SLOT_ICLOTHING)
 
-/datum/symptom/pthroat/first_activate(mob/living/carbon/mob)
+/datum/symptom/pthroat/first_process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	RegisterSignal(mob, COMSIG_MOB_SAY, PROC_REF(handle_speech))
 
-/datum/symptom/pthroat/deactivate(mob/living/carbon/mob)
+/datum/symptom/pthroat/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	UnregisterSignal(mob, COMSIG_MOB_SAY)
 
 /datum/symptom/pthroat/proc/handle_speech(datum/source, list/speech_args)
@@ -269,7 +269,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 	stage = 3
 	badness = EFFECT_DANGER_HINDRANCE
 
-/datum/symptom/horsethroat/activate(mob/living/carbon/mob)
+/datum/symptom/horsethroat/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(ismouse(mob))
 		var/mob/living/basic/mouse/mouse = mob
 		mouse.icon_state = "mouse_horse"
@@ -301,10 +301,10 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 	badness = EFFECT_DANGER_ANNOYING
 	var/old_haircolor = ""
 
-/datum/symptom/anime_hair/first_activate(mob/living/carbon/mob)
+/datum/symptom/anime_hair/first_process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	RegisterSignal(mob, COMSIG_MOB_SAY, PROC_REF(handle_speech))
 
-/datum/symptom/anime_hair/activate(mob/living/carbon/mob)
+/datum/symptom/anime_hair/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(ishuman(mob))
 		var/mob/living/carbon/human/affected = mob
 		var/list/hair_colors = list("pink","red","green","blue","purple")
@@ -373,7 +373,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 					affected.put_in_hands(fake_katana)
 				given_katana = TRUE
 
-/datum/symptom/anime_hair/deactivate(mob/living/carbon/mob)
+/datum/symptom/anime_hair/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	UnregisterSignal(mob, COMSIG_MOB_SAY)
 	to_chat(mob, "<span class = 'notice'>You no longer feel quite like the main character. </span>")
 	if (ishuman(mob))
@@ -402,10 +402,10 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 	badness = EFFECT_DANGER_HARMFUL
 	var/skip = FALSE
 
-/datum/symptom/butterfly_skin/activate(mob/living/carbon/mob)
+/datum/symptom/butterfly_skin/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	to_chat(mob, span_warning("Your skin feels a little fragile."))
 
-/datum/symptom/butterfly_skin/deactivate(mob/living/carbon/mob)
+/datum/symptom/butterfly_skin/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(!skip)
 		to_chat(mob, span_notice("Your skin feels nice and durable again!"))
 	..()
@@ -439,7 +439,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 	stage = 3
 	badness = EFFECT_DANGER_HELPFUL
 
-/datum/symptom/thick_blood/activate(mob/living/carbon/mob)
+/datum/symptom/thick_blood/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	var/mob/living/carbon/human/victim = mob
 	if (ishuman(victim))
 		if(victim.is_bleeding())
@@ -452,7 +452,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 	stage = 3
 	badness = EFFECT_DANGER_HARMFUL
 
-/datum/symptom/teratoma/activate(mob/living/carbon/mob)
+/datum/symptom/teratoma/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	var/fail_counter = 0
 	var/not_passed = TRUE
 	var/obj/item/organ/spawned_organ
@@ -485,7 +485,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 	multiplier = 5
 	max_multiplier = 10
 
-/datum/symptom/damage_converter/activate(mob/living/carbon/mob)
+/datum/symptom/damage_converter/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(mob.getFireLoss() > 0 || mob.getBruteLoss() > 0)
 		var/get_damage = rand(1, 3)
 		mob.adjustFireLoss(-get_damage)
@@ -498,7 +498,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 	stage = 3
 	badness = EFFECT_DANGER_ANNOYING
 
-/datum/symptom/mommi_hallucination/activate(mob/living/carbon/mob)
+/datum/symptom/mommi_hallucination/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(prob(50))
 		mob << sound('sound/effects/supermatter.ogg', volume = 25)
 
@@ -547,13 +547,13 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 	stage = 3
 
 
-/datum/symptom/wendigo_hallucination/first_activate(mob/living/carbon/mob)
+/datum/symptom/wendigo_hallucination/first_process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	RegisterSignal(mob, COMSIG_MOB_SAY, PROC_REF(handle_speech))
 
-/datum/symptom/wendigo_hallucination/deactivate(mob/living/carbon/mob)
+/datum/symptom/wendigo_hallucination/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	UnregisterSignal(mob, COMSIG_MOB_SAY)
 
-/datum/symptom/wendigo_hallucination/activate(mob/living/carbon/mob)
+/datum/symptom/wendigo_hallucination/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(!ishuman(mob))
 		return
 	var/mob/living/carbon/human/H = mob
@@ -587,7 +587,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 	max_multiplier = 5
 	stage = 3
 
-/datum/symptom/asphyxiation/activate(mob/living/carbon/mob)
+/datum/symptom/asphyxiation/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	mob.emote("gasp")
 	if(prob(20) && multiplier >= 4 && iscarbon(mob))
 		mob.reagents.add_reagent_list(list(/datum/reagent/toxin/pancuronium = 3, /datum/reagent/toxin/sodium_thiopental = 3))
@@ -696,7 +696,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 	max_multiplier = 6
 	badness = EFFECT_DANGER_FLAVOR
 
-/datum/symptom/polyvitiligo/activate(mob/living/carbon/mob)
+/datum/symptom/polyvitiligo/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(!iscarbon(mob))
 		return
 	switch(round(multiplier, 1))
@@ -718,7 +718,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 	badness = EFFECT_DANGER_HELPFUL
 
 
-/datum/symptom/metabolism/activate(mob/living/carbon/mob)
+/datum/symptom/metabolism/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(!iscarbon(mob))
 		return
 
@@ -735,7 +735,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 	max_multiplier = 3
 	badness = EFFECT_DANGER_HELPFUL
 
-/datum/symptom/mind_restoration/activate(mob/living/carbon/mob)
+/datum/symptom/mind_restoration/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(!iscarbon(mob))
 		return
 

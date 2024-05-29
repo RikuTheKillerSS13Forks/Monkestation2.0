@@ -107,7 +107,7 @@
 		var/change_limit = min(mob.get_body_temp_cold_damage_limit() + 5 - mob.get_body_temp_normal(apply_change=FALSE), 0)
 		mob.add_body_temperature_change("chills", max(-6 * power * multiplier, change_limit))
 
-/datum/symptom/fridge/deactivate(mob/living/carbon/mob)
+/datum/symptom/fridge/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(mob)
 		mob.remove_body_temperature_change("chills")
 
@@ -484,7 +484,7 @@
 	badness = EFFECT_DANGER_HINDRANCE
 	var/active = 0
 
-/datum/symptom/cult_vomit/activate(mob/living/carbon/mob)
+/datum/symptom/cult_vomit/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(!ishuman(mob) || active)
 		return
 	if(istype(get_area(mob), /area/station/service/chapel))
@@ -510,7 +510,7 @@
 	max_chance = 20
 	stage = 2
 
-/datum/symptom/choking/activate(mob/living/carbon/mob)
+/datum/symptom/choking/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	mob.emote("gasp")
 	if(prob(25))
 		to_chat(mob, span_warning("[pick("You're having difficulty breathing.", "Your breathing becomes heavy.")]"))
@@ -521,11 +521,11 @@
 	desc = "The virus liquefies facial muscles, disfiguring the host."
 	max_count = 1
 
-/datum/symptom/disfiguration/activate(mob/living/carbon/mob)
+/datum/symptom/disfiguration/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	ADD_TRAIT(mob, TRAIT_DISFIGURED, DISEASE_TRAIT)
 	mob.visible_message(span_warning("[mob]'s face appears to cave in!"), span_notice("You feel your face crumple and cave in!"))
 
-/datum/symptom/disfiguration/deactivate(mob/living/carbon/mob)
+/datum/symptom/disfiguration/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	REMOVE_TRAIT(mob, TRAIT_DISFIGURED, DISEASE_TRAIT)
 
 /datum/symptom/blindness
@@ -535,7 +535,7 @@
 	stage = 2
 	badness = EFFECT_DANGER_HARMFUL
 
-/datum/symptom/blindness/activate(mob/living/carbon/mob)
+/datum/symptom/blindness/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(!iscarbon(mob))
 		return
 

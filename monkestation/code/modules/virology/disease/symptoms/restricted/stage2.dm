@@ -84,7 +84,7 @@
 	var/list/passive_message = span_notice("You miss the feeling of starlight on your skin.")
 	var/nearspace_penalty = 0.3
 
-/datum/symptom/starlight/activate(mob/living/carbon/mob)
+/datum/symptom/starlight/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 
 	var/mob/living/M = mob
 	switch(round(multiplier))

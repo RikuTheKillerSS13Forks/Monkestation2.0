@@ -11,12 +11,12 @@
 	var/transformed_antag_datum //Do we add a specific antag datum once the transformation is complete?
 	var/old_form
 
-/datum/symptom/transformation/activate(mob/living/carbon/mob)
+/datum/symptom/transformation/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	old_form = mob.type
 	do_disease_transformation(mob, new_form)
 
 /*
-/datum/symptom/transformation/deactivate(mob/living/carbon/mob)
+/datum/symptom/transformation/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	do_disease_transformation(mob, old_form)
 	to_chat(mob, span_notice("You feel like yourself again!"))
 */
@@ -107,7 +107,7 @@
 	restricted = TRUE
 	max_multiplier = 4
 
-/datum/symptom/anxiety/activate(mob/living/carbon/mob, datum/disease/advanced/disease)
+/datum/symptom/anxiety/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick, datum/disease/advanced/disease)
 
 	switch(round(multiplier, 1))
 		if(2) //also changes say, see say.dm
