@@ -68,11 +68,10 @@
 	var/datum/symptom/new_symp = new type
 	new_symp.name = name
 	new_symp.id = id
-	new_symp.neutered = neutered
-	new_symp.multiplier = multiplier
-	new_symp.chance = chance
-	new_symp.max_chance = max_chance
-	new_symp.max_multiplier = max_multiplier
+	/// MONKESTATION EDIT START (Pathology)
+	for (var/datum/symptom_activator/activator as anything in activators)
+		new_symp.add_activator(activator.get_copy())
+	/// MONKESTATION EDIT END
 	return new_symp
 
 /datum/symptom/proc/generate_threshold_desc()

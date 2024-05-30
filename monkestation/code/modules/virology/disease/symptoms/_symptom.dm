@@ -20,10 +20,15 @@
 	/// Whether or not the symptom is currently active.
 	var/active = FALSE
 
-	/// The list of activators for this symptom.
-	/// These are run through sequentially to check if the symptom should process_active.
+	/// The list of *all* activators for this symptom.
+	/// Compatible ones are run through sequentially to check if the symptom is active.
 	/// Activators also modify the potency of symptoms after disease progress gives the base amount.
 	var/list/datum/symptom_activator/activators = list()
+
+	/// The list of *compatible* activators for this symptom.
+	/// These are run through sequentially to check if the symptom is active.
+	/// Activators also modify the potency of symptoms after disease progress gives the base amount.
+	var/list/datum/symptom_activator/compatible_activators = list()
 
 	/// The potency of the previous cycle.
 	/// Useful for passive effects that need to update based on potency.
@@ -46,6 +51,27 @@
 	/// This DOES affect the potency calculations.
 	var/potency_scale = 1
 
+/datum/symptom/proc/add_activator(datum/symptom_activator/activator, mob/living/carbon/host, datum/disease/advanced/disease)
+	activators += activator
+	update_compatibility()
+
+/datum/symptom/proc/remove_activator(datum/symptom_activator/activator, mob/living/carbon/host, datum/disease/advanced/disease)
+	activators -= activator
+	update_compatibility()
+
+/datum/symptom/proc/update_compatibility(mob/living/carbon/host, datum/disease/advanced/disease)
+	for (var/datum/symptom_activator/activator as anything in activators)
+		var/incompatibility_reason = activator.check_incompatibility(src, host, disease)
+
+		if (incompatibility_reason && !activator.incompatibility_reason)
+			activator.on_remove(src, host, disease)
+			compatible_activators -= activator
+		else if (!incompatibility_reason)
+			activator.on_add(src, host, disease)
+			compatible_activators += activator
+
+		activator.incompatibility_reason = incompatibility_reason
+
 /// Returns the final potency amount of this symptom by running through the entire activation string.
 /datum/symptom/proc/get_potency(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	var/potency = disease.get_base_potency()
@@ -53,7 +79,7 @@
 	if (potency <= 0)
 		return 0
 
-	for (var/datum/symptom_activator/activator as anything in activators)
+	for (var/datum/symptom_activator/activator as anything in compatible_activators)
 		potency *= activator.get_potency(host, disease, src, potency, seconds_per_tick)
 		if (potency <= 0) // this means an activator didn't pass it's check
 			return 0
@@ -70,56 +96,48 @@
 
 /// Runs the effects of this symptom.
 /// Returns whether or not the active effect ran successfully.
-/datum/symptom/proc/try_run_effect(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick) // does a lot so that other procs dont have to call parent
+/datum/symptom/proc/try_run_effect(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	var/potency = get_potency(host, disease, seconds_per_tick)
 
-	var/list/compatible_activators = list()
-
-	for (var/datum/symptom_activator/activator as anything in activators)
-		if (!activator.incompatibility_reason)
-			compatible_activators += activator
-
 	if (potency <= 0)
-		if (active)
-			active = FALSE
-			current_cycles = 0
-			deactivate_passive_effect(host, disease)
-			SEND_SIGNAL(src, COMSIG_SYMPTOM_DEACTIVATE_PASSIVE, host, disease)
-		process_any(host, disease, potency, seconds_per_tick) // called here instead of at the start so that passives, active state and cycles update first
-		process_inactive(host, disease, seconds_per_tick)
-		for (var/datum/symptom_activator/activator as anything in compatible_activators)
-			activator.process_any(host, disease, symptom, potency, seconds_per_tick)
-			activator.process_inactive(host, disease, symptom, seconds_per_tick)
-		previous_potency = potency
+		handle_active(host, disease, potency, seconds_per_tick)
 		return FALSE
+	handle_inactive(host, disease, potency, seconds_per_tick)
+	return TRUE
 
+/// Handles processing for a valid cycle.
+/datum/symptom/proc/handle_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
+	if (active)
+		active = FALSE
+		current_cycles = 0
+		deactivate_passive_effect(host, disease)
+		SEND_SIGNAL(src, COMSIG_SYMPTOM_DEACTIVATE_PASSIVE, host, disease, seconds_per_tick)
+	process_any(host, disease, potency, seconds_per_tick)
+	process_inactive(host, disease, seconds_per_tick)
+	SEND_SIGNAL(src, COMSIG_SYMPTOM_PROCESS_ANY, host, disease, potency, seconds_per_tick)
+	SEND_SIGNAL(src, COMSIG_SYMPTOM_PROCESS_INACTIVE, host, disease, potency, seconds_per_tick)
+
+/// Handles processing for an inactive cycle.
+/datum/symptom/proc/handle_inactive(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
 	cycles++
 	current_cycles++
 	if (!active)
 		active = TRUE
 		activate_passive_effect(host, disease)
-		SEND_SIGNAL(src, COMSIG_SYMPTOM_ACTIVATE_PASSIVE, host, disease)
+		SEND_SIGNAL(src, COMSIG_SYMPTOM_ACTIVATE_PASSIVE, host, disease, seconds_per_tick)
 	process_any(host, disease, potency, seconds_per_tick)
 	process_active(host, disease, seconds_per_tick)
-	for (var/datum/symptom_activator/activator as anything in compatible_activators)
-		activator.process_any(host, disease, symptom, potency, seconds_per_tick)
-		activator.process_active(host, disease, symptom, potency, seconds_per_tick)
+	SEND_SIGNAL(src, COMSIG_SYMPTOM_PROCESS_ANY, host, disease, potency, seconds_per_tick)
+	SEND_SIGNAL(src, COMSIG_SYMPTOM_PROCESS_ACTIVE, host, disease, potency, seconds_per_tick)
 	previous_potency = potency
-	return TRUE
-
-
-/datum/symptom/proc/can_run_effect(active_stage = -1, seconds_per_tick)
-	if((cycles < max_count || max_count == -1) && (stage <= active_stage || active_stage == -1) && prob(min(chance * seconds_per_tick, max_chance)))
-		return 1
-	return 0
 
 /// Only runs on the first valid cycle in a row.
 /// Useful for messages and applying passive effects.
-/datum/symptom/proc/activate_passive_effect(mob/living/carbon/mob, datum/disease/advanced/disease)
+/datum/symptom/proc/activate_passive_effect(mob/living/carbon/host, datum/disease/advanced/disease)
 
 /// Only runs on the last valid cycle in a row.
 /// Useful for messages and removing passive effects.
-/datum/symptom/proc/deactivate_passive_effect(mob/living/carbon/mob, datum/disease/advanced/disease)
+/datum/symptom/proc/deactivate_passive_effect(mob/living/carbon/host, datum/disease/advanced/disease)
 
 /// Runs once every valid cycle.
 /// This is where the most things should go.
@@ -127,7 +145,7 @@
 
 /// Runs once every invalid cycle.
 /// Rarely useful, but it exists.
-/datum/symptom/proc/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
+/datum/symptom/proc/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
 
 /// Runs once every cycle regardless of validity.
 /datum/symptom/proc/process_any(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
