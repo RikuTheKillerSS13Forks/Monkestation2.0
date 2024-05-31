@@ -11,7 +11,7 @@
 	mob.dna.add_mutation(/datum/mutation/human/pressure_adaptation)
 	mob.dna.add_mutation(/datum/mutation/human/temperature_adaptation)
 
-/datum/symptom/spaceadapt/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
+/datum/symptom/spaceadapt/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	mob.dna.remove_mutation(/datum/mutation/human/pressure_adaptation)
 	mob.dna.remove_mutation(/datum/mutation/human/temperature_adaptation)
 
@@ -48,7 +48,7 @@
 			mob.emote("scream")
 			ADD_TRAIT(mob, TRAIT_DEAF, DISEASE_TRAIT)
 
-/datum/symptom/deaf/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
+/datum/symptom/deaf/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	REMOVE_TRAIT(mob, TRAIT_DEAF, DISEASE_TRAIT)
 
 
@@ -101,7 +101,7 @@
 	mob.adjustFireLoss(-heal_amt)
 	mob.adjustCloneLoss(-heal_amt)
 
-/datum/symptom/immortal/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
+/datum/symptom/immortal/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(istype(mob, /mob/living/carbon/human))
 		var/mob/living/carbon/human/H = mob
 		to_chat(H, span_warning("You suddenly feel hurt and old..."))
@@ -121,7 +121,7 @@
 		for (var/obj/item/bodypart/part in victim.bodyparts)
 			part.wound_resistance -= 10
 
-/datum/symptom/bones/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
+/datum/symptom/bones/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(istype(mob, /mob/living/carbon/human))
 		var/mob/living/carbon/human/victim = mob
 		for (var/obj/item/bodypart/part in victim.bodyparts)
@@ -261,7 +261,7 @@
 	C.real_name = original_name
 	activated = TRUE
 
-/datum/symptom/dnaspread/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
+/datum/symptom/dnaspread/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	activated = FALSE
 	if(!old_dna)
 		return
@@ -293,7 +293,7 @@
 		return
 	victim.set_species(new_species)
 
-/datum/symptom/species/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
+/datum/symptom/species/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	var/mob/living/carbon/human/victim = mob
 	if(!ishuman(victim))
 		return
@@ -407,7 +407,7 @@
 /datum/symptom/adaptation/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick, datum/disease/advanced/disease)
 	disease.infectable_biotypes |= biotypes
 
-/datum/symptom/adaptation/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick, datum/disease/advanced/disease)
+/datum/symptom/adaptation/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick, datum/disease/advanced/disease)
 	disease.infectable_biotypes &= ~(biotypes)
 
 /datum/symptom/adaptation/undead
@@ -419,7 +419,7 @@
 	.=..()
 	disease.process_dead = TRUE
 
-/datum/symptom/adaptation/undead/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick, datum/disease/advanced/disease)
+/datum/symptom/adaptation/undead/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick, datum/disease/advanced/disease)
 	.=..()
 	disease.process_dead = FALSE
 
@@ -440,7 +440,7 @@
 			breathing = FALSE
 			ADD_TRAIT(mob, TRAIT_NOBREATH, DISEASE_TRAIT)
 
-/datum/symptom/oxygen/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick, datum/disease/advanced/disease)
+/datum/symptom/oxygen/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick, datum/disease/advanced/disease)
 	if(!breathing)
 		breathing = TRUE
 		REMOVE_TRAIT(mob, TRAIT_NOBREATH, DISEASE_TRAIT)

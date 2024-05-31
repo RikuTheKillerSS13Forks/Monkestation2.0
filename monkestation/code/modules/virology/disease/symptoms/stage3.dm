@@ -34,7 +34,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 	GLOB.disease_hivemind_users |= mob
 	RegisterSignal(mob, COMSIG_MOB_SAY, PROC_REF(handle_speech))
 
-/datum/symptom/telepathic/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
+/datum/symptom/telepathic/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	GLOB.disease_hivemind_users -= mob
 	UnregisterSignal(mob, COMSIG_MOB_SAY)
 
@@ -187,7 +187,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 				victim.facial_hair_color = "#242424"
 				victim.update_body()
 
-/datum/symptom/elvis/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
+/datum/symptom/elvis/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(ismouse(mob))
 		return
 	/*
@@ -242,7 +242,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 /datum/symptom/pthroat/first_process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	RegisterSignal(mob, COMSIG_MOB_SAY, PROC_REF(handle_speech))
 
-/datum/symptom/pthroat/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
+/datum/symptom/pthroat/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	UnregisterSignal(mob, COMSIG_MOB_SAY)
 
 /datum/symptom/pthroat/proc/handle_speech(datum/source, list/speech_args)
@@ -373,7 +373,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 					affected.put_in_hands(fake_katana)
 				given_katana = TRUE
 
-/datum/symptom/anime_hair/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
+/datum/symptom/anime_hair/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	UnregisterSignal(mob, COMSIG_MOB_SAY)
 	to_chat(mob, "<span class = 'notice'>You no longer feel quite like the main character. </span>")
 	if (ishuman(mob))
@@ -405,7 +405,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 /datum/symptom/butterfly_skin/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	to_chat(mob, span_warning("Your skin feels a little fragile."))
 
-/datum/symptom/butterfly_skin/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
+/datum/symptom/butterfly_skin/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(!skip)
 		to_chat(mob, span_notice("Your skin feels nice and durable again!"))
 	..()
@@ -550,7 +550,7 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 /datum/symptom/wendigo_hallucination/first_process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	RegisterSignal(mob, COMSIG_MOB_SAY, PROC_REF(handle_speech))
 
-/datum/symptom/wendigo_hallucination/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
+/datum/symptom/wendigo_hallucination/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	UnregisterSignal(mob, COMSIG_MOB_SAY)
 
 /datum/symptom/wendigo_hallucination/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)

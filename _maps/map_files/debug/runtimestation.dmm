@@ -1924,6 +1924,10 @@
 /obj/item/melee/energy/axe,
 /turf/open/floor/iron,
 /area/station/commons/storage/primary)
+"kd" = (
+/obj/machinery/nanite_program_hub,
+/turf/open/floor/plating,
+/area/station/commons/storage/primary)
 "kj" = (
 /obj/machinery/door/airlock,
 /obj/structure/cable,
@@ -2090,6 +2094,15 @@
 /obj/machinery/atmospherics/pipe/smart/manifold/scrubbers/visible,
 /turf/open/floor/plating,
 /area/station/construction)
+"rI" = (
+/obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden,
+/obj/effect/turf_decal/stripes/line{
+	dir = 4
+	},
+/obj/structure/cable,
+/obj/item/disk/nanite_program,
+/turf/open/floor/iron,
+/area/station/commons/storage/primary)
 "rK" = (
 /obj/effect/turf_decal/stripes/line{
 	dir = 4
@@ -2344,6 +2357,11 @@
 /obj/structure/closet/syndicate/resources/everything,
 /turf/open/floor/iron,
 /area/station/science)
+"Cv" = (
+/obj/machinery/light/directional/east,
+/obj/machinery/public_nanite_chamber,
+/turf/open/floor/plating,
+/area/station/commons/storage/primary)
 "CQ" = (
 /obj/machinery/light/directional/south,
 /obj/effect/turf_decal/stripes/line{
@@ -2423,6 +2441,10 @@
 	},
 /turf/open/floor/plating,
 /area/station/construction)
+"Gj" = (
+/obj/machinery/nanite_programmer,
+/turf/open/floor/plating,
+/area/station/commons/storage/primary)
 "GC" = (
 /turf/open/floor/iron/kitchen_coldroom/freezerfloor,
 /area/station/commons/storage/primary)
@@ -2512,6 +2534,10 @@
 	},
 /turf/open/floor/iron,
 /area/station/cargo/miningoffice)
+"MJ" = (
+/obj/machinery/computer/nanite_cloud_controller,
+/turf/open/floor/plating,
+/area/station/commons/storage/primary)
 "MN" = (
 /obj/effect/turf_decal/tile/neutral/fourcorners,
 /turf/open/floor/iron/dark,
@@ -2564,6 +2590,15 @@
 /obj/item/disk/tech_disk/debug,
 /turf/open/floor/iron,
 /area/station/science)
+"PG" = (
+/obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden,
+/obj/effect/turf_decal/stripes/line{
+	dir = 4
+	},
+/obj/structure/cable,
+/obj/item/nanite_scanner,
+/turf/open/floor/iron,
+/area/station/commons/storage/primary)
 "Qi" = (
 /obj/structure/cable,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden{
@@ -8401,8 +8436,8 @@ eH
 eH
 fH
 fw
-eH
-eH
+rI
+PG
 eH
 eH
 fH
@@ -8493,10 +8528,10 @@ dl
 gg
 ez
 dB
-dl
-dl
-dl
-dx
+kd
+Gj
+MJ
+Cv
 dE
 cS
 pv

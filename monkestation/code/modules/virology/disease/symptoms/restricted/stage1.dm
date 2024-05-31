@@ -16,7 +16,7 @@
 	do_disease_transformation(mob, new_form)
 
 /*
-/datum/symptom/transformation/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
+/datum/symptom/transformation/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	do_disease_transformation(mob, old_form)
 	to_chat(mob, span_notice("You feel like yourself again!"))
 */

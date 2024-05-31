@@ -107,7 +107,7 @@
 		var/change_limit = min(mob.get_body_temp_cold_damage_limit() + 5 - mob.get_body_temp_normal(apply_change=FALSE), 0)
 		mob.add_body_temperature_change("chills", max(-6 * power * multiplier, change_limit))
 
-/datum/symptom/fridge/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
+/datum/symptom/fridge/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	if(mob)
 		mob.remove_body_temperature_change("chills")
 
@@ -525,7 +525,7 @@
 	ADD_TRAIT(mob, TRAIT_DISFIGURED, DISEASE_TRAIT)
 	mob.visible_message(span_warning("[mob]'s face appears to cave in!"), span_notice("You feel your face crumple and cave in!"))
 
-/datum/symptom/disfiguration/deprocess_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
+/datum/symptom/disfiguration/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
 	REMOVE_TRAIT(mob, TRAIT_DISFIGURED, DISEASE_TRAIT)
 
 /datum/symptom/blindness
