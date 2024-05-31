@@ -795,11 +795,13 @@
 	if(M.stat)
 		to_chat(user, span_warning("The slime is dead!"))
 		return
+	// monkestation start: xenobio rework
 	if(M.ooze_production >= 50)
 		to_chat(user, span_warning("The slime is already producing too much ooze!"))
 		return
 	to_chat(user, span_notice("You feed the slime the steroid. It will now produce more ooze."))
-	M.ooze_production++
+	M.ooze_production = min(M.ooze_production + 10, 50)
+	// monkestation end
 	qdel(src)
 
 /obj/item/slimepotion/enhancer
@@ -872,7 +874,7 @@
 		return
 	if(isitem(C))
 		var/obj/item/I = C
-		if(I.slowdown <= 0 || I.obj_flags & IMMUTABLE_SLOW)
+		if(I.slowdown <= 0 || (I.item_flags & IMMUTABLE_SLOW))
 			to_chat(user, span_warning("The [C] can't be made any faster!"))
 			return ..()
 		I.slowdown = 0
