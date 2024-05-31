@@ -35,13 +35,13 @@ GLOBAL_LIST_INIT(science_goggles_wearers, list())
 	viruses = virus
 
 	for(var/datum/disease/advanced/D as anything in viruses)
-		id_list += "[D.uniqueID]-[D.subID]"
+		id_list += "[D.get_id()]"
 
 	if(!core)
 		var/obj/effect/pathogen_cloud/core/core = locate(/obj/effect/pathogen_cloud/core) in src.loc
 		if(get_turf(core) == get_turf(src))
 			for(var/datum/disease/advanced/V as anything in viruses)
-				if("[V.uniqueID]-[V.subID]" in core.id_list)
+				if("[V.get_id()]" in core.id_list)
 					continue
 				core.viruses |= V.Copy()
 				core.modified = TRUE

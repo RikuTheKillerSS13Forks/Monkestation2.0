@@ -56,7 +56,7 @@
 	if (istype(disease_list) && disease_list.len > 0)
 		for(var/datum/disease/advanced/V as anything in disease_list)
 			if (!V)
-				message_admins("[key_name(src)] is trying to assume contact diseases from touching \a [source], but the disease_list contains an ID ([V.uniqueID]-[V.subID]) that isn't associated to an actual disease datum! Ping Dwasint about it please.")
+				message_admins("[key_name(src)] is trying to assume contact diseases from touching \a [source], but the disease_list contains an ID ([V.get_id()]) that isn't associated to an actual disease datum! Ping Dwasint about it please.")
 				return
 			if(!blocked && V.spread_flags & DISEASE_SPREAD_CONTACT_SKIN)
 				infect_disease(V, notes="(Contact, from [source])")

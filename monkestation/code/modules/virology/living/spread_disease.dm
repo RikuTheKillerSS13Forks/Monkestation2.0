@@ -30,7 +30,7 @@
 		return FALSE
 
 	for(var/datum/disease/advanced/D as anything in diseases)
-		if("[disease.uniqueID]-[disease.subID]" == "[D.uniqueID]-[D.subID]") // child ids are for pathogenic mutations and aren't accounted for as thats fucked.
+		if("[disease.get_id()]" == "[D.get_id()]") // child ids are for pathogenic mutations and aren't accounted for as thats fucked.
 			return FALSE
 
 	if(immune_system && !immune_system.CanInfect(disease))

@@ -62,13 +62,18 @@ GLOBAL_LIST_INIT(virusDB, list())
 		viable += disease
 	return viable
 
+/// Returns the full ID of this disease.
+/// Does string manipulation so cache it please.
+/datum/disease/advanced/proc/get_id()
+	return "[uniqueID]-[subID]"
+
 /datum/disease/advanced/proc/update_global_log()
-	if ("[uniqueID]-[subID]" in GLOB.inspectable_diseases)
+	if (get_id() in GLOB.inspectable_diseases)
 		return
-	GLOB.inspectable_diseases["[uniqueID]-[subID]"] = Copy()
+	GLOB.inspectable_diseases[get_id()] = Copy()
 
 /datum/disease/advanced/proc/clean_global_log()
-	var/ID = "[uniqueID]-[subID]"
+	var/ID = get_id()
 	if (ID in GLOB.virusDB)
 		return
 
@@ -76,18 +81,18 @@ GLOBAL_LIST_INIT(virusDB, list())
 		if(!length(L.diseases))
 			continue
 		for(var/datum/disease/advanced/D as anything in L.diseases)
-			if (ID == "[D.uniqueID]-[D.subID]")
+			if (ID == D.get_id())
 				return
 
 	for (var/obj/item/I in GLOB.infected_items)
 		for(var/datum/disease/advanced/D as anything in I.viruses)
-			if (ID == "[D.uniqueID]-[D.subID]")
+			if (ID == D.get_id())
 				return
 
 	var/dishes = 0
 	for (var/obj/item/weapon/virusdish/dish in GLOB.virusdishes)
 		if (dish.contained_virus)
-			if (ID == "[dish.contained_virus.uniqueID]-[dish.contained_virus.subID]")
+			if (ID == dish.contained_virus.get_id())
 				dishes++
 				if (dishes > 1)//counting the dish we're in currently
 					return
@@ -417,7 +422,7 @@ GLOBAL_LIST_INIT(virusDB, list())
 			continue
 
 		if ((enemy_pathogen.form in can_kill) && strength > enemy_pathogen.strength)
-			log += "<br />[ROUND_TIME()] destroyed enemy [enemy_pathogen.form] #[enemy_pathogen.uniqueID]-[enemy_pathogen.subID] ([strength] > [enemy_pathogen.strength])"
+			log += "<br />[ROUND_TIME()] destroyed enemy [enemy_pathogen.form] #[enemy_pathogen.get_id()] ([strength] > [enemy_pathogen.strength])"
 			enemy_pathogen.cure(mob)
 
 	// This makes it so that <mob> only ever gets affected by the equivalent of one virus so antags don't just stack a bunch
@@ -491,7 +496,7 @@ GLOBAL_LIST_INIT(virusDB, list())
 	//--Plague Stuff--
 	/*
 	var/datum/faction/plague_mice/plague = find_active_faction_by_type(/datum/faction/plague_mice)
-	if (plague && ("[uniqueID]-[subID]" == plague.diseaseID))
+	if (plague && (get_id() == plague.diseaseID))
 		plague.update_hud_icons()
 	*/
 	//----------------
@@ -528,14 +533,14 @@ GLOBAL_LIST_INIT(virusDB, list())
 /datum/disease/advanced/proc/name(override=FALSE)
 	.= "[form] #["[uniqueID]"][childID ? "-["[childID]"]" : ""]"
 
-	if (!override && ("[uniqueID]-[subID]" in GLOB.virusDB))
-		var/datum/data/record/V = GLOB.virusDB["[uniqueID]-[subID]"]
+	if (!override && (get_id() in GLOB.virusDB))
+		var/datum/data/record/V = GLOB.virusDB[get_id()]
 		.= V.fields["name"]
 
 /datum/disease/advanced/proc/real_name()
 	.= "[form] #["[uniqueID]"]-["[subID]"]"
-	if ("[uniqueID]-[subID]" in GLOB.virusDB)
-		var/datum/data/record/v = GLOB.virusDB["[uniqueID]-[subID]"]
+	if (get_id() in GLOB.virusDB)
+		var/datum/data/record/v = GLOB.virusDB[get_id()]
 		var/nickname = v.fields["nickname"] ? " \"[v.fields["nickname"]]\"" : ""
 		. += nickname
 
@@ -612,7 +617,7 @@ GLOBAL_LIST_INIT(virusDB, list())
 	return dat
 
 /datum/disease/advanced/proc/addToDB()
-	if ("[uniqueID]-[subID]" in GLOB.virusDB)
+	if (get_id() in GLOB.virusDB)
 		return 0
 	childID = 0
 	for (var/virus_file in GLOB.virusDB)
@@ -632,7 +637,7 @@ GLOBAL_LIST_INIT(virusDB, list())
 	v.fields["antigen"] = get_antigen_string()
 	v.fields["spread_flags_type"] = get_spread_string()
 	v.fields["danger"] = "Undetermined"
-	GLOB.virusDB["[uniqueID]-[subID]"] = v
+	GLOB.virusDB[get_id()] = v
 	return 1
 
 /datum/disease/advanced/virus
@@ -681,7 +686,7 @@ GLOBAL_LIST_INIT(virusDB, list())
 		create_disease_info_pane(usr)
 
 /datum/disease/advanced/proc/create_disease_info_pane(mob/user)
-	var/datum/browser/popup = new(user, "\ref[src]", "GNAv3 [form] #[uniqueID]-[subID]", 600, 500, src)
+	var/datum/browser/popup = new(user, "\ref[src]", "GNAv3 [form] #[get_id()]", 600, 500, src)
 	var/content = get_info()
 	content += "<BR><b>LOGS</b></BR>"
 	content += log
@@ -848,7 +853,7 @@ GLOBAL_LIST_INIT(virusDB, list())
 			if (alert("Can this virus spread_flags through words?","Spreading Vectors","Yes","No") == "Yes")
 				D.spread_flags |= SPREAD_MEMETIC
 		*/
-		GLOB.inspectable_diseases -= "[D.uniqueID]-[D.subID]"//little odds of this happening thanks to subID but who knows
+		GLOB.inspectable_diseases -= "[D.get_id()]"//little odds of this happening thanks to subID but who knows
 		D.update_global_log()
 
 		if (alert("Lastly, do you want this pathogen to be added to the station's Database? (allows medical HUDs to locate infected mobs, among other things)","Pathogen Database","Yes","No") == "Yes")
@@ -860,10 +865,10 @@ GLOBAL_LIST_INIT(virusDB, list())
 			infectedMob.diseases = list()
 		infectedMob.diseases += D
 		var/nickname = ""
-		if ("[D.uniqueID]-[D.subID]" in GLOB.virusDB)
-			var/datum/data/record/v = GLOB.virusDB["[D.uniqueID]-[D.subID]"]
+		if ("[D.get_id()]" in GLOB.virusDB)
+			var/datum/data/record/v = GLOB.virusDB["[D.get_id()]"]
 			nickname = v.fields["nickname"] ? " \"[v.fields["nickname"]]\"" : ""
-		log_admin("[infectedMob] was infected with [D.form] #[D.uniqueID]-[D.subID][nickname] by [C.ckey]")
+		log_admin("[infectedMob] was infected with [D.form] #[D.get_id()][nickname] by [C.ckey]")
 		message_admins("[infectedMob] was infected with  [D.form] #["[D.uniqueID]"]-["[D.subID]"][nickname] by [C.ckey]")
 		D.AddToGoggleView(infectedMob)
 	else
@@ -871,7 +876,7 @@ GLOBAL_LIST_INIT(virusDB, list())
 		dish.contained_virus = D
 		dish.growth = rand(5, 50)
 		dish.name = "growth dish (Unknown [D.form])"
-		if ("[D.uniqueID]-[D.subID]" in GLOB.virusDB)
+		if ("[D.get_id()]" in GLOB.virusDB)
 			dish.name = "growth dish ([D.name(TRUE)])"
 		dish.update_icon()
 
@@ -945,7 +950,7 @@ GLOBAL_LIST_INIT(virusDB, list())
 		var/dishes = 0
 		for (var/mob/living/L in GLOB.mob_list)
 			for(var/datum/disease/advanced/D as anything in L.diseases)
-				if (ID == "[D.uniqueID]-[D.subID]")
+				if (ID == "[D.get_id()]")
 					infctd_mobs++
 					if (L.stat == DEAD)
 						infctd_mobs_dead++
@@ -956,7 +961,7 @@ GLOBAL_LIST_INIT(virusDB, list())
 
 		for (var/obj/item/I in GLOB.infected_items)
 			for(var/datum/disease/advanced/D as anything in I.viruses)
-				if (ID == "[D.uniqueID]-[D.subID]")
+				if (ID == "[D.get_id()]")
 					infctd_items++
 					if(!length(logs["[ID]"]))
 						logs["[ID]"] = list()
@@ -964,7 +969,7 @@ GLOBAL_LIST_INIT(virusDB, list())
 					logs["[ID]"]["[I]"] = D.log
 		for (var/obj/item/weapon/virusdish/dish in GLOB.virusdishes)
 			if (dish.contained_virus)
-				if (ID == "[dish.contained_virus.uniqueID]-[dish.contained_virus.subID]")
+				if (ID == "[dish.contained_virus.get_id()]")
 					dishes++
 					if(!length(logs["[ID]"]))
 						logs["[ID]"] = list()

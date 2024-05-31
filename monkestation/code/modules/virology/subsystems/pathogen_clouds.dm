@@ -40,7 +40,7 @@ SUBSYSTEM_DEF(pathogen_clouds)
 			//This should prevent mobs breathing in hundreds of clouds at once
 			for(var/obj/effect/pathogen_cloud/core/core in cloud.loc)
 				for(var/datum/disease/advanced/V as anything in cloud.viruses)
-					if("[V.uniqueID]-[V.subID]" in core.id_list)
+					if("[V.get_id()]" in core.id_list)
 						continue
 					core.viruses |= V.Copy()
 					core.modified = TRUE
@@ -66,7 +66,7 @@ SUBSYSTEM_DEF(pathogen_clouds)
 						return
 					if (!other_C.moving)
 						for(var/datum/disease/advanced/V as anything in other_C.viruses)
-							if("[V.uniqueID]-[V.subID]" in core.id_list)
+							if("[V.get_id()]" in core.id_list)
 								continue
 							core.viruses |= V.Copy()
 							core.modified = TRUE

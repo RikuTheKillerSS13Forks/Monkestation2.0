@@ -39,7 +39,7 @@
 					continue
 				if (length(L.diseases))
 					for (var/datum/disease/advanced/D as anything in L.diseases)
-						var/ID = "[D.uniqueID]-[D.subID]"
+						var/ID = "[D.get_id()]"
 						if(ID in GLOB.virusDB)
 							if (antibody in D.antigen)
 								antigens_that_matter += antibody
@@ -78,7 +78,7 @@
 
 	if (length(L.diseases))
 		for (var/datum/disease/advanced/D as anything in L.diseases)
-			var/ID = "[D.uniqueID]-[D.subID]"
+			var/ID = "[D.get_id()]"
 			scan.DrawBox("#FF0000",6,6+D.strength*3,display_width-5,6+D.strength*3)
 			if(ID in GLOB.virusDB)
 				var/subdivision = (D.strength - ((D.robustness * D.strength) / 100)) / D.max_stages
@@ -111,7 +111,7 @@
 
 	if (length(L.diseases))
 		for (var/datum/disease/advanced/D as anything in L.diseases)
-			var/ID = "[D.uniqueID]-[D.subID]"
+			var/ID = "[D.get_id()]"
 			if(ID in GLOB.virusDB)
 				var/datum/data/record/V = GLOB.virusDB[ID]
 				info += "<br><i>[V.fields["name"]][V.fields["nickname"] ? " \"[V.fields["nickname"]]\"" : ""] detected. Strength: [D.strength]. Robustness: [D.robustness]. Antigen: [D.get_antigen_string()]</i>"
