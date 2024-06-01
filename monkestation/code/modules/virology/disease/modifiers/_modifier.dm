@@ -2,6 +2,9 @@
 	var/name = "Base Modifier"
 	var/desc = "WHAT HAVE YOU DONE?!"
 
+	/// If above 0, how many of these you can have on one activator.
+	var/max_count = 1
+
 	/// If not null, used to tell the player why this is incompatible.
 	/// Makes this modifier have no effect on the activator it's attached to.
 	var/incompatibility_reason
@@ -19,6 +22,13 @@
 /// Called every time the activation string of our symptom changes.
 /// If compatible, return null, if not, return the reason why as a string.
 /datum/symptom_activator/proc/check_incompatibility(datum/symptom_activator/activator, datum/symptom/symptom, mob/living/carbon/host, datum/disease/advanced/disease)
+	if (max_count > 0)
+		var/self_count = 0
+		for (var/activator as anything in symptom.activators)
+			if (istype(activator, type))
+				self_count++
+		if (max_count > self_count)
+			return "Maximum amount of \"[name]\" is [max_count]."
 	for (var/symptom_type as anything in incompatible_symptoms)
 		if (istype(symptom, symptom_type))
 			return "Incompatible with [symptom]."

@@ -5,6 +5,17 @@
 #define EFFECT_DANGER_HARMFUL	"4"
 #define EFFECT_DANGER_DEADLY	"5"
 
+// Used for symptom rarity and HUDs.
+#define SYMPTOM_SEVERITY_AWESOME   "4"
+#define SYMPTOM_SEVERITY_GREAT     "3"
+#define SYMPTOM_SEVERITY_GOOD      "2"
+#define SYMPTOM_SEVERITY_OKAY      "1"
+#define SYMPTOM_SEVERITY_NEUTRAL   "0"
+#define SYMPTOM_SEVERITY_ANNOYING "-1"
+#define SYMPTOM_SEVERITY_BAD      "-2"
+#define SYMPTOM_SEVERITY_DEADLY   "-3"
+#define SYMPTOM_SEVERITY_HORRIBLE "-4"
+
 #define	ANTIGEN_BLOOD	"blood"
 #define	ANTIGEN_COMMON	"common"
 #define	ANTIGEN_RARE	"rare"

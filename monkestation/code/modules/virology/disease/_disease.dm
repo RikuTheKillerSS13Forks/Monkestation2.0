@@ -6,14 +6,6 @@ GLOBAL_LIST_INIT(virusDB, list())
 	var/list/antigen = list()
 	//alters a pathogen's propensity to mutate. Set to FALSE to forbid a pathogen from ever mutating.
 	var/mutation_modifier = TRUE
-	//the antibody concentration at which the disease will fully exit the body
-	var/strength = 100
-	//the percentage of the strength at which effects will start getting disabled by antibodies.
-	var/robustness = 100
-	//chance to cure the disease at every proc when the body is getting cooked alive.
-	var/max_bodytemperature = T0C+100
-	//very low temperatures will stop the disease from activating/progressing
-	var/min_bodytemperature = 120
 	///split category used for predefined diseases atm
 	var/category = DISEASE_NORMAL
 
@@ -28,22 +20,10 @@ GLOBAL_LIST_INIT(virusDB, list())
 	var/pattern = 1
 	var/pattern_color
 
-	///pathogenic warfare - If you have a second disease of a form name in the list they will start fighting.
-	var/list/can_kill = list("Bacteria")
-
 	//When an opportunity for the disease to spread_flags to a mob arrives, runs this percentage through prob()
 	//Ignored if infected materials are ingested (injected with infected blood, eating infected meat)
 	var/infectionchance = 20
 	var/infectionchance_base = 20
-
-	//ticks increases by [speed] every time the disease activates. Drinking Virus Food also accelerates the process by 10.
-	var/ticks = 0
-	var/speed = 1
-
-	var/stageprob = 25
-
-	//when spreading to another mob, that new carrier has the disease's stage reduced by stage_variance
-	var/stage_variance = -1
 
 	var/uniqueID = 0// 0000 to 9999, set when the pathogen gets initially created
 	var/subID = 0// 000 to 9999, set if the pathogen underwent effect or antigen mutation
@@ -65,7 +45,14 @@ GLOBAL_LIST_INIT(virusDB, list())
 /// Returns the full ID of this disease.
 /// Does string manipulation so cache it please.
 /datum/disease/advanced/proc/get_id()
-	return "[uniqueID]-[subID]"
+	return "[uniqueID]-[subID]" // this was originally manually written out like 80 times wtf
+
+/// Randomizes the appearance of the disease.
+/datum/disease/advanced/proc/randomize_appearance()
+	var/list/random_hexes = list("8","9","a","b","c","d","e")
+	color = random_string(6, random_hexes)
+	pattern = rand(1, 6)
+	pattern_color = random_string(6, random_hexes)
 
 /datum/disease/advanced/proc/update_global_log()
 	if (get_id() in GLOB.inspectable_diseases)
@@ -123,85 +110,6 @@ GLOBAL_LIST_INIT(virusDB, list())
 				L.client.images |= infectedMob.pathogen
 		return
 
-/datum/disease/advanced/proc/incubate(atom/incubator, mutatechance=1, specified_stage=0)
-	mutatechance *= mutation_modifier
-
-	var/mob/living/body = null
-	var/obj/item/weapon/virusdish/dish = null
-	var/obj/machinery/disease2/incubator/machine = null
-
-	if (isliving(incubator))
-		body = incubator
-	else if (istype(incubator,/obj/item/weapon/virusdish))
-		dish = incubator
-		if (istype(dish.loc,/obj/machinery/disease2/incubator))
-			machine = dish.loc
-
-	if(specified_stage)
-		for(var/x in symptoms.len)
-			if(x == specified_stage)
-				var/datum/symptom/e = symptoms[x]
-				e.multiplier_tweak(0.1 * rand(1, 3))
-				minormutate(specified_stage)
-				if(e.chance == e.max_chance && prob(strength) && e.max_chance <= initial(e.max_chance) * 3)
-					e.max_chance++
-
-	if (mutatechance > 0 && (body || dish) && incubator.reagents)
-		if (incubator.reagents.has_reagent(/datum/reagent/toxin/mutagen,  0.5) && incubator.reagents.has_reagent(/datum/reagent/consumable/nutriment/protein,0.5))
-			if(incubator.reagents.remove_reagent(/datum/reagent/toxin/mutagen, 0.5) && incubator.reagents.remove_reagent(/datum/reagent/consumable/nutriment/protein,0.5))
-				log += "<br />[ROUND_TIME()] Robustness Strengthening (Mutagen and Protein in [incubator])"
-				var/change = rand(1,5)
-				robustness = min(100,robustness + change)
-				for(var/datum/symptom/e in symptoms)
-					e.multiplier_tweak(0.1)
-				if (dish)
-					if (machine)
-						machine.update_minor(dish,0,change,0.1)
-		else if (incubator.reagents.has_reagent(/datum/reagent/toxin/mutagen, 0.5) && incubator.reagents.has_reagent(/datum/reagent/medicine/antipathogenic/spaceacillin,0.5))
-			if(incubator.reagents.remove_reagent(/datum/reagent/toxin/mutagen, 0.5) && incubator.reagents.remove_reagent(/datum/reagent/medicine/antipathogenic/spaceacillin,0.5))
-				log += "<br />[ROUND_TIME()] Robustness Weakening (Mutagen and spaceacillin in [incubator])"
-				var/change = rand(1,5)
-				robustness = max(0,robustness - change)
-				for(var/datum/symptom/e in symptoms)
-					e.multiplier_tweak(-0.1)
-				if (dish)
-					if (machine)
-						machine.update_minor(dish,0,-change,-0.1)
-		else
-			if(incubator.reagents.remove_reagent(/datum/reagent/toxin/mutagen, 0.05) && prob(mutatechance))
-				log += "<br />[ROUND_TIME()] Effect Mutation (Mutagen in [incubator])"
-				effectmutate(body != null)
-				if (dish)
-					if(dish.info && dish.analysed)
-						dish.info = "OUTDATED : [dish.info]"
-						dish.analysed = 0
-					dish.update_icon()
-					if (machine)
-						machine.update_major(dish)
-			if(incubator.reagents.remove_reagent(/datum/reagent/consumable/nutriment/protein,0.05) && prob(mutatechance))
-				log += "<br />[ROUND_TIME()] Strengthening (/datum/reagent/consumable/nutriment/protein in [incubator])"
-				var/change = rand(1,5)
-				strength = min(100,strength + change)
-				if (dish)
-					if (machine)
-						machine.update_minor(dish,change)
-			if(incubator.reagents.remove_reagent(/datum/reagent/medicine/antipathogenic/spaceacillin,0.05) && prob(mutatechance))
-				log += "<br />[ROUND_TIME()] Weakening (/datum/reagent/medicine/antipathogenic/spaceacillin in [incubator])"
-				var/change = rand(1,5)
-				strength = max(0,strength - change)
-				if (dish)
-					if (machine)
-						machine.update_minor(dish,-change)
-		if(incubator.reagents.remove_reagent(/datum/reagent/uranium/radium,0.02) && prob(mutatechance/8))
-			log += "<br />[ROUND_TIME()] Antigen Mutation (Radium in [incubator])"
-			antigenmutate()
-			if (dish)
-				if(dish.info && dish.analysed)
-					dish.info = "OUTDATED : [dish.info]"
-					dish.analysed = 0
-				if (machine)
-					machine.update_major(dish)
-
 /datum/disease/advanced/proc/makerandom(var/list/str = list(), var/list/rob = list(), var/list/anti = list(), var/list/bad = list(), var/atom/source = null)
 	//ID
 	uniqueID = rand(0,9999)
@@ -233,10 +141,7 @@ GLOBAL_LIST_INIT(virusDB, list())
 
 	//cosmetic petri dish stuff - if set beforehand, will not be randomized
 	if (!color)
-		var/list/randomhexes = list("8","9","a","b","c","d","e")
-		color = "#[pick(randomhexes)][pick(randomhexes)][pick(randomhexes)][pick(randomhexes)][pick(randomhexes)][pick(randomhexes)]"
-		pattern = rand(1,6)
-		pattern_color = "#[pick(randomhexes)][pick(randomhexes)][pick(randomhexes)][pick(randomhexes)][pick(randomhexes)][pick(randomhexes)]"
+		randomize_appearance()
 
 	//spreading vectors - if set beforehand, will not be randomized
 	if (!spread_flags)
@@ -315,24 +220,6 @@ GLOBAL_LIST_INIT(virusDB, list())
 	if(!index)
 		return pick(symptoms)
 	return symptoms[clamp(index,0,symptoms.len)]
-
-//Major Mutations
-/datum/disease/advanced/proc/effectmutate(var/inBody=FALSE)
-	clean_global_log()
-	subID = rand(0,9999)
-	var/list/randomhexes = list("7","8","9","a","b","c","d","e")
-	var/colormix = "#[pick(randomhexes)][pick(randomhexes)][pick(randomhexes)][pick(randomhexes)][pick(randomhexes)][pick(randomhexes)]"
-	color = BlendRGB(color,colormix,0.25)
-	var/i = rand(1, symptoms.len)
-	var/datum/symptom/e = symptoms[i]
-	var/datum/symptom/f
-	if (inBody)//mutations that occur directly in a body don't cause helpful symptoms to become deadly instantly.
-		f = new_random_effect(min(5,text2num(e.badness)+1), max(0,text2num(e.badness)-1), e.stage, e.type)
-	else
-		f = new_random_effect(min(5,text2num(e.badness)+2), max(0,text2num(e.badness)-3), e.stage, e.type)//badness is slightly more likely to go down than up.
-	symptoms[i] = f
-	log += "<br />[ROUND_TIME()] Mutated effect [e.name] [e.chance]% into [f.name] [f.chance]%."
-	update_global_log()
 
 /datum/disease/advanced/proc/antigenmutate()
 	clean_global_log()
@@ -825,10 +712,7 @@ GLOBAL_LIST_INIT(virusDB, list())
 		else
 			D.roll_antigen()
 
-		var/list/randomhexes = list("8","9","a","b","c","d","e")
-		D.color = "#[pick(randomhexes)][pick(randomhexes)][pick(randomhexes)][pick(randomhexes)][pick(randomhexes)][pick(randomhexes)]"
-		D.pattern = rand(1,6)
-		D.pattern_color = "#[pick(randomhexes)][pick(randomhexes)][pick(randomhexes)][pick(randomhexes)][pick(randomhexes)][pick(randomhexes)]"
+		randomize_appearance()
 		if (alert("Do you want to specify the appearance of your pathogen in a petri dish?","Choose your appearance","Yes","No") == "Yes")
 			D.color = tgui_color_picker(C, "Choose the color of the dish", "Cosmetic")
 			D.pattern = input(C, "Choose the shape of the pattern inside the dish (1 to 6)", "Cosmetic",rand(1,6)) as num
