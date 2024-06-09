@@ -31,6 +31,15 @@ GLOBAL_LIST_INIT(virusDB, list())
 	//bitflag showing which transmission types are allowed for this disease
 	var/allowed_transmission = DISEASE_SPREAD_BLOOD | DISEASE_SPREAD_CONTACT_SKIN | DISEASE_SPREAD_CONTACT_FLUIDS | DISEASE_SPREAD_AIRBORNE
 
+	/// How much the disease has progressed. This is a value from 0 to 1.
+	var/progress = 0
+
+	/// How much the disease progress changes by default every second.
+	var/progress_rate = 0.01
+
+	/// List of multipliers for progress rate.
+	var/list/progress_rate_multipliers = list()
+
 /proc/filter_disease_by_spread(list/diseases, required = NONE)
 	if(!length(diseases))
 		return list()
@@ -258,105 +267,35 @@ GLOBAL_LIST_INIT(virusDB, list())
 
 		antigen |= pick(antigen_family(selected_second_antigen))
 
+/datum/disease/advanced/proc/adjust_progress(amount)
+	set_progress(progress + amount)
 
-/datum/disease/advanced/proc/activate(mob/living/mob, starved = FALSE, seconds_per_tick)
-	if((mob.stat == DEAD) && !process_dead)
+/datum/disease/advanced/proc/set_progress(amount)
+	progress = clamp(amount, 0, 1)
+
+/datum/disease/advanced/proc/get_base_potency()
+	return max(0, progress - length(symptoms) * 0.1)
+
+/datum/disease/advanced/proc/activate(mob/living/carbon/host, starved = FALSE, seconds_per_tick)
+	if((host.stat == DEAD) && !process_dead)
 		return
 
-	//Searing body temperatures cure diseases, on top of killing you.
-	if(mob.bodytemperature > max_bodytemperature)
-		cure(mob,1)
+	if(!(infectable_biotypes & host.mob_biotypes))
 		return
 
-	if(!(infectable_biotypes & mob.mob_biotypes))
+	if(!host.immune_system.CanInfect(src))
+		cure(host)
 		return
 
-	if(mob.immune_system)
-		if(prob(8))
-			mob.immune_system.NaturalImmune()
+	var/final_progress_rate = progress_rate
 
-	if(!mob.immune_system.CanInfect(src))
-		cure(mob)
-		return
+	for(var/multiplier as anything in progress_rate_multipliers)
+		final_progress_rate *= multiplier
 
-	//Freezing body temperatures halt diseases completely
-	if(mob.bodytemperature < min_bodytemperature)
-		return
+	adjust_progress(final_progress_rate)
 
-	//Virus food speeds up disease progress
-	if(!ismouse(mob))
-		if(mob.reagents?.has_reagent(/datum/reagent/consumable/virus_food))
-			mob.reagents.remove_reagent(/datum/reagent/consumable/virus_food, 0.1)
-			if(!logged_virusfood)
-				log += "<br />[ROUND_TIME()] Virus Fed ([mob.reagents.get_reagent_amount(/datum/reagent/consumable/virus_food)]U)"
-				logged_virusfood=1
-			ticks += 10
-		else
-			logged_virusfood=0
-	if(prob(strength * 0.1))
-		incubate(mob, 1)
-	//Moving to the next stage
-	if(ticks > stage*100 && prob(stageprob))
-		incubate(mob, 1)
-		if(stage < max_stages)
-			log += "<br />[ROUND_TIME()] NEXT STAGE ([stage])"
-			stage++
-		ticks = 0
-
-	//Pathogen killing each others
-	for (var/datum/disease/advanced/enemy_pathogen as anything in mob.diseases)
-		if(enemy_pathogen == src)
-			continue
-
-		if ((enemy_pathogen.form in can_kill) && strength > enemy_pathogen.strength)
-			log += "<br />[ROUND_TIME()] destroyed enemy [enemy_pathogen.form] #[enemy_pathogen.get_id()] ([strength] > [enemy_pathogen.strength])"
-			enemy_pathogen.cure(mob)
-
-	// This makes it so that <mob> only ever gets affected by the equivalent of one virus so antags don't just stack a bunch
-	if(starved)
-		return
-
-	var/list/immune_data = GetImmuneData(mob)
-
-	for(var/datum/symptom/e in symptoms)
-		if (e.can_run_effect(immune_data[1], seconds_per_tick))
-			e.run_effect(mob, src)
-
-	//fever is a reaction of the body's immune system to the infection. The higher the antibody concentration (and the disease still not cured), the higher the fever
-	if (mob.bodytemperature < BODYTEMP_HEAT_DAMAGE_LIMIT)//but we won't go all the way to burning up just because of a fever, probably
-		var/fever = round((robustness / 100) * (immune_data[2] / 10) * (stage / max_stages))
-		switch (mob.mob_size)
-			if (MOB_SIZE_TINY)
-				mob.bodytemperature += fever*0.2
-			if (MOB_SIZE_SMALL)
-				mob.bodytemperature += fever*0.5
-			if (MOB_SIZE_HUMAN)
-				mob.bodytemperature += fever
-			if (MOB_SIZE_LARGE)
-				mob.bodytemperature += fever*1.5
-			if (MOB_SIZE_HUGE)
-				mob.bodytemperature += fever*2
-
-		if (fever > 0  && prob(3))
-			switch (fever_warning)
-				if (0)
-					to_chat(mob, span_warning("You feel a fever coming on, your body warms up and your head hurts a bit."))
-					fever_warning++
-				if (1)
-					if (mob.bodytemperature > 320)
-						to_chat(mob, span_warning("Your palms are sweaty."))
-						fever_warning++
-				if (2)
-					if (mob.bodytemperature > 335)
-						to_chat(mob, span_warning("Your knees are weak."))
-						fever_warning++
-				if (3)
-					if (mob.bodytemperature > 350)
-						to_chat(mob, span_warning("Your arms are heavy."))
-						fever_warning++
-
-
-	ticks += speed
+	for(var/datum/symptom/symptom as anything in symptoms)
+		symptom.try_run_effect(host, src, seconds_per_tick)
 
 /proc/virus_copylist(list/list)
 	if(!length(list))
