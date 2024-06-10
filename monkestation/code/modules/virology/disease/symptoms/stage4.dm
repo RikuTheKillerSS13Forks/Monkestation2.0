@@ -1,151 +1,164 @@
 /datum/symptom/spaceadapt
 	name = "Space Adaptation Effect"
-	desc = "Causes the infected to secrete a thin thermally insulating and spaceproof barrier from their skin."
-	stage = 4
-	max_count = 1
-	badness = EFFECT_DANGER_HELPFUL
-	chance = 10
-	max_chance = 25
+	desc = "Causes the host to secrete a thin thermally insulating and spaceproof barrier from their skin."
+	badness = SYMPTOM_SEVERITY_GREAT
+	minimum_potency = 1.3
+	potency_scale = 0
 
-/datum/symptom/spaceadapt/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
-	mob.dna.add_mutation(/datum/mutation/human/pressure_adaptation)
-	mob.dna.add_mutation(/datum/mutation/human/temperature_adaptation)
+/datum/symptom/spaceadapt/activate_passive_effect(mob/living/carbon/host, datum/disease/advanced/disease)
+	host.add_traits(list(TRAIT_RESISTCOLD, TRAIT_RESISTHEAT, TRAIT_RESISTLOWPRESSURE, TRAIT_RESISTHIGHPRESSURE), SYMPTOM_TRAIT)
 
-/datum/symptom/spaceadapt/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
-	mob.dna.remove_mutation(/datum/mutation/human/pressure_adaptation)
-	mob.dna.remove_mutation(/datum/mutation/human/temperature_adaptation)
+/datum/symptom/spaceadapt/deactivate_passive_effect(mob/living/carbon/host, datum/disease/advanced/disease)
+	host.remove_traits(list(TRAIT_RESISTCOLD, TRAIT_RESISTHEAT, TRAIT_RESISTLOWPRESSURE, TRAIT_RESISTHIGHPRESSURE), SYMPTOM_TRAIT)
 
 /datum/symptom/minttoxin
 	name = "Creosote Syndrome"
-	desc = "Causes the infected to synthesize a wafer thin mint."
-	stage = 4
-	badness = EFFECT_DANGER_HARMFUL
+	desc = "Causes the host to synthesize a wafer thin mint that reacts to high concentrations of lipids in the host."
+	badness = SYMPTOM_SEVERITY_BAD
+	minimum_potency = 0.8
+	potency_scale = 0
 
-/datum/symptom/minttoxin/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
-	if(istype(mob) && mob.reagents.get_reagent_amount(/datum/reagent/consumable/mintextract) < 5)
-		to_chat(mob, span_notice("You feel a minty freshness"))
-		mob.reagents.add_reagent(/datum/reagent/consumable/mintextract, 5)
+/datum/symptom/minttoxin/process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
+	if(host.reagents.get_reagent_amount(/datum/reagent/consumable/mintextract) < 5)
+		to_chat(host, span_notice("You feel a minty freshness."))
+		host.reagents.add_reagent(/datum/reagent/consumable/mintextract, 5)
 
 /datum/symptom/deaf
 	name = "Dead Ear Syndrome"
-	desc = "Kills the infected's aural senses."
-	stage = 4
-	max_multiplier = 5
-	badness = EFFECT_DANGER_HINDRANCE
+	desc = "Kills the host's aural senses."
+	badness = SYMPTOM_SEVERITY_BAD
+	potency_scale = 2
 
-/datum/symptom/deaf/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
-	var/obj/item/organ/internal/ears/ears = mob.get_organ_slot(ORGAN_SLOT_EARS)
+/datum/symptom/deaf/process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
+	var/obj/item/organ/internal/ears/ears = host.get_organ_slot(ORGAN_SLOT_EARS)
+
 	if(!ears)
-		return //cutting off your ears to cure the deafness: the ultimate own
-	to_chat(mob, span_userdanger("Your ears pop and begin ringing loudly!"))
-	ears.deaf = min(20, ears.deaf + 15)
+		return
 
-	if(prob(multiplier * 5))
-		if(ears.damage < ears.maxHealth)
-			to_chat(mob, span_userdanger("Your ears pop painfully and start bleeding!"))
-			// Just absolutely murder me man
-			ears.apply_organ_damage(ears.maxHealth)
-			mob.emote("scream")
-			ADD_TRAIT(mob, TRAIT_DEAF, DISEASE_TRAIT)
+	if(ears.damage >= ears.maxHealth) // your ears are already fucked mate
+		return
 
-/datum/symptom/deaf/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
-	REMOVE_TRAIT(mob, TRAIT_DEAF, DISEASE_TRAIT)
+	ears.apply_organ_damage(potency * seconds_per_tick)
 
+	if(!ears.deaf && SPT_PROB(potency * 5, seconds_per_tick))
+		to_chat(host, span_bolddanger("Your ears pop and begin ringing loudly!"))
+		ears.deaf = rand(10, 15) * potency
+
+	if(potency >= 1 && !ears.deaf && SPT_PROB(potency, seconds_per_tick))
+		to_chat(host, span_userdanger("Your ears pop painfully and start bleeding!"))
+		host.emote("scream")
+		ears.apply_organ_damage(ears.maxHealth)
+		host.AdjustKnockdown((potency * 2) SECONDS)
 
 /datum/symptom/killertoxins
 	name = "Toxification Syndrome"
-	desc = "A more advanced version of Hyperacidity, causing the infected to rapidly generate toxins."
-	stage = 4
-	badness = EFFECT_DANGER_DEADLY
-	multiplier = 3
-	max_multiplier = 5
+	desc = "Causes an advanced form of hyperacidity, resulting in rapid toxin buildup."
+	badness = SYMPTOM_SEVERITY_HORRIBLE // this kills VERY quickly
+	minimum_potency = 1
+	potency_scale = 5 // extreme initial effect with low scaling
 
-/datum/symptom/killertoxins/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
-	mob.adjustToxLoss(5*multiplier)
+/datum/symptom/killertoxins/process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
+	host.adjustToxLoss(potency * 5 * seconds_per_tick)
 
+	if(potency >= 1.2) // this actually amounts to 2 due to potency_scale
+		host.adjustOrganLoss(ORGAN_SLOT_LIVER, (potency - 0.7) * seconds_per_tick)
+
+	if(SPT_PROB(potency, seconds_per_tick))
+		to_chat(host, span_warning("You feel like your organs are turning inside out."))
 
 /datum/symptom/dna
 	name = "Reverse Pattern Syndrome"
-	desc = "Attacks the infected's DNA, causing rapid spontaneous mutation, and inhibits the ability for the infected to be affected by cryogenics."
-	stage = 4
-	badness = EFFECT_DANGER_DEADLY
+	desc = "Attacks the host's DNA, causing rapid and spontaneous mutations. Also tries to keep the host above the required temperatures for cryogenics."
+	badness = SYMPTOM_SEVERITY_DEADLY
+	potency_scale = 2
 
-/datum/symptom/dna/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
-	mob.bodytemperature = max(mob.bodytemperature, 350)
-	scramble_dna(mob, TRUE, TRUE, TRUE, rand(15,45))
-	if(mob.cloneloss <= 50)
-		mob.adjustCloneLoss(10)
+/datum/symptom/dna/process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
+	if(host.bodytemperature < 350)
+		host.bodytemperature = min(host.bodytemperature + potency * 50 * seconds_per_tick, 350)
 
+	scramble_dna(host, TRUE, TRUE, TRUE, 100 * SPT_PROB_RATE(potency * 0.1, seconds_per_tick))
+	host.adjustCloneLoss(potency * 0.1 * seconds_per_tick)
 
 /datum/symptom/immortal
 	name = "Longevity Syndrome"
-	desc = "Grants functional immortality to the infected so long as the symptom is active. Heals broken bones and healing external damage. Creates a backlash if cured."
-	stage = 4
-	badness = EFFECT_DANGER_HELPFUL
-	var/total_healed = 0
+	desc = "Grants functional immortality to the infected by healing external damage and wounds. Causes severe backlash when deactivated."
+	badness = SYMPTOM_SEVERITY_AWESOME
+	minimum_potency = 2 // scales normally, but takes one hell of a lot of effort to keep active (thus making backlash a pain)
+	var/backlash = 0
 
-/datum/symptom/immortal/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
-	if(istype(mob, /mob/living/carbon/human))
-		for(var/datum/wound/wound as anything in mob.all_wounds)
-			to_chat(mob, span_notice("You feel the [wound] heal itself."))
-			wound.remove_wound()
-			break
+/datum/symptom/immortal/process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
+	for(var/datum/wound/wound as anything in host.all_wounds)
+		if(!SPT_PROB(potency * 5, seconds_per_tick))
+			continue
+		to_chat(host, span_notice("You feel the [wound] in your [wound.limb] heal itself."))
+		wound.remove_wound()
+		break
 
-	var/heal_amt = 5*multiplier
-	var/current_health = mob.getBruteLoss()
-	if(current_health >= heal_amt)
-		total_healed += heal_amt * 0.2
-	else
-		total_healed += (heal_amt - current_health) * 0.2
-	mob.adjustBruteLoss(-heal_amt)
-	mob.adjustFireLoss(-heal_amt)
-	mob.adjustCloneLoss(-heal_amt)
+	var/heal_amt = potency * 5 * seconds_per_tick
+	backlash += heal_amt * 0.2 // you are only delaying the inevitable
+	host.adjustBruteLoss(-heal_amt)
+	host.adjustFireLoss(-heal_amt)
 
-/datum/symptom/immortal/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
-	if(istype(mob, /mob/living/carbon/human))
-		var/mob/living/carbon/human/H = mob
-		to_chat(H, span_warning("You suddenly feel hurt and old..."))
-		H.age += 4 * multiplier * total_healed
-	mob.adjustBruteLoss(total_healed)
-	mob.adjustFireLoss(total_healed)
+/datum/symptom/immortal/deactivate_passive_effect(mob/living/carbon/host, datum/disease/advanced/disease)
+	to_chat(host, backlash < 50 ? span_warning("You suddenly feel hurt and old...") : span_userdanger("You feel a sudden wave of pain and decay!"))
+
+	if(ishuman(host))
+		var/mob/living/carbon/human/human = host
+		human.age += round(backlash * 0.2)
+
+	var/split = rand(0, 1)
+	host.adjustBruteLoss(backlash * split)
+	host.adjustFireLoss(backlash * (1 - split))
+
+	backlash = 0
 
 /datum/symptom/bones
 	name = "Fragile Person Syndrome"
-	desc = "Attacks the infected's body structure, making it more fragile."
-	stage = 4
-	badness = EFFECT_DANGER_HINDRANCE
+	desc = "Tricks the host's immune system into attacking its own bodily structures, resulting in frailty."
+	badness = SYMPTOM_SEVERITY_BAD
 
-/datum/symptom/bones/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
-	if(istype(mob, /mob/living/carbon/human))
-		var/mob/living/carbon/human/victim = mob
-		for (var/obj/item/bodypart/part in victim.bodyparts)
-			part.wound_resistance -= 10
+/datum/symptom/bones/process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
+	for (var/obj/item/bodypart/part in host.bodyparts)
+		part.wound_resistance += previous_potency * 10
+		part.wound_resistance -= potency * 10
 
-/datum/symptom/bones/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
-	if(istype(mob, /mob/living/carbon/human))
-		var/mob/living/carbon/human/victim = mob
-		for (var/obj/item/bodypart/part in victim.bodyparts)
-			part.wound_resistance += 10
+/datum/symptom/bones/deactivate_passive_effect(mob/living/carbon/host, datum/disease/advanced/disease)
+	for (var/obj/item/bodypart/part in host.bodyparts)
+		part.wound_resistance += previous_potency * 10
 
 /datum/symptom/fizzle
 	name = "Fizzle Effect"
-	desc = "Causes an ill, though harmless, sensation in the infected's throat."
-	stage = 4
-	badness = EFFECT_DANGER_FLAVOR
+	desc = "Causes an ill, though harmless, sensation in the host's throat."
+	badness = SYMPTOM_SEVERITY_ANNOYING
 
-/datum/symptom/fizzle/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
-	mob.emote("me",1,pick("sniffles...", "clears their throat..."))
+/datum/symptom/fizzle/activate_passive_effect(mob/living/carbon/host, datum/disease/advanced/disease)
+	host.add_mood_event(name, /datum/mood_event/fizzle)
+
+/datum/symptom/fizzle/deactivate_passive_effect(mob/living/carbon/host, datum/disease/advanced/disease)
+	host.clear_mood_event(name)
+
+/datum/symptom/fizzle/process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
+	if(SPT_PROB(potency * 5, seconds_per_tick))
+		host.emote(pick("cough", "sniffle"))
 
 /datum/symptom/delightful
 	name = "Delightful Effect"
-	desc = "A more powerful version of Full Glass. Makes the infected feel delightful."
-	stage = 4
-	badness = EFFECT_DANGER_FLAVOR
+	desc = "Causes the host to feel delightful. May cause severe depression when deactivated."
+	badness = SYMPTOM_SEVERITY_OKAY // the depression is pretty bad
+	potency_scale = 2
+	var/backlash
 
-/datum/symptom/delightful/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
-	to_chat(mob, "<span class = 'notice'>You feel delightful!</span>")
-	if (mob.reagents.get_reagent_amount(/datum/reagent/drug/happiness) < 5)
-		mob.reagents.add_reagent(/datum/reagent/drug/happiness, 10)
+/datum/symptom/delightful/activate_passive_effect(mob/living/carbon/host, datum/disease/advanced/disease)
+	to_chat(host, span_boldnotice("You feel delightful!"))
+
+/datum/symptom/delightful/deactivate_passive_effect(mob/living/carbon/host, datum/disease/advanced/disease)
+	if(SPT_PROB(1, backlash)) // never a 100% chance
+		to_chat(host, span_boldwarning("You feel fucking horrible.")) // not gonna sugarcoat it
+		host.add_mood_event(name, /datum/mood_event/delightful_depression)
+
+/datum/symptom/delightful/process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
+	host.clear_mood_event(name)
+	host.add_mood_event(name, /datum/mood_event/delightful, potency * 5)
 
 /datum/symptom/spawn
 	name = "Arachnogenesis Effect"
@@ -156,7 +169,7 @@
 	var/spawn_type= /mob/living/basic/spider/growing/spiderling/guard
 	var/spawn_name="spiderling"
 
-/datum/symptom/spawn/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
+/datum/symptom/spawn/process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
 	playsound(mob.loc, 'sound/effects/splat.ogg', 50, 1)
 	var/mob/living/spawned_mob = new spawn_type(get_turf(mob))
 	mob.emote("me",1,"vomits up a live [spawn_name]!")
@@ -183,7 +196,7 @@
 	max_chance = 25
 	max_multiplier = 4
 
-/datum/symptom/gregarious/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
+/datum/symptom/gregarious/process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
 	var/others_count = 0
 	for(var/mob/living/carbon/m in oview(5, mob))
 		others_count += 1
@@ -211,7 +224,7 @@
 	chance = 5
 	max_chance = 20
 
-/datum/symptom/magnitis/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
+/datum/symptom/magnitis/process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
 	if(mob.reagents.has_reagent(/datum/reagent/iron))
 		return
 
@@ -242,7 +255,7 @@
 	var/datum/dna/old_dna
 	var/old_name
 
-/datum/symptom/dnaspread/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
+/datum/symptom/dnaspread/process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
 	if(!activated)
 		to_chat(mob, span_warning("You don't feel like yourself.."))
 		old_dna = new
@@ -284,7 +297,7 @@
 	max_count = 1
 	max_chance = 24
 
-/datum/symptom/species/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
+/datum/symptom/species/process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
 	var/mob/living/carbon/human/victim = mob
 	if(!ishuman(victim))
 		return

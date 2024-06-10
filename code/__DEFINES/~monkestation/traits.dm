@@ -31,3 +31,6 @@
 
 #define ABDUCTOR_GLAND_VENTCRAWLING_TRAIT "abductor_gland_ventcrawling"
 #define TRAIT_BETTER_CYBERCONNECTOR "better_cyberconnector_hacking"
+
+/// Trait source for traits given by disease symptoms.
+#define SYMPTOM_TRAIT

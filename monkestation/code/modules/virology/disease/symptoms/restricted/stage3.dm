@@ -32,7 +32,7 @@
 	max_multiplier = 5
 	restricted = TRUE
 
-/datum/symptom/mutation/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
+/datum/symptom/mutation/process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
 	switch(round(multiplier, 1))
 		if(2)
 			if(prob(1))

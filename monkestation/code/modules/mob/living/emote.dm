@@ -167,6 +167,12 @@
 	else
 		return pick('monkestation/sound/voice/feline/bark.ogg','monkestation/sound/voice/feline/bark2.ogg') // Yes, bark trait in feline folder [Bad To The Bone]
 
+/datum/emote/living/sniffle
+	key = "sniffle"
+	key_third_person = "sniffles"
+	message = "sniffles."
+	message_mime = "sniffles silently."
+
 /datum/emote/living/weh
 	key = "weh"
 	key_third_person = "wehs"

@@ -11,7 +11,7 @@
 	var/transformed_antag_datum //Do we add a specific antag datum once the transformation is complete?
 	var/old_form
 
-/datum/symptom/transformation/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
+/datum/symptom/transformation/process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
 	old_form = mob.type
 	do_disease_transformation(mob, new_form)
 

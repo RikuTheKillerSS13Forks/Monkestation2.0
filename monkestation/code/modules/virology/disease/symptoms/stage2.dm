@@ -484,7 +484,7 @@
 	badness = EFFECT_DANGER_HINDRANCE
 	var/active = 0
 
-/datum/symptom/cult_vomit/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
+/datum/symptom/cult_vomit/process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
 	if(!ishuman(mob) || active)
 		return
 	if(istype(get_area(mob), /area/station/service/chapel))
@@ -510,7 +510,7 @@
 	max_chance = 20
 	stage = 2
 
-/datum/symptom/choking/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
+/datum/symptom/choking/process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
 	mob.emote("gasp")
 	if(prob(25))
 		to_chat(mob, span_warning("[pick("You're having difficulty breathing.", "Your breathing becomes heavy.")]"))
@@ -521,7 +521,7 @@
 	desc = "The virus liquefies facial muscles, disfiguring the host."
 	max_count = 1
 
-/datum/symptom/disfiguration/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
+/datum/symptom/disfiguration/process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
 	ADD_TRAIT(mob, TRAIT_DISFIGURED, DISEASE_TRAIT)
 	mob.visible_message(span_warning("[mob]'s face appears to cave in!"), span_notice("You feel your face crumple and cave in!"))
 
@@ -535,7 +535,7 @@
 	stage = 2
 	badness = EFFECT_DANGER_HARMFUL
 
-/datum/symptom/blindness/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
+/datum/symptom/blindness/process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
 	if(!iscarbon(mob))
 		return
 

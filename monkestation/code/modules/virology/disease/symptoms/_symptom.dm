@@ -35,18 +35,15 @@
 	var/previous_potency = 0
 
 	/// The minimum amount of potency required to trigger this symptom.
-	/// Useful for symptoms that have a high impact even at low potency.
-	var/minimum_potency = 0
+	/// Useful for symptoms that have an immediate impact.
+	/// Potency always starts at 1 once this is passed.
+	var/minimum_potency = 0.2
 
 	/// The maximum amount of potency this symptom can have.
 	/// Anything 0 or below means the symptom is uncapped.
 	var/maximum_potency = 0
 
-	/// What potency this symptom starts out at, if the min_potency threshold is passed.
-	/// The potency is in absolute units, not relative, so if you change potency_scale you may need to change this too.
-	var/initial_potency = 1
-
-	/// How much potency roughly doubles the effects of this symptom. (except for non-linear scaling)
+	/// How much potency doubles the initial potency of this symptom. (except for non-linear scaling)
 	/// Used to give the player an idea of how much potency past min_potency they need.
 	/// This DOES affect the potency calculations.
 	var/potency_scale = 1
@@ -87,7 +84,7 @@
 	if (potency < minimum_potency) // initial potency threshold check
 		return 0
 
-	potency = (potency - minimum_potency + initial_potency) / potency_scale // simple enough math
+	potency = (potency - minimum_potency + 1) / potency_scale
 
 	if (maximum_potency > 0 && potency > maximum_potency)
 		return maximum_potency

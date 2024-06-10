@@ -9,3 +9,9 @@
 	description = "Glory to the hunt."
 	mood_change = 10
 	hidden = TRUE
+
+/datum/mood_event/delightful // the mood_change for this is procedural
+	description = "Man, everything just feels so great right now!"
+
+/datum/mood_event/delightful/add_effects(change)
+	mood_change = change
