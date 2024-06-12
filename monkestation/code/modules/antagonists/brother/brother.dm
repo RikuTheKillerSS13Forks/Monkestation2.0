@@ -1,6 +1,7 @@
 /datum/antagonist/brother
 	var/datum/action/bb/comms/comms_action
 	var/datum/action/bb/gear/gear_action
+	var/datum/action/cooldown/brother/swap_consciousness/swap_action
 
 /datum/antagonist/brother/on_gain()
 	. = ..()
@@ -15,9 +16,12 @@
 		comms_action = new(src)
 	if(QDELETED(gear_action) && !team.summoned_gear)
 		gear_action = new(src)
+	if(QDELETED(swap_action))
+		swap_action = new(src)
 	var/mob/living/target = mob_override || owner.current
 	comms_action.Grant(target)
 	gear_action?.Grant(target)
+	swap_action.Grant(target)
 	add_team_hud(target, /datum/antagonist/brother, REF(team))
 
 /datum/antagonist/brother/remove_innate_effects(mob/living/mob_override)

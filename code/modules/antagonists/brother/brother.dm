@@ -65,7 +65,7 @@
 
 	// monkestation edit start: add a ban and pref check to conversion
 	if(is_banned_from(flashed.ckey, list(ROLE_BROTHER, ROLE_SYNDICATE)))
-		flashed.balloon_alert(source, "banned from role!")
+		flashed.balloon_alert(source, "god said no!")
 		return
 	// monkestation edit end
 
@@ -79,7 +79,7 @@
 		flashed.balloon_alert(source, "[flashed.p_theyre()] loyal to someone else!")
 		return
 
-	if (HAS_TRAIT(flashed, TRAIT_MINDSHIELD) || (flashed.mind.assigned_role?.departments_bitflags & DEPARTMENT_BITFLAG_SECURITY))
+	if (HAS_TRAIT(flashed, TRAIT_MINDSHIELD)) // monkestation edit: why the arbitrary security check??? if you de-mindshield a member of security, its free game
 		flashed.balloon_alert(source, "[flashed.p_they()] resist!")
 		return
 
