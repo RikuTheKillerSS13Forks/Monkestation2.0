@@ -3,46 +3,47 @@ GLOBAL_LIST_INIT(disease_hivemind_users, list())
 
 /datum/symptom/toxins
 	name = "Hyperacidity"
-	desc = "Inhibits the infected's ability to process natural toxins, producing a buildup of said toxins."
-	stage = 3
-	max_multiplier = 3
-	badness = EFFECT_DANGER_HARMFUL
+	desc = "Inhibits the host's ability to process natural toxins, producing a buildup of said toxins."
+	badness = SYMPTOM_SEVERITY_DEADLY
+	potency_scale = 2
+	maximum_potency = 2 // use Toxification Syndrome if you want something stronger
 
 /datum/symptom/toxins/process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
-	mob.adjustToxLoss((2*multiplier))
+	host.adjustToxLoss(potency * 2)
 
+	if(SPT_PROB(potency, seconds_per_tick))
+		to_chat(host, span_warning("Your chest hurts."))
 
 /datum/symptom/shakey
 	name = "World Shaking Syndrome"
-	desc = "Attacks the infected's motor output, giving them a sense of vertigo."
-	stage = 3
-	max_multiplier = 3
-	badness = EFFECT_DANGER_HINDRANCE
+	desc = "Attacks the host's motor output, giving them a sense of vertigo."
+	badness = SYMPTOM_SEVERITY_BAD
+	potency_scale = 1.5 // im too much of a coward to give this a potency scale of 1
 
 /datum/symptom/shakey/process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
-	shake_camera(mob, 5*multiplier)
-
+	if(SPT_PROB(potency * 10, seconds_per_tick))
+		shake_camera(host, potency * 5, potency * 2)
 
 /datum/symptom/telepathic
 	name = "Abductor Syndrome"
-	desc = "Repurposes a portion of the users brain, making them incapable of normal speech but allows you to talk into a hivemind."
-	stage = 3
-	max_count = 1
-	badness = EFFECT_DANGER_FLAVOR
+	desc = "Repurposes a portion of the host's brain, making them incapable of normal speech, but connects them to a hivemind."
+	badness = SYMPTOM_SEVERITY_BAD // completely blocks regular speech
+	minimum_potency = 1
 
-/datum/symptom/telepathic/first_process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
-	GLOB.disease_hivemind_users |= mob
-	RegisterSignal(mob, COMSIG_MOB_SAY, PROC_REF(handle_speech))
+/datum/symptom/telepathic/activate_passive_effect(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
+	GLOB.disease_hivemind_users |= host
+	RegisterSignal(host, COMSIG_MOB_SAY, PROC_REF(handle_speech))
 
-/datum/symptom/telepathic/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick)
-	GLOB.disease_hivemind_users -= mob
-	UnregisterSignal(mob, COMSIG_MOB_SAY)
+/datum/symptom/telepathic/deactivate_passive_effect(mob/living/carbon/host, datum/disease/advanced/disease)
+	GLOB.disease_hivemind_users -= host
+	UnregisterSignal(host, COMSIG_MOB_SAY)
 
-/datum/symptom/telepathic/proc/handle_speech(datum/source, list/speech_args)
+/datum/symptom/telepathic/proc/handle_speech(mob/living/carbon/host, list/speech_args)
 	SIGNAL_HANDLER
+
 	var/message = speech_args[SPEECH_MESSAGE]
-	var/mob/living/carbon/human/mob = source
-	mob.log_talk(message, LOG_SAY, tag="HIVEMIND DISEASE")
+	host.log_talk(message, LOG_SAY, tag="HIVEMIND DISEASE")
+
 	for(var/mob/living/living as anything in GLOB.disease_hivemind_users)
 		if(!isliving(living))
 			continue

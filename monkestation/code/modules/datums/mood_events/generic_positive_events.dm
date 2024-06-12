@@ -15,3 +15,7 @@
 
 /datum/mood_event/delightful/add_effects(change)
 	mood_change = change
+
+/datum/mood_event/gregarious_negative
+	description = "I feel so alone..."
+	mood_change = -10

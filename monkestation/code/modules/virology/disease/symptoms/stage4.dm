@@ -63,12 +63,13 @@
 	if(potency >= 1.2) // this actually amounts to 2 due to potency_scale
 		host.adjustOrganLoss(ORGAN_SLOT_LIVER, (potency - 0.7) * seconds_per_tick)
 
-	if(SPT_PROB(potency, seconds_per_tick))
+	if(SPT_PROB(potency * 2, seconds_per_tick))
 		to_chat(host, span_warning("You feel like your organs are turning inside out."))
+		host.vomit()
 
 /datum/symptom/dna
 	name = "Reverse Pattern Syndrome"
-	desc = "Attacks the host's DNA, causing rapid and spontaneous mutations. Also tries to keep the host above the required temperatures for cryogenics."
+	desc = "Attacks the host's DNA, causing rapid and spontaneous mutations. This process creates heat, inhibiting the use of cryogenics."
 	badness = SYMPTOM_SEVERITY_DEADLY
 	potency_scale = 2
 
@@ -144,7 +145,7 @@
 /datum/symptom/delightful
 	name = "Delightful Effect"
 	desc = "Causes the host to feel delightful. May cause severe depression when deactivated."
-	badness = SYMPTOM_SEVERITY_OKAY // the depression is pretty bad
+	badness = SYMPTOM_SEVERITY_OKAY // the depression is pretty bad, but usually its good (mood isnt that impactful)
 	potency_scale = 2
 	var/backlash
 
@@ -160,88 +161,119 @@
 	host.clear_mood_event(name)
 	host.add_mood_event(name, /datum/mood_event/delightful, potency * 5)
 
-/datum/symptom/spawn
+/datum/symptom/spawner
 	name = "Arachnogenesis Effect"
-	desc = "Converts the infected's stomach to begin producing creatures of the arachnid variety."
-	stage = 4
-	max_multiplier = 7
-	badness = EFFECT_DANGER_HARMFUL
-	var/spawn_type= /mob/living/basic/spider/growing/spiderling/guard
-	var/spawn_name="spiderling"
+	desc = "Converts the host's stomach to begin producing creatures of the arachnid variety."
+	badness = SYMPTOM_SEVERITY_HORRIBLE // as it turns out, turning into a giant spider spawner is pretty damn bad
+	potency_scale = 2
+	var/spawn_type = /mob/living/basic/spider/growing/spiderling/guard
 
-/datum/symptom/spawn/process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
-	playsound(mob.loc, 'sound/effects/splat.ogg', 50, 1)
-	var/mob/living/spawned_mob = new spawn_type(get_turf(mob))
-	mob.emote("me",1,"vomits up a live [spawn_name]!")
-	if(multiplier < 4)
-		addtimer(CALLBACK(src, PROC_REF(kill_mob), spawned_mob), 1 MINUTES)
+/datum/symptom/spawner/process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
+	if(!SPT_PROB(potency * 2, seconds_per_tick))
+		return
 
-/datum/symptom/spawn/proc/kill_mob(mob/living/basic/mob)
-	mob.visible_message(span_warning("The [mob] falls apart!"), span_warning("You fall apart"))
-	mob.death()
+	playsound(host.loc, 'sound/effects/splat.ogg', 50, 1)
+	var/mob/living/spawned_mob = new spawn_type(get_turf(host))
+	host.emote("me", 1, "vomits up a live [spawned_mob.name]!")
 
-/datum/symptom/spawn/roach
+	if(potency < 2)
+		addtimer(CALLBACK(src, PROC_REF(kill_mob), spawned_mob), 1 MINUTE)
+
+/datum/symptom/spawner/proc/kill_mob(mob/living/basic/target)
+	target.visible_message(span_warning("The [target] falls apart!"), span_userdanger("You fall apart!"))
+	target.death()
+
+/datum/symptom/spawner/roach
 	name = "Blattogenesis Effect"
-	desc = "Converts the infected's stomach to begin producing creatures of the blattid variety."
-	stage = 4
-	badness = EFFECT_DANGER_HINDRANCE
-	spawn_type=/mob/living/basic/cockroach
-	spawn_name="cockroach"
+	desc = "Converts the host's stomach to begin producing creatures of the blattid variety."
+	badness = SYMPTOM_SEVERITY_BAD
+	spawn_type = /mob/living/basic/cockroach
 
 /datum/symptom/gregarious
 	name = "Gregarious Impetus"
-	desc = "Infests the social structures of the infected's brain, causing them to feel better in crowds of other potential victims, and punishing them for being alone."
-	stage = 4
-	badness = EFFECT_DANGER_HINDRANCE
-	max_chance = 25
-	max_multiplier = 4
+	desc = "Infests the social structures of the host's brain, causing them to feel better in crowds of other potential victims, and punishing them for being alone."
+	badness = SYMPTOM_SEVERITY_DEADLY
+	potency_scale = 2
+
+	var/required_victims = 1
+	var/max_required_victims = 4
+	var/satisfied = TRUE
 
 /datum/symptom/gregarious/process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
 	var/others_count = 0
-	for(var/mob/living/carbon/m in oview(5, mob))
-		others_count += 1
+	for(var/mob/living/carbon/m in oview(5, host))
+		others_count++
 
-	if (others_count >= multiplier)
-		to_chat(mob, span_notice("A friendly sensation is satisfied with how many are near you - for now."))
-		mob.adjustOrganLoss(ORGAN_SLOT_BRAIN, -multiplier)
-		mob.reagents.add_reagent(/datum/reagent/drug/happiness, multiplier) // ADDICTED TO HAVING FRIENDS
-		if (multiplier < max_multiplier)
-			multiplier += 0.15 // The virus gets greedier
-	else
-		to_chat(mob, span_warning("A hostile sensation in your brain stings you... it wants more of the living near you."))
-		mob.adjustOrganLoss(ORGAN_SLOT_BRAIN, multiplier / 2)
-		mob.AdjustParalyzed(multiplier) // This practically permaparalyzes you at higher multipliers but
-		mob.AdjustKnockdown(multiplier) // that's your fucking fault for not being near enough people
-		mob.AdjustStun(multiplier)   // You'll have to wait until the multiplier gets low enough
-		if (multiplier > 1)
-			multiplier -= 0.3 // The virus tempers expectations
+	if (others_count >= required_victims)
+		if (!satisfied)
+			to_chat(host, span_notice("A friendly sensation is satisfied with how many are near you - for now."))
+			satisfied = TRUE
+
+		host.adjustOrganLoss(ORGAN_SLOT_BRAIN, -potency * seconds_per_tick)
+		host.add_mood_event(name, /datum/mood_event/gregarious_positive)
+
+		required_victims = min(required_victims + 0.15 * potency * seconds_per_tick, max_required_victims) // it hungers
+		return
+
+	if (satisfied)
+		to_chat(host, span_warning("A hostile sensation in your brain stings you... it wants more of the living near you."))
+		satisfied = FALSE
+
+	host.adjustOrganLoss(ORGAN_SLOT_BRAIN, potency * 2 * seconds_per_tick)
+	host.add_mood_event(name, /datum/mood_event/gregarious_negative)
+
+	if (SPT_PROB(potency * 5, seconds_per_tick))
+		host.visible_message(
+			message = span_danger("[host] collapses and clasps their head in pain!"),
+			self_message = span_userdanger("A massive wave of pain washes over your head!"),
+			blind_message = span_hear("You hear a thud.")
+		)
+		host.AdjustParalyzed(2 SECONDS)
+		host.emote("scream")
+
+	required_victims = max(required_victims - 0.3 / potency * seconds_per_tick, 1) // finally some good fucking food
+
+/datum/symptom/gregarious/deactivate_passive_effect(mob/living/carbon/host, datum/disease/advanced/disease)
+	host.clear_mood_event(name)
 
 /datum/symptom/magnitis
 	name = "Magnitis"
-	desc = "This disease disrupts the magnetic field of the body, making it act as if a powerful magnet."
-	stage = 4
-	badness = EFFECT_DANGER_DEADLY
-	chance = 5
-	max_chance = 20
+	desc = "Creates strong magnetic fields around the host. Iron can act as a conduit for the fields, nullifying their external effects."
+	badness = SYMPTOM_SEVERITY_HORRIBLE
+	potency_scale = 3
 
 /datum/symptom/magnitis/process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
-	if(mob.reagents.has_reagent(/datum/reagent/iron))
+	if (host.reagents.has_reagent(/datum/reagent/iron))
+		if (SPT_PROB(potency * 2, seconds_per_tick))
+			to_chat(host, span_warning("You feel a painful prickling sensation under your skin."))
+		host.adjustBruteLoss(potency * 0.5) // gives you plenty of time to work out countermeasures... usually
 		return
 
-	var/intensity = 1 + (count > 10) + (count > 20)
-	if (prob(20))
-		to_chat(mob, span_warning("You feel a [intensity < 3 ? "slight" : "powerful"] shock course through your body."))
-	for(var/obj/M in orange(3 * intensity,mob))
-		if(!M.anchored)
-			var/iter = rand(1,intensity)
-			for(var/i=0,i<iter,i++)
-				step_towards(M,mob)
-	for(var/mob/living/silicon/S in orange(3 * intensity,mob))
-		if(istype(S, /mob/living/silicon/ai))
+	var/intensity = (1 + min(2, current_cycles * 0.1)) * potency // every time it attracts, it gets slightly stronger, then resets when deactivated
+
+	if (SPT_PROB(intensity, seconds_per_tick))
+		to_chat(host, span_warning("You feel a [intensity < 3 ? "slight" : "powerful"] shock course through your body."))
+		playsound(host, SFX_SPARKS, 100, TRUE, SHORT_RANGE_SOUND_EXTRARANGE)
+		host.do_jitter_animation(10)
+
+	var/list/nearby_stuff = orange(intensity, host)
+	var/move_force = intensity * MOVE_FORCE_STRONG
+
+	for (var/obj/nearby in nearby_stuff)
+		if (nearby.anchored)
 			continue
-		var/iter = rand(1,intensity)
-		for(var/i=0,i<iter,i++)
-			step_towards(S,mob)
+		if (nearby.move_resist > move_force)
+			continue
+		var/steps = rand(1, intensity)
+		for(var/i = 0, i < steps, i++)
+			step_towards(nearby, host)
+
+	for (var/mob/living/silicon/silicon in nearby_stuff)
+		if (silicon.move_resist > move_force)
+			continue
+		var/steps = rand(1, intensity)
+		for(var/i = 0, i < steps, i++)
+			step_towards(silicon, host)
 
 /*/datum/symptom/dnaspread //commented out due to causing enough problems to turn random people into monkies apon curing.
 	name = "Retrotransposis"
@@ -320,142 +352,182 @@
 	new_species = /datum/species/moth
 */
 /datum/symptom/retrovirus
-	name = "Retrovirus"
-	desc = "A DNA-altering retrovirus that scrambles the structural and unique enzymes of a host constantly."
-	max_multiplier = 4
-	stage = 4
-	badness = EFFECT_DANGER_HARMFUL
+	name = "Retrovirus" // I CAN DO ANYTHING
+	desc = "A DNA-altering retrovirus that scrambles the structural and unique enzymes of a host constantly, causing completely unpredictable symptoms."
+	badness = SYMPTOM_SEVERITY_HORRIBLE
+	potency_scale = 2
 
-/datum/symptom/retrovirus/activate(mob/living/carbon/affected_mob)
-	if(!iscarbon(affected_mob))
+/datum/symptom/retrovirus/process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
+	if(SPT_PROB(2, seconds_per_tick))
+		to_chat(host, span_danger("Your head hurts."))
+		host.add_mood_event("retro_headache", /datum/mood_event/retro_headache)
+	if(SPT_PROB(1.5, seconds_per_tick))
+		to_chat(host, span_danger("You feel a tingling sensation in your chest."))
+		host.adjustOrganLoss(pick(ORGAN_SLOT_HEART, ORGAN_SLOT_LUNGS, ORGAN_SLOT_STOMACH, ORGAN_SLOT_LIVER), potency * 10)
+	if(SPT_PROB(2.5, seconds_per_tick))
+		to_chat(host, span_danger("You feel angry."))
+		host.add_mood_event("retro_angry", /datum/mood_event/retro_angry)
+
+	if(potency < 2)
 		return
-	switch(multiplier)
-		if(1)
-			if(prob(4))
-				to_chat(affected_mob, span_danger("Your head hurts."))
-			if(prob(4.5))
-				to_chat(affected_mob, span_danger("You feel a tingling sensation in your chest."))
-			if(prob(4.5))
-				to_chat(affected_mob, span_danger("You feel angry."))
-		if(2)
-			if(prob(4))
-				to_chat(affected_mob, span_danger("Your skin feels loose."))
-			if(prob(5))
-				to_chat(affected_mob, span_danger("You feel very strange."))
-			if(prob(2))
-				to_chat(affected_mob, span_danger("You feel a stabbing pain in your head!"))
-				affected_mob.Unconscious(40)
-			if(prob(2))
-				to_chat(affected_mob, span_danger("Your stomach churns."))
-		if(3)
-			if(prob(5))
-				to_chat(affected_mob, span_danger("Your entire body vibrates."))
-			if(prob(19))
-				switch(rand(1,3))
-					if(1)
-						scramble_dna(affected_mob, 1, 0, 0, rand(15,45))
-					if(2)
-						scramble_dna(affected_mob, 0, 1, 0, rand(15,45))
-					if(3)
-						scramble_dna(affected_mob, 0, 0, 1, rand(15,45))
-		if(4)
-			if(prob(37))
-				switch(rand(1,3))
-					if(1)
-						scramble_dna(affected_mob, 1, 0, 0, rand(50,75))
-					if(2)
-						scramble_dna(affected_mob, 0, 1, 0, rand(50,75))
-					if(3)
-						scramble_dna(affected_mob, 0, 0, 1, rand(50,75))
+
+	if(SPT_PROB(3, seconds_per_tick) && !is_species(host, /datum/species/human/krokodil_addict))
+		if(prob(30) && ishuman(host))
+			to_chat(host, span_userdanger("Your skin falls off! What the fuck?!"))
+			var/mob/living/carbon/human/human_host = host // CTRL + C and CTRL + V here we fucking go!
+			human_host.facial_hairstyle = "Shaved"
+			human_host.hairstyle = "Bald"
+			human_host.update_body_parts()
+			human_host.set_species(/datum/species/human/krokodil_addict)
+			human_host.adjustBruteLoss(25 * potency)
+			host.add_mood_event("retro_skin", /datum/mood_event/retro_skinoff)
+		else
+			to_chat(host, span_danger("Your skin feels loose."))
+			host.add_mood_event("retro_skin", /datum/mood_event/retro_skinloose) // haha, skinloose? get it? cause sin- *dies*
+	if(SPT_PROB(2, seconds_per_tick))
+		to_chat(host, span_danger("You feel very strange."))
+		host.adjust_hallucinations_up_to((5 * potency) SECONDS, 30 SECONDS)
+	if(SPT_PROB(1.5, seconds_per_tick))
+		to_chat(host, span_danger("You feel a stabbing pain in your head!"))
+		host.emote("collapse")
+	if(SPT_PROB(2.5, seconds_per_tick))
+		to_chat(host, span_danger("Your stomach churns painfully!"))
+		host.vomit(potency * 20)
+
+	if(potency < 3)
+		return
+
+	if(SPT_PROB(3, seconds_per_tick))
+		to_chat(host, span_danger("Your entire body vibrates."))
+		host.do_jitter_animation(100)
+		host.stamina.adjust(potency * -25)
+	if(SPT_PROB(10, seconds_per_tick))
+		switch(rand(1,3)) // now this, THIS is shitcode, except i cant figure out how to make it any better
+			if(1)
+				scramble_dna(host, 1, 0, 0, rand(15,45))
+			if(2)
+				scramble_dna(host, 0, 1, 0, rand(15,45))
+			if(3)
+				scramble_dna(host, 0, 0, 1, rand(15,45))
+
+	if(potency < 4)
+		return
+
+	if(SPT_PROB(20, seconds_per_tick)) // oh good lord of mutations
+		switch(rand(1,3))
+			if(1)
+				scramble_dna(host, 1, 0, 0, rand(50,75))
+			if(2)
+				scramble_dna(host, 0, 1, 0, rand(50,75))
+			if(3)
+				scramble_dna(host, 0, 0, 1, rand(50,75))
 
 /datum/symptom/rhumba_beat
 	name = "The Rhumba Beat"
 	desc = "Chick Chicky Boom!"
-	max_multiplier = 5
-	stage = 4
-	badness = EFFECT_DANGER_DEADLY
+	badness = SYMPTOM_SEVERITY_HORRIBLE
+	potency_scale = 2
+	minimum_potency = 2
 
-/datum/symptom/rhumba_beat/activate(mob/living/carbon/affected_mob)
-	if(ismouse(affected_mob))
-		affected_mob.gib()
-		return
-	multiplier += 0.1
+	var/progress = 0
 
-	switch(round(multiplier))
-		if(2)
-			if(prob(26))
-				affected_mob.adjustFireLoss(5, FALSE)
-			if(prob(0.5))
-				to_chat(affected_mob, span_danger("You feel strange..."))
-		if(3)
-			if(prob(2.5))
-				to_chat(affected_mob, span_danger("You feel the urge to dance..."))
-			else if(prob(2.5))
-				affected_mob.emote("gasp")
-			else if(prob(5))
-				to_chat(affected_mob, span_danger("You feel the need to chick chicky boom..."))
-		if(4)
-			if(prob(10))
+/datum/symptom/rhumba_beat/process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
+	switch(progress)
+		if(-INFINITY to 1)
+			if(SPT_PROB(25, seconds_per_tick))
+				host.adjustFireLoss(5 * potency, FALSE)
+			if(SPT_PROB(1, seconds_per_tick))
+				to_chat(host, span_danger("You feel strange..."))
+		if(1 to 2)
+			if(SPT_PROB(2, seconds_per_tick))
+				to_chat(host, span_danger("You feel the urge to dance..."))
+			else if(SPT_PROB(2, seconds_per_tick))
+				host.emote("gasp")
+			else if(SPT_PROB(5, seconds_per_tick))
+				to_chat(host, span_danger("You feel the need to chick chicky boom..."))
+		if(2 to 3)
+			if(SPT_PROB(5, seconds_per_tick))
 				if(prob(50))
-					affected_mob.adjust_fire_stacks(2)
-					affected_mob.ignite_mob()
+					host.adjust_fire_stacks(potency * 2)
+					host.ignite_mob()
 				else
-					affected_mob.emote("gasp")
-					to_chat(affected_mob, span_danger("You feel a burning beat inside..."))
-		if(5)
-			to_chat(affected_mob, span_danger("Your body is unable to contain the Rhumba Beat..."))
-			if(prob(29))
-				explosion(affected_mob, devastation_range = -1, light_impact_range = 2, flame_range = 2, flash_range = 3, adminlog = FALSE, explosion_cause = src) // This is equivalent to a lvl 1 fireball
-				multiplier -= 3
+					host.emote("gasp")
+					to_chat(host, span_danger("You feel a burning beat inside..."))
+		if(4 to INFINITY)
+			if(SPT_PROB(20, seconds_per_tick))
+				to_chat(host, span_danger("Your body is unable to contain the Rhumba Beat..."))
+				dyn_explosion(host, potency * 2, flame_range = 1.25, flash_range = 1.5, adminlog = FALSE, explosion_cause = src) // at potency 4, causes a devastating explosion
+				progress = 0
+	progress = min(progress + potency * 0.1 * seconds_per_tick, 5) // 5 so it has leeway
 
+/datum/symptom/rhumba_beat/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
+	if(progress > 0 && SPT_PROB(2, seconds_per_tick))
+		to_chat(host, span_notice("Your body seems to be calming down..."))
+	progress = max(progress - 0.2 * seconds_per_tick, 0)
 
 /datum/symptom/adaptation
 	name = "Inorganic Biology"
-	desc = "The virus can survive and replicate even in an inorganic environment, increasing its resistance and infection rate."
-	max_count = 1
-	stage = 4
-	badness = EFFECT_DANGER_FLAVOR
+	desc = "The pathogen can survive and replicate even in an inorganic environment."
+	badness = SYMPTOM_SEVERITY_NEUTRAL
+	minimum_potency = 0 // having it still causes a base potency malus
+
 	var/biotypes = MOB_MINERAL | MOB_ROBOTIC
 
-/datum/symptom/adaptation/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick, datum/disease/advanced/disease)
+/datum/symptom/adaptation/activate_passive_effect(mob/living/carbon/host, datum/disease/advanced/disease)
 	disease.infectable_biotypes |= biotypes
 
-/datum/symptom/adaptation/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick, datum/disease/advanced/disease)
+/datum/symptom/adaptation/deactivate_passive_effect(mob/living/carbon/host, datum/disease/advanced/disease)
 	disease.infectable_biotypes &= ~(biotypes)
 
 /datum/symptom/adaptation/undead
 	name = "Necrotic Metabolism"
-	desc = "The virus is able to thrive and act even within dead hosts."
+	desc = "The pathogen is able to thrive and act even within dead hosts."
 	biotypes = MOB_UNDEAD
 
-/datum/symptom/adaptation/undead/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick, datum/disease/advanced/disease)
-	.=..()
+/datum/symptom/adaptation/undead/activate_passive_effect(mob/living/carbon/host, datum/disease/advanced/disease)
+	. = ..()
 	disease.process_dead = TRUE
 
-/datum/symptom/adaptation/undead/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick, datum/disease/advanced/disease)
-	.=..()
+/datum/symptom/adaptation/undead/deactivate_passive_effect(mob/living/carbon/host, datum/disease/advanced/disease)
+	. = ..()
 	disease.process_dead = FALSE
 
 /datum/symptom/oxygen
 	name = "Self-Respiration"
-	desc = "The virus synthesizes oxygen, which can remove the need for breathing at high symptom strength."
-	stage = 4
-	max_multiplier = 5
-	badness = EFFECT_DANGER_HELPFUL
+	desc = "The pathogen synthesizes oxygen, which can remove the need for breathing at high potency. Even higher potencies can result in rapid blood restoration."
+	badness = SYMPTOM_SEVERITY_GREAT
+
 	var/breathing = TRUE
 
-/datum/symptom/oxygen/process_active(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick, datum/disease/advanced/disease)
-	mob.losebreath = max(0, mob.losebreath - multiplier)
-	mob.adjustOxyLoss(-2 * multiplier)
-	if(multiplier >= 4)
-		to_chat(mob, span_notice("[pick("Your lungs feel great.", "You realize you haven't been breathing.", "You don't feel the need to breathe.")]"))
-		if(breathing)
-			breathing = FALSE
-			ADD_TRAIT(mob, TRAIT_NOBREATH, DISEASE_TRAIT)
+/datum/symptom/oxygen/process_active(mob/living/carbon/host, datum/disease/advanced/disease, potency, seconds_per_tick)
+	host.losebreath = max(0, host.losebreath - potency * seconds_per_tick)
+	host.adjustOxyLoss(potency * -2 * seconds_per_tick)
 
-/datum/symptom/oxygen/process_inactive(mob/living/carbon/host, datum/disease/advanced/disease, seconds_per_tick, datum/disease/advanced/disease)
-	if(!breathing)
-		breathing = TRUE
-		REMOVE_TRAIT(mob, TRAIT_NOBREATH, DISEASE_TRAIT)
-		mob.emote("gasp")
-		to_chat(mob, span_notice("You feel the need to breathe again."))
+	if(potency >= 2)
+		if(SPT_PROB(5, seconds_per_tick) && current_cycles < 30)
+			to_chat(host, span_notice(pick("Your lungs feel great.", "You realize you haven't been breathing.", "You don't feel the need to breathe.")))
+		stop_breathing(host)
+	else
+		start_breathing(host)
+
+	if(potency >= 3) // readds the legacy blood volume restoration threshold, albeit in a different form
+		if(SPT_PROB(3, seconds_per_tick) && host.blood_volume < BLOOD_VOLUME_SAFE)
+			to_chat(host, span_boldnotice("You feel a pleasant warmth that breaks through your clammy skin."))
+		host.blood_volume = min(BLOOD_VOLUME_NORMAL, host.blood_volume + potency * seconds_per_tick)
+
+/datum/symptom/oxygen/deactivate_passive_effect(mob/living/carbon/host, datum/disease/advanced/disease)
+	start_breathing(host)
+
+/datum/symptom/oxygen/proc/stop_breathing(mob/living/carbon/host)
+	if (!breathing)
+		return
+	breathing = FALSE
+	ADD_TRAIT(host, TRAIT_NOBREATH, DISEASE_TRAIT)
+
+/datum/symptom/oxygen/proc/start_breathing(mob/living/carbon/host)
+	if (breathing)
+		return
+	breathing = TRUE
+	REMOVE_TRAIT(host, TRAIT_NOBREATH, DISEASE_TRAIT)
+	host.emote("gasp")
+	to_chat(host, span_danger("You feel the need to breathe again."))

@@ -6,15 +6,15 @@
 #define EFFECT_DANGER_DEADLY	"5"
 
 // Used for symptom rarity and HUDs.
-#define SYMPTOM_SEVERITY_AWESOME   "4"
-#define SYMPTOM_SEVERITY_GREAT     "3"
-#define SYMPTOM_SEVERITY_GOOD      "2"
-#define SYMPTOM_SEVERITY_OKAY      "1"
-#define SYMPTOM_SEVERITY_NEUTRAL   "0"
-#define SYMPTOM_SEVERITY_ANNOYING "-1"
-#define SYMPTOM_SEVERITY_BAD      "-2"
-#define SYMPTOM_SEVERITY_DEADLY   "-3"
-#define SYMPTOM_SEVERITY_HORRIBLE "-4"
+#define SYMPTOM_SEVERITY_AWESOME   "4" // this symptom has the magic capability to cure omega cancer
+#define SYMPTOM_SEVERITY_GREAT     "3" // no big downside and has high impact positive effects like healing
+#define SYMPTOM_SEVERITY_GOOD      "2" // low impact positive effect
+#define SYMPTOM_SEVERITY_OKAY      "1" // generally positive but not necessarily influential or it has a potential downside
+#define SYMPTOM_SEVERITY_NEUTRAL   "0" // stuff like growing hair or something thats a 50/50 on being good or bad
+#define SYMPTOM_SEVERITY_ANNOYING "-1" // constant coughing, minor debuffs to stuff like mood, etc
+#define SYMPTOM_SEVERITY_BAD      "-2" // genuinely bad stuff like blindness, tripping over yourself or the like
+#define SYMPTOM_SEVERITY_DEADLY   "-3" // this kills but not necessarily fast
+#define SYMPTOM_SEVERITY_HORRIBLE "-4" // immediately lethal, think burning alive or fast-acting toxins
 
 #define	ANTIGEN_BLOOD	"blood"
 #define	ANTIGEN_COMMON	"common"
