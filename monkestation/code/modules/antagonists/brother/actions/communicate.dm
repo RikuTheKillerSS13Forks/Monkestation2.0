@@ -1,6 +1,6 @@
 /datum/action/bb/comms
 	name = "Blood Bond"
-	desc = "Communicate privately with your fellow brother(s)."
+	desc = "Communicate privately with your fellow brothers."
 	button_icon_state = "comms"
 	check_flags = AB_CHECK_CONSCIOUS
 

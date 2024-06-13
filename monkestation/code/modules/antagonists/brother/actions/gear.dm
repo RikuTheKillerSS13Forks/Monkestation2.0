@@ -1,6 +1,6 @@
 /datum/action/bb/gear
 	name = "Choose Gear"
-	desc = "Choose a piece of gear of your choice. You can only pick one, and all teammates must agree."
+	desc = "Choose a piece of gear. You can only pick one, and all brothers must agree."
 	button_icon_state = "weapons"
 	check_flags = AB_CHECK_CONSCIOUS
 	var/static/list/choices
