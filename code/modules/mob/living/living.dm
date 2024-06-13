@@ -268,6 +268,8 @@
 		return TRUE
 	if(!client && (mob_size < MOB_SIZE_SMALL))
 		return
+	if(istype(AM, /mob/living/basic/skeleton_gem)) // MONKESTATION EDIT: I only want it to be pullable, not pushable.
+		return
 	now_pushing = TRUE
 	SEND_SIGNAL(src, COMSIG_LIVING_PUSHING_MOVABLE, AM)
 	var/dir_to_target = get_dir(src, AM)

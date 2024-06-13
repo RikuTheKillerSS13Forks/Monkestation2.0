@@ -11,12 +11,12 @@
 
 	mob_size = MOB_SIZE_HUGE // no, you cannot put it in a closet, sorry
 
-	status_flags = GODMODE
+	status_flags = CANPUSH | GODMODE
 
 	maxHealth = INFINITY
 	health = INFINITY
 
-	speed = 0.5
+	speed = 0
 
 	mob_biotypes = BIO_INORGANIC
 
@@ -37,8 +37,8 @@
 /mob/living/basic/skeleton_gem/Initialize(mapload)
 	. = ..()
 
-	AddComponent(/datum/component/unobserved_actor, unobserved_flags = NO_OBSERVED_MOVEMENT)
-	AddComponent(/datum/component/stationloving, FALSE, TRUE)
+	AddComponent(/datum/component/unobserved_actor/gem, unobserved_flags = NO_OBSERVED_MOVEMENT | NO_OBSERVED_ACTIONS | NO_OBSERVED_ATTACKS)
+	AddComponent(/datum/component/stationloving/gem, TRUE, FALSE)
 
 	AddElement(/datum/element/forced_gravity, TRUE)
 	AddElement(/datum/element/simple_flying)
@@ -51,6 +51,11 @@
 		l_power = 2,
 		l_color = COLOR_VOID_PURPLE
 	)
+
+/mob/living/basic/skeleton_gem/set_pulledby(new_pulledby)
+	. = ..()
+	if(!new_pulledby)
+		SEND_SIGNAL(src, COMSIG_PAUSE_FLOATING_ANIM, 0 SECONDS) // ultimate shitcode to restart the floating animation
 
 /mob/living/basic/skeleton_gem/examine(mob/user)
 	. = ..()
@@ -125,6 +130,16 @@
 	user.equip_to_slot_or_del(new /obj/item/clothing/under/color/black(user), ITEM_SLOT_ICLOTHING)
 
 	ADD_TRAIT(user, TRAIT_NO_SOUL, LICH_TRAIT)
+
+/datum/component/stationloving/gem
+	dupe_mode = COMPONENT_DUPE_UNIQUE
+	dupe_type = /datum/component/stationloving
+
+/datum/component/unobserved_actor/gem
+
+/datum/component/unobserved_actor/gem/check_if_seen(mob/living/source)
+	var/atom/movable/movable = parent
+	return !movable.moving_from_pull && ..()
 
 /datum/component/phylactery/gem
 	dupe_mode = COMPONENT_DUPE_ALLOWED
