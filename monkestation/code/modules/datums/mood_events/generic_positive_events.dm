@@ -9,3 +9,8 @@
 	description = "Glory to the hunt."
 	mood_change = 10
 	hidden = TRUE
+
+/datum/mood_event/gem
+	description = "I've been acknowledged! MORTALS, FEAR ME!!!"
+	mood_change = 10
+	hidden = TRUE

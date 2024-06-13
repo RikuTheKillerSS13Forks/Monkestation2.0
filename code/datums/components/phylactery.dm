@@ -30,7 +30,7 @@
 	stun_per_resurrection = 20 SECONDS,
 	phylactery_color = COLOR_VERY_DARK_LIME_GREEN,
 )
-	if(!isobj(parent))
+	if(!isobj(parent) && !istype(parent, /mob/living/basic/skeleton_gem))
 		return COMPONENT_INCOMPATIBLE
 
 	if(isnull(lich_mind))
@@ -134,7 +134,7 @@
 	var/time_to_revive = base_respawn_time + (num_resurrections * time_per_resurrection)
 	revive_timer = addtimer(CALLBACK(src, PROC_REF(revive_lich), died), time_to_revive, TIMER_UNIQUE|TIMER_STOPPABLE)
 	to_chat(died, span_green("You feel your soul being dragged back to this world... \
-		<b>you will revive at your phylactery in [time_to_revive / 10 / 60] minute\s.</b>"))
+		<b>you will revive at [istype(parent, /mob/living/basic/skeleton_gem) ? "the [parent]" : "your phylactery"] in [time_to_revive / 10 / 60] minute\s.</b>"))
 
 /**
  * Signal proc for [COMSIG_LIVING_REVIVE].
