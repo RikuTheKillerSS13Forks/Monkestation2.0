@@ -7,6 +7,8 @@
 	icon_living = "gem"
 	icon_dead = "gem"
 
+	layer = LARGE_MOB_LAYER // you are not hiding this
+
 	mob_size = MOB_SIZE_HUGE // no, you cannot put it in a closet, sorry
 
 	status_flags = GODMODE
@@ -22,8 +24,7 @@
 	minimum_survivable_temperature = 0
 	maximum_survivable_temperature = INFINITY
 
-	obj_damage = INFINITY // NOTHING CAN STOP ME!!
-	move_force = INFINITY
+	move_force = INFINITY // NOTHING CAN STOP ME!!
 	pull_force = INFINITY
 	pressure_resistance = INFINITY // accidentally widening a breach 5 times is bad
 
