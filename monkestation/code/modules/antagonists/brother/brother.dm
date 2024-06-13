@@ -26,10 +26,13 @@
 
 /datum/antagonist/brother/remove_innate_effects(mob/living/mob_override)
 	. = ..()
+	var/mob/living/target = mob_override || owner.current
 	if(!QDELETED(comms_action))
-		comms_action.Remove(mob_override || owner.current)
+		comms_action.Remove(target)
 	if(!QDELETED(gear_action))
-		gear_action.Remove(mob_override || owner.current)
+		gear_action.Remove(target)
+	if(!QDELETED(swap_action))
+		swap_action.Remove(target)
 
 /datum/antagonist/brother/create_team(datum/team/brother_team/new_team)
 	. = ..()
