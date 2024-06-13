@@ -15,3 +15,13 @@
 		GLOB.manifest.general -= crewfile
 	if(locked && !QDELETED(lockfile))
 		GLOB.manifest.locked -= lockfile
+
+/datum/mind/proc/swap_addictions(datum/mind/target)
+	var/cached_points = addiction_points
+	var/cached_active = active_addictions
+
+	addiction_points = target.addiction_points
+	target.addiction_points = cached_points
+
+	active_addictions = target.active_addictions
+	target.active_addictions = cached_active

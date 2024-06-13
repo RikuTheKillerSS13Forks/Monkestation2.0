@@ -50,7 +50,7 @@
 	if(!istext(message) || !length(message) || QDELETED(owner) || QDELETED(team))
 		return
 	owner.current.log_talk(html_decode(message), LOG_SAY, tag = "blood brother")
-	var/formatted_msg = "<span class='[team.color]'><b><i>\[Blood Bond\]</i> [span_name("[owner.name]")]</b>: [message]</span>"
+	var/formatted_msg = "<span class='cfc_red'><b><i>\[Blood Bond\]</i> [span_name("[owner.name]")]</b>: [message]</span>"
 	for(var/datum/mind/brother as anything in team.members)
 		var/mob/living/target = brother.current
 		if(brother != owner)

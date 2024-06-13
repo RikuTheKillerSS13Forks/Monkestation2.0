@@ -26,27 +26,27 @@
 	var/mob/living/target_mob = target.current
 	var/mob/living/owner = src.owner
 
+	if(QDELETED(target_mob) || target_mob.stat == DEAD)
+		owner.balloon_alert(owner, "failed!")
+		return FALSE
+
 	if(owner.has_status_effect(/datum/status_effect/one_mind) || target_mob.has_status_effect(/datum/status_effect/one_mind))
 		owner.balloon_alert(owner, "already swapped!")
+
+	target_mob.balloon_alert(target_mob, "swapping minds...")
+
+	if(!do_after(owner, 1 SECOND, timed_action_flags = IGNORE_USER_LOC_CHANGE | IGNORE_HELD_ITEM | IGNORE_SLOWDOWNS))
+		owner.balloon_alert(owner, "failed!")
+		target_mob.balloon_alert(target_mob, "failed!")
+		return FALSE
 
 	if(QDELETED(target_mob) || target_mob.stat == DEAD)
 		owner.balloon_alert(owner, "failed!")
 		return FALSE
 
-	target_mob.balloon_alert(target_mob, "swapping minds...")
-
-	if(!do_after(owner, 1 SECOND, target_mob, timed_action_flags = IGNORE_USER_LOC_CHANGE | IGNORE_TARGET_LOC_CHANGE | IGNORE_HELD_ITEM | IGNORE_SLOWDOWNS))
-		owner.balloon_alert(owner, "failed!")
-		target_mob.balloon_alert(target_mob, "failed!")
-		return FALSE
-
 	if(owner.has_status_effect(/datum/status_effect/one_mind) || target_mob.has_status_effect(/datum/status_effect/one_mind))
 		owner.balloon_alert(owner, "already swapped!")
 		target_mob.balloon_alert(target_mob, "already swapped!")
-
-	if(target_mob.stat == DEAD)
-		owner.balloon_alert(owner, "failed!")
-		return FALSE
 
 	owner.apply_status_effect(/datum/status_effect/one_mind, target_mob)
 	target_mob.apply_status_effect(/datum/status_effect/one_mind, owner)
@@ -55,6 +55,8 @@
 
 	owner.ghostize(TRUE)
 	target_mob.ghostize(TRUE)
+
+	owner_mind.swap_addictions(target)
 
 	INVOKE_ASYNC(src, PROC_REF(finalize_other), target)
 
@@ -130,6 +132,9 @@
 
 	owner.ghostize(TRUE)
 	old_mob.ghostize(TRUE)
+
+	if(!QDELETED(other_mind))
+		mind.swap_addictions(other_mind)
 
 	INVOKE_ASYNC(src, PROC_REF(finalize_other), other_mind, owner)
 

@@ -30,4 +30,5 @@ export const RADIO_PREFIXES = {
   ':u ': 'Supp',
   ':v ': 'Svc',
   ':y ': 'CCom',
+  ':w ': 'Bond', // MONKESTATION EDIT: Blood Brother Prefix
 } as const;
