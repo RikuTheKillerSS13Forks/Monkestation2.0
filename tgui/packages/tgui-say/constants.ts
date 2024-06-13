@@ -32,3 +32,8 @@ export const RADIO_PREFIXES = {
   ':y ': 'CCom',
   ':w ': 'Bond', // MONKESTATION EDIT: Blood Brother Prefix
 } as const;
+
+export const HIDDEN_PREFIXES = { // MONKESTATION EDIT: HIDDEN PREFIXES
+  ':b ': true,
+  ':w ': true,
+} as const;

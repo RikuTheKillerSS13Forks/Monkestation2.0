@@ -1,7 +1,7 @@
 import { Channel, ChannelIterator } from './ChannelIterator';
 import { ChatHistory } from './ChatHistory';
 import { Component, createRef, InfernoKeyboardEvent, RefObject } from 'inferno';
-import { LINE_LENGTHS, RADIO_PREFIXES, WINDOW_SIZES } from './constants';
+import { LINE_LENGTHS, RADIO_PREFIXES, HIDDEN_PREFIXES, WINDOW_SIZES } from './constants'; // MONKESTATION EDIT: HIDDEN PREFIXES
 import { byondMessages } from './timers';
 import { dragStartHandler } from 'tgui/drag';
 import { windowOpen, windowClose, windowSet } from './helpers';
@@ -167,7 +167,7 @@ export class TguiSay extends Component<{}, State> {
 
   handleIncrementChannel() {
     // Binary talk is a special case, tell byond to show thinking indicators
-    if (this.channelIterator.isSay() && this.currentPrefix === ':b ') {
+    if (this.channelIterator.isSay() && HIDDEN_PREFIXES[this.currentPrefix ?? '']) {
       this.messages.channelIncrementMsg(true);
     }
 
@@ -187,7 +187,7 @@ export class TguiSay extends Component<{}, State> {
     const typed = this.innerRef.current?.value;
 
     // If we're typing, send the message
-    if (this.channelIterator.isVisible() && this.currentPrefix !== ':b ') {
+    if (this.channelIterator.isVisible() && !HIDDEN_PREFIXES[this.currentPrefix ?? '']) { // MONKESTATION EDIT: HIDDEN PREFIXES
       this.messages.typingMsg();
     }
 
@@ -211,8 +211,7 @@ export class TguiSay extends Component<{}, State> {
       return;
     }
 
-    // If we're in binary, hide the thinking indicator
-    if (prefix === ':b ') {
+    if (HIDDEN_PREFIXES[prefix]) { // MONKESTATION EDIT: HIDDEN PREFIXES
       Byond.sendMessage('thinking', { visible: false });
     }
 
