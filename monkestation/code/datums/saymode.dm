@@ -13,6 +13,6 @@
 	if(QDELETED(team) || !(user.mind in team.members))
 		return
 	if(length(team.members) < 2)
-		owner.balloon_alert(owner, "no brothers to communicate with!")
+		user.balloon_alert(user, "no brothers to communicate with!")
 		return
 	bond.communicate(message) // same thing the comms action does, just pass in the original message with no processing
