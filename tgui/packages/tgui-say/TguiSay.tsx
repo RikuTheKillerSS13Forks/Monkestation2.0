@@ -166,8 +166,7 @@ export class TguiSay extends Component<{}, State> {
   }
 
   handleIncrementChannel() {
-    // Binary talk is a special case, tell byond to show thinking indicators
-    if (this.channelIterator.isSay() && HIDDEN_PREFIXES[this.currentPrefix ?? '']) {
+    if (this.channelIterator.isSay() && HIDDEN_PREFIXES[this.currentPrefix ?? '']) { // MONKESTATION EDIT: HIDDEN PREFIXES
       this.messages.channelIncrementMsg(true);
     }
 

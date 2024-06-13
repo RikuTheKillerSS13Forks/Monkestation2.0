@@ -1,6 +1,6 @@
 /datum/action/bb/comms
 	name = "Blood Bond"
-	desc = "Communicate privately with your fellow brothers."
+	desc = "Communicate privately with your brothers."
 	button_icon_state = "comms"
 	check_flags = AB_CHECK_CONSCIOUS
 
@@ -17,7 +17,7 @@
 	. = ..()
 	if(!.)
 		return
-	var/message = tgui_input_text(owner, "What do you wish to communicate with your fellow brother[length(team.members) > 2 ? "s" : ""]?", "Blood Bond", timeout = 90 SECONDS)
+	var/message = tgui_input_text(owner, "What do you wish to communicate to your brothers? (TIP: You can use the prefix ':b' for this.)", "Blood Bond", timeout = 90 SECONDS)
 	if(!message || !IsAvailable(feedback = TRUE))
 		return FALSE
 	bond.communicate(message)

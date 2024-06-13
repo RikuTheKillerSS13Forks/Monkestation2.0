@@ -14,5 +14,5 @@
 		return
 	if(length(team.members) < 2)
 		user.balloon_alert(user, "no brothers to communicate with!")
-		return
+		return FALSE
 	bond.communicate(message) // same thing the comms action does, just pass in the original message with no processing
