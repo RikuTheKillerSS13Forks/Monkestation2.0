@@ -63,7 +63,7 @@
 
 ///from mind/transfer_to. Sent to the receiving mob.
 #define COMSIG_MOB_MIND_TRANSFERRED_INTO "mob_mind_transferred_into"
-/// From /mob/proc/ghostize() Called when a mob sucessfully ghosts
+/// From /mob/proc/ghostize() Called when a mob sucessfully ghosts (ghost)
 #define COMSIG_MOB_GHOSTIZED "mob_ghostized"
 
 ///from base of obj/allowed(mob/M): (/obj) returns ACCESS_ALLOWED if mob has id access to the obj

@@ -31,3 +31,7 @@
 
 #define ABDUCTOR_GLAND_VENTCRAWLING_TRAIT "abductor_gland_ventcrawling"
 #define TRAIT_BETTER_CYBERCONNECTOR "better_cyberconnector_hacking"
+
+/// Used by the One Mind Blood Brother ability to keep track of minds that are already swapped.
+/// This can STILL break under extremely specific circumstances, but it's robust enough.
+#define TRAIT_ONE_MIND "one_mind"

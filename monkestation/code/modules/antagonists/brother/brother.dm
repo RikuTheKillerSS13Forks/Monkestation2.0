@@ -1,7 +1,7 @@
 /datum/antagonist/brother
 	var/datum/action/bb/comms/comms_action
 	var/datum/action/bb/gear/gear_action
-	var/datum/action/cooldown/brother/swap_consciousness/swap_action
+	var/datum/action/cooldown/brother/one_mind/swap_action
 
 /datum/antagonist/brother/on_gain()
 	. = ..()
@@ -23,6 +23,7 @@
 	gear_action?.Grant(target)
 	swap_action.Grant(target)
 	add_team_hud(target, /datum/antagonist/brother, REF(team))
+	RegisterSignal(target, COMSIG_BB_CLEAR_ABILITIES, PROC_REF(clear_abilities))
 
 /datum/antagonist/brother/remove_innate_effects(mob/living/mob_override)
 	. = ..()
@@ -33,6 +34,7 @@
 		gear_action.Remove(target)
 	if(!QDELETED(swap_action))
 		swap_action.Remove(target)
+	UnregisterSignal(target, COMSIG_BB_CLEAR_ABILITIES)
 
 /datum/antagonist/brother/create_team(datum/team/brother_team/new_team)
 	. = ..()
@@ -63,3 +65,13 @@
 	for(var/dead_mob in GLOB.dead_mob_list)
 		var/link = FOLLOW_LINK(dead_mob, owner.current)
 		to_chat(dead_mob, "[link] [formatted_msg]", type = MESSAGE_TYPE_RADIO)
+
+/datum/antagonist/brother/proc/clear_abilities(mob/living/target) // done to avoid action duplication with mind swap, it's a hack but whatever
+	SIGNAL_HANDLER
+	if(target.mind == owner)
+		return
+	remove_innate_effects(target)
+	if(target.stat != DEAD && !LAZYLEN(target.mind?.antag_datums))
+		target.remove_from_current_living_antags()
+	var/datum/action/antag_info/info_button = info_button_ref?.resolve()
+	info_button?.Remove(target)

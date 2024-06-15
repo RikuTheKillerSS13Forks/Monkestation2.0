@@ -63,7 +63,7 @@
 		flashed.balloon_alert(source, "[flashed.p_their()] mind is vacant!")
 		return
 
-	// monkestation edit start: add a ban and pref check to conversion
+	// monkestation edit start: add a ban check to conversion
 	if(is_banned_from(flashed.ckey, list(ROLE_BROTHER, ROLE_SYNDICATE)))
 		flashed.balloon_alert(source, "god said no!")
 		return

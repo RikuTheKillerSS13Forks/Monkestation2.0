@@ -17,7 +17,7 @@
 	. = ..()
 	if(!.)
 		return
-	var/message = tgui_input_text(owner, "What do you wish to communicate to your brothers? (TIP: You can use the prefix ':b' for this.)", "Blood Bond", timeout = 90 SECONDS)
+	var/message = tgui_input_text(owner, "What do you wish to communicate to your brothers? (TIP: You can use the prefix ':w' for this.)", "Blood Bond", timeout = 90 SECONDS)
 	if(!message || !IsAvailable(feedback = TRUE))
 		return FALSE
 	bond.communicate(message)
