@@ -5904,6 +5904,7 @@
 #include "monkestation\code\modules\antagonists\brother\brother_team.dm"
 #include "monkestation\code\modules\antagonists\brother\abilities\_base.dm"
 #include "monkestation\code\modules\antagonists\brother\abilities\one_mind.dm"
+#include "monkestation\code\modules\antagonists\brother\abilities\sacrifice.dm"
 #include "monkestation\code\modules\antagonists\brother\actions\_action.dm"
 #include "monkestation\code\modules\antagonists\brother\actions\communicate.dm"
 #include "monkestation\code\modules\antagonists\brother\actions\gear.dm"

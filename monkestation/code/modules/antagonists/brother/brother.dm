@@ -2,6 +2,7 @@
 	var/datum/action/bb/comms/comms_action
 	var/datum/action/bb/gear/gear_action
 	var/datum/action/cooldown/brother/one_mind/swap_action
+	var/datum/action/cooldown/spell/touch/sacrifice/sacrifice_action
 
 /datum/antagonist/brother/on_gain()
 	. = ..()
@@ -18,10 +19,13 @@
 		gear_action = new(src)
 	if(QDELETED(swap_action))
 		swap_action = new(src)
+	if(QDELETED(sacrifice_action))
+		sacrifice_action = new(src)
 	var/mob/living/target = mob_override || owner.current
 	comms_action.Grant(target)
 	gear_action?.Grant(target)
 	swap_action.Grant(target)
+	sacrifice_action.Grant(target)
 	add_team_hud(target, /datum/antagonist/brother, REF(team))
 	RegisterSignal(target, COMSIG_BB_CLEAR_ABILITIES, PROC_REF(clear_abilities))
 
@@ -34,6 +38,8 @@
 		gear_action.Remove(target)
 	if(!QDELETED(swap_action))
 		swap_action.Remove(target)
+	if(!QDELETED(sacrifice_action))
+		sacrifice_action.Remove(target)
 	UnregisterSignal(target, COMSIG_BB_CLEAR_ABILITIES)
 
 /datum/antagonist/brother/create_team(datum/team/brother_team/new_team)

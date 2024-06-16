@@ -165,8 +165,13 @@
 	if(owner && target)
 		owner.swap_addictions(target)
 
-	owner_mob?.ghostize(can_reenter_corpse = TRUE)
-	target_mob?.ghostize(can_reenter_corpse = TRUE)
+	owner_mob?.ghostize(can_reenter_corpse = target_mob != null)
+	if(!target)
+		owner_mob?.death() // no amount of TRAIT_NODEATH will save you from having your soul removed
+
+	target_mob?.ghostize(can_reenter_corpse = owner_mob != null)
+	if(!owner)
+		target_mob?.death()
 
 	remove_overlay(owner_mob, owner)
 	remove_overlay(target_mob, target)
