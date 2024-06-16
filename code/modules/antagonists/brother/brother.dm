@@ -79,7 +79,7 @@
 		flashed.balloon_alert(source, "[flashed.p_theyre()] loyal to someone else!")
 		return
 
-	if (HAS_TRAIT(flashed, TRAIT_MINDSHIELD)) // monkestation edit: why the arbitrary security check??? if you de-mindshield a member of security, its free game
+	if (HAS_TRAIT(flashed, TRAIT_MINDSHIELD) || HAS_MIND_TRAIT(flashed, TRAIT_UNCONVERTABLE))
 		flashed.balloon_alert(source, "[flashed.p_they()] resist!")
 		return
 

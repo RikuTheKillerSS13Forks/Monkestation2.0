@@ -189,8 +189,7 @@ SUBSYSTEM_DEF(gamemode)
 		event_pools[event.track] += event //Add it to the categorized event pools
 
 	load_roundstart_data()
-
-//	return ..()
+	return SS_INIT_SUCCESS
 
 
 /datum/controller/subsystem/gamemode/fire(resumed = FALSE)
@@ -261,7 +260,10 @@ SUBSYSTEM_DEF(gamemode)
 		else if(living_players && isliving(player))
 			if(!ishuman(player) && !isAI(player))
 				continue
-			if(!(player.z in SSmapping.levels_by_trait(ZTRAIT_STATION)))
+			// I split these checks up to make the code more readable ~Lucy
+			var/is_on_station = is_station_level(player.z)
+			var/is_late_arrival = HAS_TRAIT(SSstation, STATION_TRAIT_LATE_ARRIVALS) && istype(get_area(player), /area/shuttle/arrival)
+			if(!is_on_station && !is_late_arrival)
 				continue
 			candidate_candidates += player
 

@@ -555,6 +555,8 @@ Remember to update _globalvars/traits.dm if you're adding/removing/renaming trai
 
 /// Is the mob standing on an elevated surface? This prevents them from dropping down if not elevated first.
 #define TRAIT_ON_ELEVATED_SURFACE "on_elevated_surface"
+/// Does the mob ignore elevation? (e.g. xeno larvas & cortical borers on hiding)
+#define TRAIT_IGNORE_ELEVATION "ignore_elevation"
 
 // METABOLISMS
 // Various jobs on the station have historically had better reactions
@@ -1301,6 +1303,9 @@ Remember to update _globalvars/traits.dm if you're adding/removing/renaming trai
 
 /// Do IPC's dream of doomsday? The answer is yes
 #define TRAIT_ROBOT_CAN_BLEED "robots_can_bleed"
+
+/// tough feets for the satyrs
+#define TRAIT_HARD_SOLES "hard_soles" //Taken from Skyrat
 //monkestation edit end
 /// This atom can have spells cast from it if a mob is within it
 /// This means the "caster" of the spell is changed to the mob's loc

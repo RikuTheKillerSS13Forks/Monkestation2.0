@@ -205,3 +205,82 @@
   - bugfix: Unknown Methamphetamine Isomer (cortical borer meth) is now actually safe
       to use and doesn't cause brain damage or addiction. It's effects are now equivalent
       to regular meth instead of being doubled, too.
+2024-06-13:
+  DexeeXI:
+  - bugfix: Loadouts should have EYEPATCHES of the regular variety available!
+2024-06-14:
+  Absolucy:
+  - bugfix: Fixed some runtime errors relating to interaction modes, mainly combat
+      mode.
+  - refactor: (vinylspiders) Fixed a bunch of instances of callbacks being qdeleted
+      and cleaned up related code.
+  - bugfix: Fixed a runtime error relating to mineral regrowth.
+  - bugfix: Roundstart antags should now be properly created when the Late Arrivals
+      station trait rolls.
+  - balance: '"Unconvertable" minds now consistently resist most, if not all forms
+      of conversion or brainwashing.'
+  - refactor: Refactored /datum/mind's "unconvertable" var into a trait.
+  - bugfix: Sign Language action properly toggles between an active/inactive background
+      again.
+  AlbertNanotracen:
+  - rscadd: T
+  - bugfix: Ingredients which fail to react in soup reactions drop when the reaction
+      finishes as intended
+  - rscadd: The ancient recipe for the Death Sandwich has been rediscovered buried
+      in the deepest depths of an erupting volcano.
+  - rscadd: Blood Brothers can chose the death sandwich recipe book as their gear(requested
+      by @knighthethrasher)
+  - rscadd: Added wedding cakes
+  - rscadd: Toast sandwich
+  - bugfix: The peanut butter banana sandwich is no longer presented as grilled when
+      it doesn't require a griddle to make.
+  Melbert:
+  - bugfix: Fixes runtime from trying to put two pots on one stove.
+  RikuTheKiller:
+  - balance: Silicons will no longer become soulless if they suicide.
+  ThePooba:
+  - bugfix: hiding under table for the borers and larvae, they get their plane changed
+      to WALL_PLANE when hiding so they can be under items, tables, other things
+  - bugfix: elevating under tables, they now elevate properly when hiding / unhiding
+      by toggling a trait
+  - rscadd: A trait define was added to manage this was added to elevate them slightly
+      when they are on certain turfs
+2024-06-15:
+  Absolucy:
+  - bugfix: Fixed a qdel runtime related to slimes.
+  - bugfix: The Gamemode and Holomaps subsystem will no longer claim to have loaded
+      with errors, when they in fact loaded just fine.
+  - balance: Cult stun hand is now less effective against mindshielded people, their
+      sacrifice target, and monster hunters, alongside anyone else after the cult
+      gains halos. The weakened stun will only knockdown, similar to mansus grasp,
+      and silence for a far shorter period of time.
+  - balance: Holy magic resistance now fully protects against the cult stun.
+  - rscadd: Added a funny interaction with the cult stun hand and sacrifice runes
+      when used on someone who is incredibly drunk.
+  - balance: The cult stun hand can now be countered by CQC and Sleeping Carp, consistent
+      with all other forms of "touch spells".
+2024-06-16:
+  Absolucy:
+  - bugfix: The "Clear Chat" button now properly works, instead of BSODing chat.
+  - bugfix: Hopefully fixed some lag relating to massive amounts of sounds. (me when
+      one morbillion lizard plushies)
+  - bugfix: (SyncIt21) Fixed a runtime when turning scrubbers on via the air alarm
+      UI.
+  - refactor: (SyncIt21) atmos_conditions_changed() now starts atmos processing based
+      on it's turf air contents.
+  - refactor: (SyncIt21) Don't send gas name to gas filter UI as the name is already
+      decoded there from it's ID.
+  - bugfix: (FlufflesTheDog) VERY small amounts of a gas (<0.0001 mol) in pipenets
+      will once again be fully removed.
+  - balance: (Deadgebert) Gas mixer output now accurate to set ratio regardless of
+      input temperatures.
+  - bugfix: (BurgerBB) Scrubbers and Vents will no longer reset their settings on
+      map load.
+  DexeeXI:
+  - bugfix: placed the PTL on the engine side of the SMES units.
+  KnigTheThrasher:
+  - rscadd: Added holomaps and ghost spawners to kilostation
+  ThePooba:
+  - bugfix: Heretics Codex Cicatrix ritual with a skin now uses up the items involved.
+  - bugfix: Changes Assault Pod Level trait check from not Reserved (centcom and station)
+      to station level trait (just station)
