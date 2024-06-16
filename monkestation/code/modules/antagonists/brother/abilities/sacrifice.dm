@@ -74,7 +74,7 @@
 		blind_message = span_hear("You hear a loud crackle."),
 		ignored_mobs = list(target)
 	)
-	to_chat(target, span_boldnotice("[owner] lends some of their power to you!"))
+	to_chat(target, span_boldnotice("[owner] lends some of [owner.p_their()] power to you!"))
 
 /datum/action/cooldown/spell/touch/sacrifice/proc/true_sacrifice(mob/living/target, datum/antagonist/brother/target_bond)
 	var/mob/living/owner = src.owner
