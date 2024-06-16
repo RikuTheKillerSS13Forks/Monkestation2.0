@@ -158,11 +158,7 @@
 		highest_flow = blood_flow
 
 	if(blood_flow < minimum_flow)
-		if(demotes_to)
-			replace_wound(new demotes_to)
-		else
-			to_chat(victim, span_green("The cut on your [limb.plaintext_zone] has [!limb.can_bleed() ? "healed up" : "stopped bleeding"]!"))
-			qdel(src)
+		demote() // MONKESTATION EDIT: Move bleeding wound demotion to a proc.
 
 /datum/wound/slash/flesh/on_stasis(seconds_per_tick, times_fired)
 	if(blood_flow >= minimum_flow)
