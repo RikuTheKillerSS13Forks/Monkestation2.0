@@ -54,6 +54,8 @@
 	if(target_bond?.get_team() != team)
 		return
 
+	..() // it starts a cooldown and whatnot, the sacrifice proc overrides that
+
 	if(target.stat == DEAD)
 		true_sacrifice(target, target_bond)
 	else
@@ -78,7 +80,7 @@
 
 /datum/action/cooldown/spell/touch/sacrifice/proc/true_sacrifice(mob/living/target, datum/antagonist/brother/target_bond)
 	var/mob/living/owner = src.owner
-	target.apply_status_effect(/datum/status_effect/sacrifice/true)
+	var/datum/status_effect/sacrifice/target_status = target.apply_status_effect(/datum/status_effect/sacrifice/true)
 
 	owner.visible_message(
 		message = span_bolddanger("[owner] hits [target] with a glowing hand and burns to ashes as a glorious torrent of spiritual fire forms around [target]!"),
@@ -104,124 +106,7 @@
 	owner.ghostize(can_reenter_corpse = FALSE) // bypasses the "x is no longer your brother!" message
 	owner.dust(just_ash = TRUE, drop_items = TRUE, force = TRUE) // goodbye
 
-/obj/item/melee/touch_attack/sacrifice
-	name = "Sacrifice"
-	desc = "A soft, yet fierce glow emanates from it. \
-		When used on one of your brothers, grants them power at the cost of your own. \
-		If used on a dead brother you'll sacrifice your life to revive them. \
-		Revival grants an <b>extremely</b> powerful boost."
-	icon = 'monkestation/icons/obj/weapons/hand.dmi'
-	icon_state = "sacrifice"
-
-/datum/status_effect/sacrifice
-	id = "sacrifice"
-	duration = 1 MINUTE
-	alert_type = /atom/movable/screen/alert/status_effect/sacrifice
-	tick_interval = 0 // this heals so fast i just had to
-
-	var/datum/weakref/pair_ref
-	var/strength = 0.3
-
-/datum/status_effect/sacrifice/on_creation(mob/living/new_owner)
-	if(!..())
-		return FALSE
-
-/datum/status_effect/sacrifice/on_apply()
-	ADD_TRAIT(owner, TRAIT_SACRIFICE, SACRIFICE_TRAIT)
-
-	RegisterSignal(owner, COMSIG_LIVING_DEATH, PROC_REF(on_death))
-	RegisterSignal(owner.mind, COMSIG_MIND_TRANSFERRED, PROC_REF(on_mind_transfer))
-
-	owner.add_or_update_variable_movespeed_modifier(/datum/movespeed_modifier/status_effect/sacrifice, multiplicative_slowdown = -strength)
-	owner.add_or_update_variable_actionspeed_modifier(/datum/actionspeed_modifier/status_effect/sacrifice, multiplicative_slowdown = -strength)
-
-	var/mob/living/carbon/human/human_owner = owner
-	if(!istype(human_owner))
-		return TRUE
-	var/datum/physiology/physiology = human_owner.physiology
-
-	var/multiplier = 1 - strength
-	physiology.brute_mod *= multiplier
-	physiology.burn_mod *= multiplier
-	physiology.tox_mod *= multiplier
-	physiology.oxy_mod *= multiplier
-	physiology.stun_mod *= multiplier
-	physiology.stamina_mod *= multiplier
-	physiology.bleed_mod *= multiplier
-
-	return TRUE
-
-/datum/status_effect/sacrifice/on_remove()
-	REMOVE_TRAITS_IN(owner, SACRIFICE_TRAIT)
-
-	UnregisterSignal(owner, COMSIG_LIVING_DEATH)
-	UnregisterSignal(owner.mind, COMSIG_MIND_TRANSFERRED)
-
-	var/datum/antagonist/brother/bond = owner.mind?.has_antag_datum(/datum/antagonist/brother)
-	bond?.sacrifice_action?.StartCooldown()
-
-	owner.remove_movespeed_modifier(/datum/movespeed_modifier/status_effect/sacrifice)
-	owner.remove_actionspeed_modifier(/datum/actionspeed_modifier/status_effect/sacrifice)
-
-	var/mob/living/carbon/human/human_owner = owner
-	if(!istype(human_owner))
-		return
-	var/datum/physiology/physiology = human_owner.physiology
-
-	var/multiplier = 1 - strength
-	physiology.brute_mod /= multiplier
-	physiology.burn_mod /= multiplier
-	physiology.tox_mod /= multiplier
-	physiology.oxy_mod /= multiplier
-	physiology.stun_mod /= multiplier
-	physiology.stamina_mod /= multiplier
-	physiology.bleed_mod /= multiplier
-
-	var/datum/status_effect/sacrifice/pair = pair_ref?.resolve()
-	pair?.owner?.remove_status_effect(pair.type)
-
-/datum/status_effect/sacrifice/proc/on_death(mob/living/corpse)
-	SIGNAL_HANDLER
-	corpse.remove_status_effect(type)
-
-/datum/status_effect/sacrifice/proc/on_mind_transfer(datum/mind/mind, mob/living/previous_body)
-	SIGNAL_HANDLER
-	mind?.current?.apply_status_effect(type, pair_ref?.resolve())
-	pair_ref = null // clear the pair weakref, makes on_remove not remove our paired effect
-	previous_body?.remove_status_effect(type)
-
-/datum/status_effect/sacrifice/debuff
-	id = "sacrifice_debuff" // has to be on a separate ID in case of a mind swap
-	alert_type = /atom/movable/screen/alert/status_effect/sacrifice/debuff
-	strength = -0.3
-
-/datum/status_effect/sacrifice/true
-	id = "sacrifice_true" // a mind swap can still happen under specific circumstances
-	duration = 30 SECONDS // shorter, but way, way stronger
-	alert_type = /atom/movable/screen/alert/status_effect/sacrifice/true
-	strength = 0.5
-
-/datum/status_effect/sacrifice/true/on_apply()
-	. = ..()
-
-	var/datum/antagonist/brother/bond = owner.mind?.has_antag_datum(/datum/antagonist/brother)
-	bond?.sacrifice_action?.StartCooldown(duration) // timer to show the player how long they have until deactivation
-
-	owner.add_traits(list(
-		TRAIT_NODEATH, // There is no immediate heal. That's why you get this instead.
-		TRAIT_NOCRITDAMAGE,
-		TRAIT_NOHARDCRIT,
-		TRAIT_NOSOFTCRIT,
-		TRAIT_NOCRITOVERLAY,
-		TRAIT_IGNOREDAMAGESLOWDOWN,
-		TRAIT_STABLEHEART, // I don't CARE if your heart can't beat, just live without it, dumbass.
-		TRAIT_STABLELIVER, // You get to ignore your drinking problem, at least temporarily.
-		TRAIT_NOLIMBDISABLE, // Imagine if they got revived only to be fucking handicapped. That'd suck.
-		TRAIT_SLEEPIMMUNE, // This would probably be the worst out of all of them if I let it happen.
-		TRAIT_NOBREATH, // It stops the gasping and you'd just instaheal all the oxy damage anyway.
-	), SACRIFICE_TRAIT)
-
-	var/mob/living/carbon/human/user = owner
+	var/mob/living/carbon/human/user = target
 	if(!istype(user))
 		return
 
@@ -258,6 +143,144 @@
 		)
 		playsound(user, 'sound/effects/cloth_rip.ogg', 100, TRUE)
 
+/obj/item/melee/touch_attack/sacrifice
+	name = "Sacrifice"
+	desc = "A soft, yet fierce glow emanates from it. \
+		When used on one of your brothers, grants them power at the cost of your own. \
+		If used on a dead brother you'll sacrifice your life to revive them. \
+		Revival grants an <b>extremely</b> powerful boost."
+	icon = 'monkestation/icons/obj/weapons/hand.dmi'
+	icon_state = "sacrifice"
+
+/datum/status_effect/sacrifice
+	id = "sacrifice"
+	duration = 1 MINUTE
+	alert_type = /atom/movable/screen/alert/status_effect/sacrifice
+	tick_interval = 0 // this heals so fast i just had to
+	status_type = STATUS_EFFECT_REPLACE
+
+	var/datum/weakref/pair_ref
+	var/strength = 0.3
+
+	var/outline_color = "#c60000"
+
+/datum/status_effect/sacrifice/on_creation(mob/living/new_owner, duration_override)
+	. = ..()
+	if(duration_override != null)
+		duration = duration_override
+	var/datum/antagonist/brother/bond = owner.mind?.has_antag_datum(/datum/antagonist/brother)
+	bond?.sacrifice_action?.StartCooldown(duration) // do not move this, it's here for a reason
+
+/datum/status_effect/sacrifice/on_apply()
+	owner.add_filter(id, 2, outline_filter(color = outline_color, size = 1))
+
+	ADD_TRAIT(owner, TRAIT_SACRIFICE, REF(src))
+
+	RegisterSignal(owner, COMSIG_LIVING_DEATH, PROC_REF(on_death))
+	RegisterSignal(owner.mind, COMSIG_MIND_TRANSFERRED, PROC_REF(on_mind_transferred))
+
+	owner.add_or_update_variable_movespeed_modifier(/datum/movespeed_modifier/status_effect/sacrifice, multiplicative_slowdown = -strength)
+	owner.add_or_update_variable_actionspeed_modifier(/datum/actionspeed_modifier/status_effect/sacrifice, multiplicative_slowdown = -strength)
+
+	var/mob/living/carbon/human/human_owner = owner
+	if(!istype(human_owner))
+		return TRUE
+	var/datum/physiology/physiology = human_owner.physiology
+
+	var/multiplier = 1 - strength
+	physiology.brute_mod *= multiplier
+	physiology.burn_mod *= multiplier
+	physiology.tox_mod *= multiplier
+	physiology.oxy_mod *= multiplier
+	physiology.stun_mod *= multiplier
+	physiology.stamina_mod *= multiplier
+	physiology.bleed_mod *= multiplier
+
+	return TRUE
+
+/datum/status_effect/sacrifice/on_remove(wait_for_transfer)
+	owner.remove_filter(id)
+
+	REMOVE_TRAITS_IN(owner, REF(src))
+
+	UnregisterSignal(owner, COMSIG_LIVING_DEATH)
+
+	if(!wait_for_transfer)
+		UnregisterSignal(owner.mind, COMSIG_MIND_TRANSFERRED)
+
+	owner.remove_movespeed_modifier(/datum/movespeed_modifier/status_effect/sacrifice)
+	owner.remove_actionspeed_modifier(/datum/actionspeed_modifier/status_effect/sacrifice)
+
+	var/mob/living/carbon/human/human_owner = owner
+	if(!istype(human_owner))
+		return
+	var/datum/physiology/physiology = human_owner.physiology
+
+	var/multiplier = 1 - strength
+	physiology.brute_mod /= multiplier
+	physiology.burn_mod /= multiplier
+	physiology.tox_mod /= multiplier
+	physiology.oxy_mod /= multiplier
+	physiology.stun_mod /= multiplier
+	physiology.stamina_mod /= multiplier
+	physiology.bleed_mod /= multiplier
+
+	var/datum/antagonist/brother/bond = owner.mind?.has_antag_datum(/datum/antagonist/brother)
+	bond?.sacrifice_action?.StartCooldown() // real cooldown
+
+/datum/status_effect/sacrifice/be_replaced()
+	on_remove(wait_for_transfer = TRUE)
+	INVOKE_ASYNC(src, PROC_REF(wait_for_transfer))
+
+/datum/status_effect/sacrifice/proc/wait_for_transfer() // this is jank, but it's the most sane way i could think of
+	var/mob/living/owner = src.owner
+	var/datum/mind/mind = owner.mind
+	sleep(1) // if you SOMEHOW swap twice within this time, good fucking job, you broke it!
+	UnregisterSignal(mind, COMSIG_MIND_TRANSFERRED)
+
+/datum/status_effect/sacrifice/proc/on_death(mob/living/corpse)
+	SIGNAL_HANDLER
+	corpse.remove_status_effect(type)
+	var/datum/status_effect/sacrifice/pair = pair_ref?.resolve()
+	pair?.owner?.remove_status_effect(pair.type)
+
+/datum/status_effect/sacrifice/proc/on_mind_transferred(datum/mind/mind, mob/living/previous_body)
+	SIGNAL_HANDLER
+	if(!QDELETED(src))
+		previous_body?.remove_status_effect(type)
+	var/datum/status_effect/new_effect = mind.current.apply_status_effect(type, duration)
+	var/datum/status_effect/sacrifice/pair = pair_ref?.resolve()
+	pair?.pair_ref = WEAKREF(new_effect)
+
+/datum/status_effect/sacrifice/debuff
+	alert_type = /atom/movable/screen/alert/status_effect/sacrifice/debuff
+	strength = -0.3
+	outline_color = "#00afc6"
+
+/datum/status_effect/sacrifice/true  // now, you'd think this is too much effort, but considering you have to round remove yourself to activate this, i just had to reward em ya know?
+	duration = 30 SECONDS // shorter, but way, way stronger
+	alert_type = /atom/movable/screen/alert/status_effect/sacrifice/true
+	strength = 0.5
+	outline_color = "#e40000"
+
+	var/regrow_progress = 0
+
+/datum/status_effect/sacrifice/true/on_apply()
+	. = ..()
+
+	owner.add_traits(list(
+		TRAIT_NODEATH, // There is no immediate heal. That's why you get this instead.
+		TRAIT_NOCRITDAMAGE,
+		TRAIT_NOHARDCRIT,
+		TRAIT_NOSOFTCRIT,
+		TRAIT_NOCRITOVERLAY,
+		TRAIT_IGNOREDAMAGESLOWDOWN,
+		TRAIT_STABLEHEART, // I don't CARE if your heart can't beat, just live without it, dumbass.
+		TRAIT_STABLELIVER, // You get to ignore your drinking problem, at least temporarily.
+		TRAIT_NOLIMBDISABLE, // Imagine if they got revived only to be fucking handicapped. That'd suck.
+		TRAIT_SLEEPIMMUNE, // This would probably be the worst out of all of them if I let it happen.
+	), REF(src))
+
 /datum/status_effect/sacrifice/true/tick(seconds_per_tick, times_fired)
 	var/delta_time = min(DELTA_WORLD_TIME(SSfastprocess), max(0, duration - world.time))
 
@@ -270,8 +293,6 @@
 	var/oxy = owner.getOxyLoss()
 	var/clone = owner.getCloneLoss()
 	var/divisor = (brute + burn + tox + oxy + clone) / 20 / delta_time // divide by whatever you want it to heal per second
-
-	owner.losebreath = 0 // it'd suck if you just got slammed with oxy damage when this ended
 
 	if(divisor > 0)
 		owner.adjustBruteLoss(-brute / divisor, updating_health = FALSE)
@@ -297,7 +318,24 @@
 	if(!istype(user))
 		return
 
-	for(var/datum/wound/wound in user.all_wounds)
+	var/list/missing_limbs = user.get_missing_limbs()
+
+	regrow_progress = min(regrow_progress + 0.15 * delta_time, length(missing_limbs)) // one limb every 6 or so seconds
+
+	while(regrow_progress >= 1 && length(missing_limbs)) // making this nigh perfect is overkill but if you're gonna do it, then might as well go all the way
+		var/picked = pick(missing_limbs)
+		user.regenerate_limb(picked)
+		missing_limbs -= picked
+		regrow_progress--
+		var/zone_name = parse_zone(picked)
+		user.visible_message(
+			message = span_danger("[user]'s [zone_name] regrows!"),
+			self_message = span_green("Your [zone_name] regrows!"),
+			blind_message = span_hear("You hear a wet crunch.")
+		)
+		playsound(user, 'sound/magic/demon_consume.ogg', 50, TRUE)
+
+	for(var/datum/wound/wound as anything in user.all_wounds)
 		wound.heal(rand(0.05, 0.15) * delta_time) // variance to avoid getting multiple messages at once
 
 /atom/movable/screen/alert/status_effect/sacrifice

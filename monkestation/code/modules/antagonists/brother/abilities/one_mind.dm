@@ -83,11 +83,8 @@
 	owner_mob.ghostize(can_reenter_corpse = TRUE)
 	target_mob.ghostize(can_reenter_corpse = TRUE)
 
-	add_overlay(owner_mob, owner)
-	add_overlay(target_mob, target)
-
-	INVOKE_ASYNC(src, PROC_REF(finalize_swap), owner, target_mob) // async for lag mitigation
-	INVOKE_ASYNC(src, PROC_REF(finalize_swap), target, owner_mob)
+	finalize_swap(owner, target_mob)
+	finalize_swap(target, owner_mob)
 
 	owner_bond_ref = WEAKREF(owner_bond)
 	target_bond_ref = WEAKREF(target_bond)
@@ -135,6 +132,8 @@
 	to_chat(target_mob, span_boldnotice("You awaken in [target_mob]'s body!"))
 	target_mob.emote("blink") // if this results in a neck snap im going to laugh my ass off
 	SEND_SIGNAL(target_mob, COMSIG_BB_CLEAR_ABILITIES)
+	if(HAS_TRAIT(mind, TRAIT_ONE_MIND))
+		add_overlay(target_mob, mind)
 
 /datum/blood_brother_mind_swap/proc/try_return()
 	var/datum/antagonist/brother/owner_bond = owner_bond_ref?.resolve()
@@ -176,12 +175,10 @@
 	remove_overlay(owner_mob, owner)
 	remove_overlay(target_mob, target)
 
-	if(owner && target_mob)
-		INVOKE_ASYNC(src, PROC_REF(finalize_swap), owner, target_mob)
-	if(target && owner_mob)
-		INVOKE_ASYNC(src, PROC_REF(finalize_swap), target, owner_mob)
+	finalize_swap(owner, target_mob)
+	finalize_swap(target, owner_mob)
 
-	addtimer(CALLBACK(GLOBAL_PROC, GLOBAL_PROC_REF(qdel)), 10 SECONDS) // swapping minds is async and also doing this costs fuckall so it's probably fine
+	qdel(src)
 
 /datum/blood_brother_mind_swap/proc/has_trait(datum/target)
 	return HAS_TRAIT(target, TRAIT_ONE_MIND)

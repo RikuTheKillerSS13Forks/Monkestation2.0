@@ -41,8 +41,5 @@
 /// This can STILL break under extremely specific circumstances, but it's robust enough.
 #define TRAIT_ONE_MIND "one_mind"
 
-/// Source for traits added by the Sacrifice Blood Brother Ability.
-#define SACRIFICE_TRAIT "sacrifice"
-
 /// Trait added by all Blood Brother Sacrifice status effects.
 #define TRAIT_SACRIFICE "sacrifice"
