@@ -233,7 +233,6 @@
 	INVOKE_ASYNC(src, PROC_REF(wait_for_transfer))
 
 /datum/status_effect/sacrifice/proc/wait_for_transfer() // this is jank, but it's the most sane way i could think of
-	var/mob/living/owner = src.owner
 	var/datum/mind/mind = owner.mind
 	sleep(1) // if you SOMEHOW swap twice within this time, good fucking job, you broke it!
 	UnregisterSignal(mind, COMSIG_MIND_TRANSFERRED)
