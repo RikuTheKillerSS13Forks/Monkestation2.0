@@ -281,7 +281,7 @@
 	), REF(src))
 
 /datum/status_effect/sacrifice/true/tick(seconds_per_tick, times_fired)
-	var/delta_time = min(DELTA_WORLD_TIME(SSfastprocess), max(0, duration - world.time))
+	var/delta_time = min(DELTA_WORLD_TIME(SSfastprocess), max(0, duration - world.time)) // i want it to heal exactly 600 damage total and also lag is lame
 
 	REMOVE_TRAIT(owner, TRAIT_KNOCKEDOUT, CRIT_HEALTH_TRAIT) // copied from nooartrium, not entirely sure if they're needed but they're here anyway
 	REMOVE_TRAIT(owner, TRAIT_KNOCKEDOUT, OXYLOSS_TRAIT)
@@ -302,7 +302,7 @@
 		owner.updatehealth()
 
 	var/organ_heal = -5 * delta_time
-	owner.adjustOrganLoss(ORGAN_SLOT_BRAIN, organ_heal)
+	owner.adjustOrganLoss(ORGAN_SLOT_BRAIN, organ_heal * 2)
 	owner.adjustOrganLoss(ORGAN_SLOT_EYES, organ_heal)
 	owner.adjustOrganLoss(ORGAN_SLOT_EARS, organ_heal)
 	owner.adjustOrganLoss(ORGAN_SLOT_HEART, organ_heal)
