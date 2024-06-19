@@ -306,7 +306,7 @@
 
 	depresso_expresso = new
 	owner.vis_contents += depresso_expresso
-	animate(depresso_expresso, 0.5 SECONDS, easing = CUBIC_EASING, flags = ANIMATION_PARALLEL, alpha = 255)
+	animate(depresso_expresso, 0.5 SECONDS, easing = CUBIC_EASING, alpha = 255)
 
 	owner.add_traits(list(
 		TRAIT_NODEATH, // There is no immediate heal. That's why you get this instead.
@@ -331,7 +331,7 @@
 		return
 	var/mob/living/owner = src.owner
 	if(animate)
-		animate(depresso_expresso, 0.5 SECONDS, easing = CUBIC_EASING, flags = ANIMATION_PARALLEL, alpha = 0)
+		animate(depresso_expresso, 0.5 SECONDS, easing = CUBIC_EASING, alpha = 0)
 		sleep(0.55 SECONDS)
 	owner?.vis_contents -= depresso_expresso
 	QDEL_NULL(depresso_expresso)
