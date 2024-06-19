@@ -86,6 +86,9 @@
 	finalize_swap(owner, target_mob)
 	finalize_swap(target, owner_mob)
 
+	add_overlay(target_mob, owner)
+	add_overlay(owner_mob, target)
+
 	owner_bond_ref = WEAKREF(owner_bond)
 	target_bond_ref = WEAKREF(target_bond)
 
@@ -132,8 +135,6 @@
 	to_chat(target_mob, span_boldnotice("You awaken in [target_mob]'s body!"))
 	target_mob.emote("blink") // if this results in a neck snap im going to laugh my ass off
 	SEND_SIGNAL(target_mob, COMSIG_BB_CLEAR_ABILITIES)
-	if(HAS_TRAIT(mind, TRAIT_ONE_MIND))
-		add_overlay(target_mob, mind)
 
 /datum/blood_brother_mind_swap/proc/try_return()
 	var/datum/antagonist/brother/owner_bond = owner_bond_ref?.resolve()

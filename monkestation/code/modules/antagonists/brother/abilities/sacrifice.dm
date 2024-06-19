@@ -13,7 +13,7 @@
 	cooldown_time = 5 MINUTES
 
 	school = SCHOOL_NECROMANCY
-	antimagic_flags = MAGIC_RESISTANCE_MIND
+	antimagic_flags = NONE
 
 	invocation = "S'C 'RA'TH!"
 	invocation_type = INVOCATION_SHOUT
@@ -54,14 +54,18 @@
 	if(target_bond?.get_team() != team)
 		return
 
-	..() // it starts a cooldown and whatnot, the sacrifice proc overrides that
-
-	if(target.stat == DEAD)
+	if(target.stat == DEAD || HAS_TRAIT(target, TRAIT_CRITICAL_CONDITION))
 		true_sacrifice(target, target_bond)
+		return // this causes runtimes otherwise, we're gone anyway
 	else
 		sacrifice(target, target_bond)
 
 	return TRUE
+
+/datum/action/cooldown/spell/touch/sacrifice/StartCooldown(override_cooldown_time, override_melee_cooldown_time) // stupid hack to make the timer work properly
+	if(isnull(override_cooldown_time))
+		return
+	..()
 
 /datum/action/cooldown/spell/touch/sacrifice/proc/sacrifice(mob/living/target, datum/antagonist/brother/target_bond)
 	var/mob/living/owner = src.owner
@@ -80,7 +84,7 @@
 
 /datum/action/cooldown/spell/touch/sacrifice/proc/true_sacrifice(mob/living/target, datum/antagonist/brother/target_bond)
 	var/mob/living/owner = src.owner
-	var/datum/status_effect/sacrifice/target_status = target.apply_status_effect(/datum/status_effect/sacrifice/true)
+	target.apply_status_effect(/datum/status_effect/sacrifice/true)
 
 	owner.visible_message(
 		message = span_bolddanger("[owner] hits [target] with a glowing hand and burns to ashes as a glorious torrent of spiritual fire forms around [target]!"),
@@ -147,10 +151,11 @@
 	name = "Sacrifice"
 	desc = "A soft, yet fierce glow emanates from it. \
 		When used on one of your brothers, grants them power at the cost of your own. \
-		If used on a dead brother you'll sacrifice your life to revive them. \
+		If used on a brother that is dead or in critical state you'll sacrifice your life to revive them. \
 		Revival grants an <b>extremely</b> powerful boost."
 	icon = 'monkestation/icons/obj/weapons/hand.dmi'
 	icon_state = "sacrifice"
+	inhand_icon_state = "sacrifice"
 
 /datum/status_effect/sacrifice
 	id = "sacrifice"
@@ -163,16 +168,24 @@
 	var/strength = 0.3
 
 	var/outline_color = "#c60000"
+	var/outline_alpha_high = 150
+	var/outline_alpha_low = 100
+
+	var/list/filter_list = list()
+	var/filter_name = "sacrifice" // for whatever reason during testing i couldn't get mind swap to swap filters properly, this is a hacky fix but it works
 
 /datum/status_effect/sacrifice/on_creation(mob/living/new_owner, duration_override)
-	. = ..()
-	if(duration_override != null)
+	if(!isnull(duration_override))
 		duration = duration_override
-	var/datum/antagonist/brother/bond = owner.mind?.has_antag_datum(/datum/antagonist/brother)
+	var/datum/antagonist/brother/bond = new_owner.mind?.has_antag_datum(/datum/antagonist/brother)
 	bond?.sacrifice_action?.StartCooldown(duration) // do not move this, it's here for a reason
+	. = ..()
 
 /datum/status_effect/sacrifice/on_apply()
-	owner.add_filter(id, 2, outline_filter(color = outline_color, size = 1))
+	filter_list += filter_name
+	owner.add_filter(filter_name, 2, list("type" = "outline", "color" = outline_color, "size" = 1.5, "alpha" = 0))
+	animate(owner.get_filter(filter_name), time = 0.5 SECONDS, loop = -1, easing = CUBIC_EASING, alpha = outline_alpha_high)
+	animate(time = 0.5 SECONDS, easing = CUBIC_EASING, alpha = outline_alpha_low)
 
 	ADD_TRAIT(owner, TRAIT_SACRIFICE, REF(src))
 
@@ -199,7 +212,7 @@
 	return TRUE
 
 /datum/status_effect/sacrifice/on_remove(wait_for_transfer)
-	owner.remove_filter(id)
+	remove_filters()
 
 	REMOVE_TRAITS_IN(owner, REF(src))
 
@@ -226,11 +239,32 @@
 	physiology.bleed_mod /= multiplier
 
 	var/datum/antagonist/brother/bond = owner.mind?.has_antag_datum(/datum/antagonist/brother)
-	bond?.sacrifice_action?.StartCooldown() // real cooldown
+	bond?.sacrifice_action?.StartCooldown(bond.sacrifice_action.cooldown_time) // real cooldown (yes, you have to override it, don't ask why)
 
 /datum/status_effect/sacrifice/be_replaced()
+	remove_filters(animate = FALSE)
 	on_remove(wait_for_transfer = TRUE)
 	INVOKE_ASYNC(src, PROC_REF(wait_for_transfer))
+
+/datum/status_effect/sacrifice/proc/remove_filters(animate = TRUE)
+	for(var/filter_name as anything in filter_list)
+		if(animate)
+			INVOKE_ASYNC(src, PROC_REF(remove_filters_animation), animate, filter_name)
+		else
+			remove_filters_animation(animate, filter_name)
+	filter_list = list()
+
+/datum/status_effect/sacrifice/proc/remove_filters_animation(animate, name)
+	if(QDELETED(src.owner))
+		return
+	var/mob/living/owner = src.owner
+	var/filter = owner.get_filter(name)
+	if(!filter)
+		return
+	if(animate)
+		animate(filter, 0.5 SECONDS, easing = CUBIC_EASING, alpha = 0)
+		sleep(0.55 SECONDS)
+	owner?.remove_filter(name)
 
 /datum/status_effect/sacrifice/proc/wait_for_transfer() // this is jank, but it's the most sane way i could think of
 	var/datum/mind/mind = owner.mind
@@ -245,9 +279,9 @@
 
 /datum/status_effect/sacrifice/proc/on_mind_transferred(datum/mind/mind, mob/living/previous_body)
 	SIGNAL_HANDLER
-	if(!QDELETED(src))
-		previous_body?.remove_status_effect(type)
-	var/datum/status_effect/new_effect = mind.current.apply_status_effect(type, duration)
+	remove_filters(animate = FALSE)
+	previous_body?.remove_status_effect(type)
+	var/datum/status_effect/new_effect = mind.current.apply_status_effect(type, duration - world.time)
 	var/datum/status_effect/sacrifice/pair = pair_ref?.resolve()
 	pair?.pair_ref = WEAKREF(new_effect)
 
@@ -255,17 +289,27 @@
 	alert_type = /atom/movable/screen/alert/status_effect/sacrifice/debuff
 	strength = -0.3
 	outline_color = "#00afc6"
+	filter_name = "sacrifice_debuff"
 
 /datum/status_effect/sacrifice/true  // now, you'd think this is too much effort, but considering you have to round remove yourself to activate this, i just had to reward em ya know?
 	duration = 30 SECONDS // shorter, but way, way stronger
 	alert_type = /atom/movable/screen/alert/status_effect/sacrifice/true
 	strength = 0.5
-	outline_color = "#e40000"
+	outline_color = "#6d00a8"
+	outline_alpha_high = 200
+	outline_alpha_low = 150
+	filter_name = "sacrifice_true"
 
 	var/regrow_progress = 0
 
 /datum/status_effect/sacrifice/true/on_apply()
 	. = ..()
+
+	//var/datum/antagonist/brother/bond = owner.mind?.has_antag_datum(/datum/antagonist/brother)
+
+	filter_list += "depresso_expresso"
+	owner.add_filter("depresso_expresso", 3, list("type" = "layer", "icon" = icon('monkestation/icons/effects/brother.dmi', "sacrifice"), "blend_mode" = BLEND_INSET_OVERLAY, "alpha" = 0))
+	animate(owner.get_filter("depresso_expresso"), 0.5 SECONDS, easing = CUBIC_EASING, alpha = 255)
 
 	owner.add_traits(list(
 		TRAIT_NODEATH, // There is no immediate heal. That's why you get this instead.
@@ -281,7 +325,10 @@
 	), REF(src))
 
 /datum/status_effect/sacrifice/true/tick(seconds_per_tick, times_fired)
-	var/delta_time = min(DELTA_WORLD_TIME(SSfastprocess), max(0, duration - world.time)) // i want it to heal exactly 600 damage total and also lag is lame
+	var/delta_time = min(DELTA_WORLD_TIME(SSfastprocess), duration - world.time) // lag is lame
+
+	if(delta_time <= 0) // no reverse or false ticks for you mate (and yes, this results in a division by 0, very funny)
+		return
 
 	REMOVE_TRAIT(owner, TRAIT_KNOCKEDOUT, CRIT_HEALTH_TRAIT) // copied from nooartrium, not entirely sure if they're needed but they're here anyway
 	REMOVE_TRAIT(owner, TRAIT_KNOCKEDOUT, OXYLOSS_TRAIT)
@@ -296,13 +343,13 @@
 	if(divisor > 0)
 		owner.adjustBruteLoss(-brute / divisor, updating_health = FALSE)
 		owner.adjustFireLoss(-burn / divisor, updating_health = FALSE)
-		owner.adjustToxLoss(-tox / divisor, updating_health = FALSE, forced = TRUE)
+		owner.adjustToxLoss(-tox / divisor, updating_health = FALSE, forced = TRUE) // if this wasn't forced oozelings would die hilariously fast
 		owner.adjustOxyLoss(-oxy / divisor, updating_health = FALSE)
 		owner.adjustCloneLoss(-clone / divisor, updating_health = FALSE)
 		owner.updatehealth()
 
 	var/organ_heal = -5 * delta_time
-	owner.adjustOrganLoss(ORGAN_SLOT_BRAIN, organ_heal * 2)
+	owner.adjustOrganLoss(ORGAN_SLOT_BRAIN, organ_heal * 2) // the brain has twice as much max health and i want it to be fully healed by the end of this
 	owner.adjustOrganLoss(ORGAN_SLOT_EYES, organ_heal)
 	owner.adjustOrganLoss(ORGAN_SLOT_EARS, organ_heal)
 	owner.adjustOrganLoss(ORGAN_SLOT_HEART, organ_heal)
@@ -319,7 +366,7 @@
 
 	var/list/missing_limbs = user.get_missing_limbs()
 
-	regrow_progress = min(regrow_progress + 0.15 * delta_time, length(missing_limbs)) // one limb every 6 or so seconds
+	regrow_progress = min(regrow_progress + 0.2 * delta_time, length(missing_limbs)) // one limb every 5 or so seconds
 
 	while(regrow_progress >= 1 && length(missing_limbs)) // making this nigh perfect is overkill but if you're gonna do it, then might as well go all the way
 		var/picked = pick(missing_limbs)
@@ -350,5 +397,5 @@
 
 /atom/movable/screen/alert/status_effect/sacrifice/true
 	name = "True Sacrifice"
-	desc = span_bolddanger("ONE LAST STAND!!")
+	desc = "ONE LAST STAND!!"
 	icon_state = "sacrifice_true"
