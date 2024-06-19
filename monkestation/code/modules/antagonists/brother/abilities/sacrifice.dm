@@ -170,8 +170,6 @@
 	var/outline_alpha_high = 150
 	var/outline_alpha_low = 100
 
-	var/filter_name = "sacrifice" // for whatever reason during testing i couldn't get mind swap to swap filters properly, this is a hacky fix but it works
-
 /datum/status_effect/sacrifice/on_creation(mob/living/new_owner, duration_override)
 	if(!isnull(duration_override))
 		duration = duration_override
@@ -180,8 +178,8 @@
 	. = ..()
 
 /datum/status_effect/sacrifice/on_apply()
-	owner.add_filter(filter_name, 3, list("type" = "outline", "color" = outline_color, "size" = 1.5, "alpha" = 0))
-	animate(owner.get_filter(filter_name), time = 0.5 SECONDS, loop = -1, easing = CUBIC_EASING, flags = ANIMATION_PARALLEL, alpha = outline_alpha_high)
+	owner.add_filter(id, 3, list("type" = "outline", "color" = outline_color, "size" = 1.5, "alpha" = 0))
+	animate(owner.get_filter(id), time = 0.5 SECONDS, loop = -1, easing = CUBIC_EASING, flags = ANIMATION_PARALLEL, alpha = outline_alpha_high)
 	animate(time = 0.5 SECONDS, easing = CUBIC_EASING, alpha = outline_alpha_low)
 
 	ADD_TRAIT(owner, TRAIT_SACRIFICE, REF(src))
@@ -244,7 +242,7 @@
 	INVOKE_ASYNC(src, PROC_REF(wait_for_transfer))
 
 /datum/status_effect/sacrifice/proc/remove_filters(animate = TRUE)
-	INVOKE_ASYNC(src, PROC_REF(remove_filter_animation), animate, filter_name)
+	INVOKE_ASYNC(src, PROC_REF(remove_filter_animation), animate, id)
 
 /datum/status_effect/sacrifice/proc/remove_filter_animation(animate, name)
 	if(QDELETED(src.owner))
@@ -281,7 +279,16 @@
 	alert_type = /atom/movable/screen/alert/status_effect/sacrifice/debuff
 	strength = -0.3
 	outline_color = "#00afc6"
-	filter_name = "sacrifice_debuff"
+
+/obj/effect/abstract/sacrifice_depression
+	name = "Depression"
+	alpha = 0
+	anchored = TRUE
+	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
+	icon = 'monkestation/icons/effects/brother.dmi'
+	icon_state = "sacrifice"
+	vis_flags = VIS_INHERIT_PLANE | VIS_INHERIT_LAYER
+	blend_mode = BLEND_INSET_OVERLAY
 
 /datum/status_effect/sacrifice/true  // now, you'd think this is too much effort, but considering you have to round remove yourself to activate this, i just had to reward em ya know?
 	duration = 30 SECONDS // shorter, but way, way stronger
@@ -290,19 +297,16 @@
 	outline_color = "#6d00a8"
 	outline_alpha_high = 200
 	outline_alpha_low = 150
-	filter_name = "sacrifice_true"
 
 	var/regrow_progress = 0
-	var/image/depresso_expresso
+	var/obj/effect/abstract/sacrifice_depression/depresso_expresso
 
 /datum/status_effect/sacrifice/true/on_apply()
 	. = ..()
 
-	depresso_expresso = image(icon = 'monkestation/icons/effects/brother.dmi', icon_state = "sacrifice")
-	depresso_expresso.alpha = 0
-	depresso_expresso.blend_mode = BLEND_INSET_OVERLAY
-	owner.add_overlay(depresso_expresso)
-	animate(depresso_expresso, 0.5 SECONDS, easing = CUBIC_EASING, alpha = 255)
+	depresso_expresso = new
+	owner.vis_contents += depresso_expresso
+	animate(depresso_expresso, 0.5 SECONDS, easing = CUBIC_EASING, flags = ANIMATION_PARALLEL, alpha = 255)
 
 	owner.add_traits(list(
 		TRAIT_NODEATH, // There is no immediate heal. That's why you get this instead.
@@ -327,9 +331,9 @@
 		return
 	var/mob/living/owner = src.owner
 	if(animate)
-		animate(depresso_expresso, 0.5 SECONDS, easing = CUBIC_EASING, alpha = 0)
+		animate(depresso_expresso, 0.5 SECONDS, easing = CUBIC_EASING, flags = ANIMATION_PARALLEL, alpha = 0)
 		sleep(0.55 SECONDS)
-	owner?.cut_overlay(depresso_expresso)
+	owner?.vis_contents -= depresso_expresso
 	QDEL_NULL(depresso_expresso)
 
 /datum/status_effect/sacrifice/true/tick(seconds_per_tick, times_fired)
