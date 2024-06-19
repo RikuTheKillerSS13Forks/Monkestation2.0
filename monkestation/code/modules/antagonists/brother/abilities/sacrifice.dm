@@ -248,10 +248,7 @@
 
 /datum/status_effect/sacrifice/proc/remove_filters(animate = TRUE)
 	for(var/filter_name as anything in filter_list)
-		if(animate)
-			INVOKE_ASYNC(src, PROC_REF(remove_filters_animation), animate, filter_name)
-		else
-			remove_filters_animation(animate, filter_name)
+		INVOKE_ASYNC(src, PROC_REF(remove_filters_animation), animate, filter_name)
 	filter_list = list()
 
 /datum/status_effect/sacrifice/proc/remove_filters_animation(animate, name)
