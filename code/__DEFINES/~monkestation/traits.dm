@@ -43,3 +43,6 @@
 
 /// Trait added by all Blood Brother Sacrifice status effects.
 #define TRAIT_SACRIFICE "sacrifice"
+
+/// Doesn't pass out from having more than 50 oxyloss.
+#define TRAIT_NOPASSOUT "no_pass_out"

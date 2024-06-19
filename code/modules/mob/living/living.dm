@@ -436,17 +436,17 @@
 	var/target_pixel_y = M.base_pixel_y + M.body_position_pixel_y_offset
 	switch(M.dir)
 		if(NORTH)
-			animate(M, pixel_x = target_pixel_x, pixel_y = target_pixel_y + offset, 3)
+			animate(M, pixel_x = target_pixel_x, pixel_y = target_pixel_y + offset, 3, flags = ANIMATION_PARALLEL) // MONKESTATION EDIT: Make these use ANIMATION_PARALLEL to fix stuff like glow animations being ended.
 		if(SOUTH)
-			animate(M, pixel_x = target_pixel_x, pixel_y = target_pixel_y - offset, 3)
+			animate(M, pixel_x = target_pixel_x, pixel_y = target_pixel_y - offset, 3, flags = ANIMATION_PARALLEL)
 		if(EAST)
 			if(M.lying_angle == 270) //update the dragged dude's direction if we've turned
 				M.set_lying_angle(90)
-			animate(M, pixel_x = target_pixel_x + offset, pixel_y = target_pixel_y, 3)
+			animate(M, pixel_x = target_pixel_x + offset, pixel_y = target_pixel_y, 3, flags = ANIMATION_PARALLEL)
 		if(WEST)
 			if(M.lying_angle == 90)
 				M.set_lying_angle(270)
-			animate(M, pixel_x = target_pixel_x - offset, pixel_y = target_pixel_y, 3)
+			animate(M, pixel_x = target_pixel_x - offset, pixel_y = target_pixel_y, 3, flags = ANIMATION_PARALLEL)
 
 /mob/living/proc/reset_pull_offsets(mob/living/M, override)
 	if(!override && M.buckled)
@@ -968,7 +968,7 @@
 /// Checks if we are actually able to ressuscitate this mob.
 /// (We don't want to revive then to have them instantly die again)
 /mob/living/proc/can_be_revived()
-	if(health <= HEALTH_THRESHOLD_DEAD)
+	if(health <= HEALTH_THRESHOLD_DEAD && !HAS_TRAIT(src, TRAIT_NODEATH)) // MONKESTATION EDIT: Update can_be_revived to take TRAIT_NODEATH into account.
 		return FALSE
 	return TRUE
 

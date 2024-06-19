@@ -157,9 +157,11 @@
 	if(new_current && QDELETED(new_current))
 		CRASH("Tried to set a mind's current var to a qdeleted mob, what the fuck")
 	if(current)
+		UnregisterSignal(current, COMSIG_LIVING_DEATH) // MONKESTATION EDIT: Register our signals in set_current instead of transfer_to. Fixes a mind swap runtime.
 		UnregisterSignal(src, COMSIG_QDELETING)
 	current = new_current
 	if(current)
+		RegisterSignal(new_current, COMSIG_LIVING_DEATH, PROC_REF(set_death_time))
 		RegisterSignal(src, COMSIG_QDELETING, PROC_REF(clear_current))
 
 /datum/mind/proc/clear_current(datum/source)
@@ -175,7 +177,6 @@
 	set_original_character(null)
 	if(current) // remove ourself from our old body's mind variable
 		current.mind = null
-		UnregisterSignal(current, COMSIG_LIVING_DEATH)
 		SStgui.on_transfer(current, new_character)
 
 	if(key)
@@ -201,7 +202,6 @@
 		var/mob/living/carbon/C = new_character
 		C.last_mind = src
 	transfer_martial_arts(new_character)
-	RegisterSignal(new_character, COMSIG_LIVING_DEATH, PROC_REF(set_death_time))
 	if(active || force_key_move)
 		new_character.key = key //now transfer the key to link the client to our new body
 	if(new_character.client)

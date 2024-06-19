@@ -54,13 +54,15 @@
 	if(target_bond?.get_team() != team)
 		return
 
+	log_combat(caster, victim, "cast the touch spell [name] on", hand) // this is due to the fact true_sacrifice can fucking obliterate us before we get a chance to speak
+	spell_feedback()
+	remove_hand(caster)
+
 	if(target.stat == DEAD || HAS_TRAIT(target, TRAIT_CRITICAL_CONDITION))
 		true_sacrifice(target, target_bond)
 		return // this causes runtimes otherwise, we're gone anyway
 	else
 		sacrifice(target, target_bond)
-
-	return TRUE
 
 /datum/action/cooldown/spell/touch/sacrifice/StartCooldown(override_cooldown_time, override_melee_cooldown_time) // stupid hack to make the timer work properly
 	if(isnull(override_cooldown_time))
@@ -93,16 +95,13 @@
 		ignored_mobs = list(target)
 	)
 
-	REMOVE_TRAIT(target, TRAIT_KNOCKEDOUT, STAT_TRAIT)
-	REMOVE_TRAIT(target, TRAIT_KNOCKEDOUT, CRIT_HEALTH_TRAIT)
-	REMOVE_TRAIT(target, TRAIT_KNOCKEDOUT, OXYLOSS_TRAIT)
+	target.cure_husk()
 
-	target.set_stat(CONSCIOUS) // bypasses can_be_revived, also used by nooartrium
-	target.updatehealth()
-	target.update_sight()
+	if (target.stat == DEAD)
+		target.revive()
+
 	target.set_resting(FALSE, silent = TRUE, instant = TRUE) // wake up bro i kms to fix your ass
 	target.SetAllImmobility(0)
-	target.grab_ghost(force = FALSE)
 	target.emote("gasp")
 
 	to_chat(target, span_userdanger("[owner] sacrificed [owner.p_them()]self for you!"))
@@ -171,7 +170,6 @@
 	var/outline_alpha_high = 150
 	var/outline_alpha_low = 100
 
-	var/list/filter_list = list()
 	var/filter_name = "sacrifice" // for whatever reason during testing i couldn't get mind swap to swap filters properly, this is a hacky fix but it works
 
 /datum/status_effect/sacrifice/on_creation(mob/living/new_owner, duration_override)
@@ -182,9 +180,8 @@
 	. = ..()
 
 /datum/status_effect/sacrifice/on_apply()
-	filter_list += filter_name
-	owner.add_filter(filter_name, 2, list("type" = "outline", "color" = outline_color, "size" = 1.5, "alpha" = 0))
-	animate(owner.get_filter(filter_name), time = 0.5 SECONDS, loop = -1, easing = CUBIC_EASING, alpha = outline_alpha_high)
+	owner.add_filter(filter_name, 3, list("type" = "outline", "color" = outline_color, "size" = 1.5, "alpha" = 0))
+	animate(owner.get_filter(filter_name), time = 0.5 SECONDS, loop = -1, easing = CUBIC_EASING, flags = ANIMATION_PARALLEL, alpha = outline_alpha_high)
 	animate(time = 0.5 SECONDS, easing = CUBIC_EASING, alpha = outline_alpha_low)
 
 	ADD_TRAIT(owner, TRAIT_SACRIFICE, REF(src))
@@ -247,11 +244,9 @@
 	INVOKE_ASYNC(src, PROC_REF(wait_for_transfer))
 
 /datum/status_effect/sacrifice/proc/remove_filters(animate = TRUE)
-	for(var/filter_name as anything in filter_list)
-		INVOKE_ASYNC(src, PROC_REF(remove_filters_animation), animate, filter_name)
-	filter_list = list()
+	INVOKE_ASYNC(src, PROC_REF(remove_filter_animation), animate, filter_name)
 
-/datum/status_effect/sacrifice/proc/remove_filters_animation(animate, name)
+/datum/status_effect/sacrifice/proc/remove_filter_animation(animate, name)
 	if(QDELETED(src.owner))
 		return
 	var/mob/living/owner = src.owner
@@ -259,7 +254,7 @@
 	if(!filter)
 		return
 	if(animate)
-		animate(filter, 0.5 SECONDS, easing = CUBIC_EASING, alpha = 0)
+		animate(filter, 0.5 SECONDS, easing = CUBIC_EASING, flags = ANIMATION_PARALLEL, alpha = 0)
 		sleep(0.55 SECONDS)
 	owner?.remove_filter(name)
 
@@ -298,15 +293,16 @@
 	filter_name = "sacrifice_true"
 
 	var/regrow_progress = 0
+	var/image/depresso_expresso
 
 /datum/status_effect/sacrifice/true/on_apply()
 	. = ..()
 
-	//var/datum/antagonist/brother/bond = owner.mind?.has_antag_datum(/datum/antagonist/brother)
-
-	filter_list += "depresso_expresso"
-	owner.add_filter("depresso_expresso", 3, list("type" = "layer", "icon" = icon('monkestation/icons/effects/brother.dmi', "sacrifice"), "blend_mode" = BLEND_INSET_OVERLAY, "alpha" = 0))
-	animate(owner.get_filter("depresso_expresso"), 0.5 SECONDS, easing = CUBIC_EASING, alpha = 255)
+	depresso_expresso = image(icon = 'monkestation/icons/effects/brother.dmi', icon_state = "sacrifice")
+	depresso_expresso.alpha = 0
+	depresso_expresso.blend_mode = BLEND_INSET_OVERLAY
+	owner.add_overlay(depresso_expresso)
+	animate(depresso_expresso, 0.5 SECONDS, easing = CUBIC_EASING, alpha = 255)
 
 	owner.add_traits(list(
 		TRAIT_NODEATH, // There is no immediate heal. That's why you get this instead.
@@ -319,16 +315,28 @@
 		TRAIT_STABLELIVER, // You get to ignore your drinking problem, at least temporarily.
 		TRAIT_NOLIMBDISABLE, // Imagine if they got revived only to be fucking handicapped. That'd suck.
 		TRAIT_SLEEPIMMUNE, // This would probably be the worst out of all of them if I let it happen.
+		TRAIT_NOPASSOUT, // Prevents oxyloss from making them pass out for obvious reasons.
 	), REF(src))
+
+/datum/status_effect/sacrifice/true/remove_filters(animate)
+	. = ..()
+	INVOKE_ASYNC(src, PROC_REF(remove_overlay), animate)
+
+/datum/status_effect/sacrifice/true/proc/remove_overlay(animate)
+	if(QDELETED(src.owner))
+		return
+	var/mob/living/owner = src.owner
+	if(animate)
+		animate(depresso_expresso, 0.5 SECONDS, easing = CUBIC_EASING, alpha = 0)
+		sleep(0.55 SECONDS)
+	owner?.cut_overlay(depresso_expresso)
+	QDEL_NULL(depresso_expresso)
 
 /datum/status_effect/sacrifice/true/tick(seconds_per_tick, times_fired)
 	var/delta_time = min(DELTA_WORLD_TIME(SSfastprocess), duration - world.time) // lag is lame
 
 	if(delta_time <= 0) // no reverse or false ticks for you mate (and yes, this results in a division by 0, very funny)
 		return
-
-	REMOVE_TRAIT(owner, TRAIT_KNOCKEDOUT, CRIT_HEALTH_TRAIT) // copied from nooartrium, not entirely sure if they're needed but they're here anyway
-	REMOVE_TRAIT(owner, TRAIT_KNOCKEDOUT, OXYLOSS_TRAIT)
 
 	var/brute = owner.getBruteLoss()
 	var/burn = owner.getFireLoss()
