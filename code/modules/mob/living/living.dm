@@ -436,7 +436,7 @@
 	var/target_pixel_y = M.base_pixel_y + M.body_position_pixel_y_offset
 	switch(M.dir)
 		if(NORTH)
-			animate(M, pixel_x = target_pixel_x, pixel_y = target_pixel_y + offset, 3, flags = ANIMATION_PARALLEL) // MONKESTATION EDIT: Make these use ANIMATION_PARALLEL to fix stuff like glow animations being ended.
+			animate(M, pixel_x = target_pixel_x, pixel_y = target_pixel_y + offset, 3, flags = ANIMATION_PARALLEL) // MONKESTATION EDIT: Make these use ANIMATION_PARALLEL to fix certain animations ending.
 		if(SOUTH)
 			animate(M, pixel_x = target_pixel_x, pixel_y = target_pixel_y - offset, 3, flags = ANIMATION_PARALLEL)
 		if(EAST)
