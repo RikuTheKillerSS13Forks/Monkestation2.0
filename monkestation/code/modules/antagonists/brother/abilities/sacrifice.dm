@@ -29,6 +29,20 @@
 		CRASH("Attempted to create [type] without an associated antag datum!")
 	bond = target
 	team = target.get_team()
+	var/mob/living/owner = bond.owner.current
+	owner.add_filter("test", 3, outline_filter(color = "#6b008987", size = 2))
+	var/obj/effect/abstract/sacrifice_fire/fire_underlay = new
+	fire_underlay.add_filter("outline", 3, outline_filter(color = "#ffffff02", size = 2))
+	var/mutable_appearance/the_actual_fire = mutable_appearance('monkestation/icons/effects/brother_64x64.dmi', "sacrifice_fire")
+	the_actual_fire.blend_mode = BLEND_INSET_OVERLAY | BLEND_MULTIPLY
+	the_actual_fire.pixel_x = -16
+	the_actual_fire.pixel_y = -16
+	fire_underlay.add_overlay(the_actual_fire) // THIS IS SO FUCKING CURSED LMAO
+	owner.vis_contents += fire_underlay
+	animate(fire_underlay, 0.5 SECONDS, easing = CUBIC_EASING, alpha = 255)
+	var/obj/effect/abstract/sacrifice_depression/depression_overlay = new
+	owner.vis_contents += depression_overlay
+	animate(depression_overlay, 0.5 SECONDS, easing = CUBIC_EASING, alpha = 255)
 	return ..()
 
 /datum/action/cooldown/spell/touch/sacrifice/IsAvailable(feedback)
@@ -178,9 +192,7 @@
 	. = ..()
 
 /datum/status_effect/sacrifice/on_apply()
-	owner.add_filter(id, 3, list("type" = "outline", "color" = outline_color, "size" = 1.5, "alpha" = 0))
-	animate(owner.get_filter(id), time = 0.5 SECONDS, loop = -1, easing = CUBIC_EASING, flags = ANIMATION_PARALLEL, alpha = outline_alpha_high)
-	animate(time = 0.5 SECONDS, easing = CUBIC_EASING, alpha = outline_alpha_low)
+	apply_filters()
 
 	ADD_TRAIT(owner, TRAIT_SACRIFICE, REF(src))
 
@@ -241,6 +253,11 @@
 	on_remove(wait_for_transfer = TRUE)
 	INVOKE_ASYNC(src, PROC_REF(wait_for_transfer))
 
+/datum/status_effect/sacrifice/proc/apply_filters()
+	owner.add_filter(id, 3, list("type" = "outline", "color" = outline_color, "size" = 1.5, "alpha" = 0))
+	animate(owner.get_filter(id), time = 0.5 SECONDS, loop = -1, easing = CUBIC_EASING, flags = ANIMATION_PARALLEL, alpha = outline_alpha_high)
+	animate(time = 0.5 SECONDS, easing = CUBIC_EASING, alpha = outline_alpha_low)
+
 /datum/status_effect/sacrifice/proc/remove_filters(animate = TRUE)
 	INVOKE_ASYNC(src, PROC_REF(remove_filter_animation), animate, id)
 
@@ -281,32 +298,38 @@
 	outline_color = "#00afc6"
 
 /obj/effect/abstract/sacrifice_depression
-	name = "Depression"
+	name = "depression"
 	alpha = 0
 	anchored = TRUE
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
-	icon = 'monkestation/icons/effects/brother.dmi'
-	icon_state = "sacrifice"
-	vis_flags = VIS_INHERIT_PLANE | VIS_INHERIT_LAYER
+	icon = 'monkestation/icons/effects/brother_64x64.dmi'
+	icon_state = "sacrifice_depression"
+	vis_flags = VIS_INHERIT_PLANE | VIS_INHERIT_LAYER | VIS_INHERIT_ID
 	blend_mode = BLEND_INSET_OVERLAY
+	pixel_x = -16
+	pixel_y = -16
+
+/obj/effect/abstract/sacrifice_fire
+	name = "fire"
+	alpha = 0
+	color = "#a200caa2"
+	anchored = TRUE
+	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
+	vis_flags = VIS_INHERIT_PLANE | VIS_INHERIT_LAYER | VIS_INHERIT_ID | VIS_UNDERLAY | VIS_INHERIT_DIR | VIS_INHERIT_ICON | VIS_INHERIT_ICON_STATE // I don't know why this combination works. It just does.
+	appearance_flags = TILE_BOUND | PIXEL_SCALE | LONG_GLIDE | KEEP_APART // KEEP_APART is *important* for this. Otherwise the outline will get cut off at 1 pixel. Why 1 pixel specifically? I don't fucking know.
 
 /datum/status_effect/sacrifice/true  // now, you'd think this is too much effort, but considering you have to round remove yourself to activate this, i just had to reward em ya know?
 	duration = 30 SECONDS // shorter, but way, way stronger
 	alert_type = /atom/movable/screen/alert/status_effect/sacrifice/true
 	strength = 0.5
-	outline_color = "#6d00a8"
-	outline_alpha_high = 200
-	outline_alpha_low = 150
 
-	var/regrow_progress = 0
-	var/obj/effect/abstract/sacrifice_depression/depresso_expresso
+	var/organ_regrow_progress = 0
+	var/limb_regrow_progress = 0
+	var/obj/effect/abstract/sacrifice_depression/depression_overlay
+	var/obj/effect/abstract/sacrifice_fire/fire_underlay
 
 /datum/status_effect/sacrifice/true/on_apply()
 	. = ..()
-
-	depresso_expresso = new
-	owner.vis_contents += depresso_expresso
-	animate(depresso_expresso, 0.5 SECONDS, easing = CUBIC_EASING, alpha = 255)
 
 	owner.add_traits(list(
 		TRAIT_NODEATH, // There is no immediate heal. That's why you get this instead.
@@ -322,21 +345,39 @@
 		TRAIT_NOPASSOUT, // Prevents oxyloss from making them pass out for obvious reasons.
 	), REF(src))
 
+/datum/status_effect/sacrifice/true/apply_filters()
+	owner.add_filter(id, 3, outline_filter(color = "#00000000", size = 3))
+	fire_underlay = new
+	fire_underlay.add_filter("outline", 3, outline_filter(color = "#00000000", size = 3))
+	var/mutable_appearance/the_actual_fire = mutable_appearance('monkestation/icons/effects/brother_64x64.dmi', "sacrifice_fire")
+	the_actual_fire.blend_mode = BLEND_INSET_OVERLAY
+	fire_underlay.add_overlay(the_actual_fire) // THIS IS SO FUCKING CURSED LMAO
+	owner.vis_contents += fire_underlay
+	animate(fire_underlay, 0.5 SECONDS, easing = CUBIC_EASING, alpha = 255)
+
+	if(!ishuman(owner)) // if they're not human, don't give them the depression overlay
+		return
+
+	depression_overlay = new
+	owner.vis_contents += depression_overlay
+	animate(depression_overlay, 0.5 SECONDS, easing = CUBIC_EASING, alpha = 255)
+
 /datum/status_effect/sacrifice/true/remove_filters(animate)
 	. = ..()
-	INVOKE_ASYNC(src, PROC_REF(remove_overlay), animate)
+	INVOKE_ASYNC(src, PROC_REF(remove_effect), depression_overlay, animate)
+	INVOKE_ASYNC(src, PROC_REF(remove_effect), fire_underlay, animate)
 
-/datum/status_effect/sacrifice/true/proc/remove_overlay(animate)
-	if(QDELETED(src.owner))
+/datum/status_effect/sacrifice/true/proc/remove_effect(effect, animate)
+	if(QDELETED(src.owner) || !effect)
 		return
 	var/mob/living/owner = src.owner
 	if(animate)
-		animate(depresso_expresso, 0.5 SECONDS, easing = CUBIC_EASING, alpha = 0)
+		animate(effect, 0.5 SECONDS, easing = CUBIC_EASING, alpha = 0)
 		sleep(0.55 SECONDS)
-	owner?.vis_contents -= depresso_expresso
-	QDEL_NULL(depresso_expresso)
+	owner?.vis_contents -= effect
+	QDEL_NULL(effect)
 
-/datum/status_effect/sacrifice/true/tick(seconds_per_tick, times_fired)
+/datum/status_effect/sacrifice/true/tick(seconds_per_tick, times_fired) // this is hella taxing, but its a high priority effect and i want it to be smooth
 	var/delta_time = min(DELTA_WORLD_TIME(SSfastprocess), duration - world.time) // lag is lame
 
 	if(delta_time <= 0) // no reverse or false ticks for you mate (and yes, this results in a division by 0, very funny)
@@ -357,31 +398,64 @@
 		owner.adjustCloneLoss(-clone / divisor, updating_health = FALSE)
 		owner.updatehealth()
 
-	var/organ_heal = -5 * delta_time
-	owner.adjustOrganLoss(ORGAN_SLOT_BRAIN, organ_heal * 2) // the brain has twice as much max health and i want it to be fully healed by the end of this
-	owner.adjustOrganLoss(ORGAN_SLOT_EYES, organ_heal)
+	var/organ_heal = -20 * delta_time // 1 organ takes 5 seconds to get to full health, 6th organ regrow is at 24s, barely enough to heal all 6
+	owner.adjustOrganLoss(ORGAN_SLOT_BRAIN, organ_heal * 2) // the brain has twice as much max health
+	owner.adjustOrganLoss(ORGAN_SLOT_EYES, organ_heal) // these have less but i want them to heal super quickly anyway
 	owner.adjustOrganLoss(ORGAN_SLOT_EARS, organ_heal)
 	owner.adjustOrganLoss(ORGAN_SLOT_HEART, organ_heal)
 	owner.adjustOrganLoss(ORGAN_SLOT_LUNGS, organ_heal)
 	owner.adjustOrganLoss(ORGAN_SLOT_STOMACH, organ_heal)
 	owner.adjustOrganLoss(ORGAN_SLOT_LIVER, organ_heal)
+	owner.adjustOrganLoss(ORGAN_SLOT_APPENDIX, organ_heal)
 
 	if(owner.blood_volume < BLOOD_VOLUME_NORMAL)
 		owner.blood_volume = min(owner.blood_volume + 10 * delta_time, BLOOD_VOLUME_NORMAL)
+
+	owner.adjust_disgust(-delta_time * (0.05 * DISGUST_LEVEL_MAXEDOUT))
 
 	var/mob/living/carbon/user = owner
 	if(!istype(user))
 		return
 
+	var/list/organ_slots = list( // only restores vital organs (except the brain), this is in order of priority unlike limbs
+		ORGAN_SLOT_HEART,
+		ORGAN_SLOT_LUNGS,
+		ORGAN_SLOT_EYES,
+		ORGAN_SLOT_EARS,
+		ORGAN_SLOT_LIVER,
+		ORGAN_SLOT_STOMACH,
+	)
+
+	var/list/new_organs = list()
+
+	for(var/slot as anything in organ_slots)
+		var/obj/item/organ/new_organ = user.dna?.species?.get_mutant_organ_type_for_slot(slot)
+		if(!new_organ)
+			continue
+
+		var/obj/item/organ/existing_organ = user.get_organ_slot(slot)
+		if(existing_organ)
+			continue
+
+		new_organs += new_organ
+
+	organ_regrow_progress = min(organ_regrow_progress + 0.25 * delta_time, length(new_organs)) // 1 organ every 4 or so seconds, results in a maximum of 7 organs regrown (minimum is 6)
+
+	while(organ_regrow_progress >= 1 && length(new_organs))
+		var/obj/item/organ/new_organ = SSwardrobe.provide_type(new_organs[1])
+		new_organ.set_organ_damage(new_organ.maxHealth)
+		new_organ.Insert(user, special = TRUE, drop_if_replaced = FALSE)
+		to_chat(user, span_green("You feel your insides turn as your [new_organ] regrow[new_organ.p_s()]!"))
+
 	var/list/missing_limbs = user.get_missing_limbs()
 
-	regrow_progress = min(regrow_progress + 0.2 * delta_time, length(missing_limbs)) // one limb every 5 or so seconds
+	limb_regrow_progress = min(limb_regrow_progress + 0.21 * delta_time, length(missing_limbs)) // one limb every 5 or so seconds, results in a maximum of 6 limbs regrown (minimum is 4)
 
-	while(regrow_progress >= 1 && length(missing_limbs)) // making this nigh perfect is overkill but if you're gonna do it, then might as well go all the way
+	while(limb_regrow_progress >= 1 && length(missing_limbs)) // making this nigh perfect is overkill but if you're gonna do it, then might as well go all the way
 		var/picked = pick(missing_limbs)
 		user.regenerate_limb(picked)
 		missing_limbs -= picked
-		regrow_progress--
+		limb_regrow_progress--
 		var/zone_name = parse_zone(picked)
 		user.visible_message(
 			message = span_danger("[user]'s [zone_name] regrows!"),
@@ -391,7 +465,7 @@
 		playsound(user, 'sound/magic/demon_consume.ogg', 50, TRUE)
 
 	for(var/datum/wound/wound as anything in user.all_wounds)
-		wound.heal(rand(0.05, 0.15) * delta_time) // variance to avoid getting multiple messages at once
+		wound.heal(rand(1, 3) * 0.2 * delta_time) // variance to avoid getting multiple messages at once
 
 /atom/movable/screen/alert/status_effect/sacrifice
 	name = "Sacrifice"

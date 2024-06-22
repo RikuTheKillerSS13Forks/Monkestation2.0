@@ -11,7 +11,10 @@
 	return
 
 /datum/wound/slash/flesh/heal(amount)
-	adjust_blood_flow(-abs(initial_flow - minimum_flow) * amount)
+	adjust_blood_flow(min(0, minimum_flow - initial_flow) * amount)
+	check_demote()
+
+/datum/wound/slash/flesh/proc/check_demote()
 	if(blood_flow < minimum_flow)
 		demote()
 

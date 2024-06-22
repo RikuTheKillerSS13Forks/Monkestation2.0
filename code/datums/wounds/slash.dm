@@ -157,8 +157,7 @@
 	if(blood_flow > highest_flow)
 		highest_flow = blood_flow
 
-	if(blood_flow < minimum_flow)
-		demote() // MONKESTATION EDIT: Move bleeding wound demotion to a proc.
+	check_demote() // MONKESTATION EDIT: Move bleeding wound demotion to a proc.
 
 /datum/wound/slash/flesh/on_stasis(seconds_per_tick, times_fired)
 	if(blood_flow >= minimum_flow)
