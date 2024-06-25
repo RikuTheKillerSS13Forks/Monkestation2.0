@@ -6,7 +6,7 @@
 /datum/wound/proc/heal(amount)
 	heal_progress += amount
 	if(heal_progress >= severity)
-		to_chat(victim, span_green("The [name] in your [limb.plaintext_zone] [limb.p_have()] healed up!"))
+		to_chat(victim, span_green("The [lowertext(name)] in your [limb.plaintext_zone] [limb.p_have()] healed up!"))
 		qdel(src)
 	return
 

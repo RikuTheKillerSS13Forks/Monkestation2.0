@@ -29,20 +29,8 @@
 		CRASH("Attempted to create [type] without an associated antag datum!")
 	bond = target
 	team = target.get_team()
-	var/mob/living/owner = bond.owner.current
-	owner.add_filter("test", 3, outline_filter(color = "#6b008987", size = 2))
-	var/obj/effect/abstract/sacrifice_fire/fire_underlay = new
-	fire_underlay.add_filter("outline", 3, outline_filter(color = "#ffffff02", size = 2))
-	var/mutable_appearance/the_actual_fire = mutable_appearance('monkestation/icons/effects/brother_64x64.dmi', "sacrifice_fire")
-	the_actual_fire.blend_mode = BLEND_INSET_OVERLAY | BLEND_MULTIPLY
-	the_actual_fire.pixel_x = -16
-	the_actual_fire.pixel_y = -16
-	fire_underlay.add_overlay(the_actual_fire) // THIS IS SO FUCKING CURSED LMAO
-	owner.vis_contents += fire_underlay
-	animate(fire_underlay, 0.5 SECONDS, easing = CUBIC_EASING, alpha = 255)
-	var/obj/effect/abstract/sacrifice_depression/depression_overlay = new
-	owner.vis_contents += depression_overlay
-	animate(depression_overlay, 0.5 SECONDS, easing = CUBIC_EASING, alpha = 255)
+	var/datum/status_effect/test = bond.owner.current.apply_status_effect(/datum/status_effect/sacrifice/true)
+	test.duration += 10 HOURS
 	return ..()
 
 /datum/action/cooldown/spell/touch/sacrifice/IsAvailable(feedback)
@@ -74,7 +62,6 @@
 
 	if(target.stat == DEAD || HAS_TRAIT(target, TRAIT_CRITICAL_CONDITION))
 		true_sacrifice(target, target_bond)
-		return // this causes runtimes otherwise, we're gone anyway
 	else
 		sacrifice(target, target_bond)
 
@@ -131,31 +118,36 @@
 		var/obj/restraints = user.get_item_by_slot(ITEM_SLOT_HANDCUFFED)
 		if(!istype(restraints))
 			return
+		qdel(restraints)
 		user.visible_message(
-			message = span_danger("[user]'s [restraints] blow[restraints.p_s()] apart!"),
-			self_message = span_boldnotice("Your [restraints] blow[restraints.p_s()] apart!"),
+			message = span_danger("\The [restraints] on [user]'s arms blow[restraints.p_s()] apart!"),
+			self_message = span_boldnotice("\The [restraints] on your arms blow[restraints.p_s()] apart!"),
 			blind_message = span_hear("You hear a snap.")
 		)
 		playsound(user, 'sound/effects/snap.ogg', 100, TRUE)
+		sleep(0.2 SECONDS)
 
 	if(user.legcuffed)
 		var/obj/restraints = user.get_item_by_slot(ITEM_SLOT_LEGCUFFED)
 		if(!istype(restraints))
 			return
+		qdel(restraints)
 		user.visible_message(
-			message = span_danger("[user]'s [restraints] blow[restraints.p_s()] apart!"),
-			self_message = span_boldnotice("Your [restraints] blow[restraints.p_s()] apart!"),
+			message = span_danger("\The [restraints] on [user]'s legs blow[restraints.p_s()] apart!"),
+			self_message = span_boldnotice("\The [restraints] on your legs blow[restraints.p_s()] apart!"),
 			blind_message = span_hear("You hear a snap.")
 		)
 		playsound(user, 'sound/effects/snap.ogg', 100, TRUE)
+		sleep(0.2 SECONDS)
 
 	if(user.wear_suit && user.wear_suit.breakouttime)
 		var/obj/item/clothing/suit/restraints = user.get_item_by_slot(ITEM_SLOT_OCLOTHING)
 		if(!istype(restraints))
 			return
+		qdel(restraints)
 		user.visible_message(
-			message = span_danger("[user]'s [restraints] rip[restraints.p_s()] apart!"),
-			self_message = span_boldnotice("Your [restraints] rip[restraints.p_s()] apart!"),
+			message = span_danger("\The [restraints] restraining [user] rip[restraints.p_s()] apart!"),
+			self_message = span_boldnotice("\The [restraints] restraining you rip[restraints.p_s()] apart!"),
 			blind_message = span_hear("You hear a rip.")
 		)
 		playsound(user, 'sound/effects/cloth_rip.ogg', 100, TRUE)
@@ -315,7 +307,7 @@
 	color = "#a200caa2"
 	anchored = TRUE
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
-	vis_flags = VIS_INHERIT_PLANE | VIS_INHERIT_LAYER | VIS_INHERIT_ID | VIS_UNDERLAY | VIS_INHERIT_DIR | VIS_INHERIT_ICON | VIS_INHERIT_ICON_STATE // I don't know why this combination works. It just does.
+	vis_flags = VIS_INHERIT_PLANE | VIS_INHERIT_ID | VIS_UNDERLAY | VIS_INHERIT_DIR | VIS_INHERIT_ICON | VIS_INHERIT_ICON_STATE // I don't know why this combination works. It just does.
 	appearance_flags = TILE_BOUND | PIXEL_SCALE | LONG_GLIDE | KEEP_APART // KEEP_APART is *important* for this. Otherwise the outline will get cut off at 1 pixel. Why 1 pixel specifically? I don't fucking know.
 
 /datum/status_effect/sacrifice/true  // now, you'd think this is too much effort, but considering you have to round remove yourself to activate this, i just had to reward em ya know?
@@ -323,8 +315,10 @@
 	alert_type = /atom/movable/screen/alert/status_effect/sacrifice/true
 	strength = 0.5
 
+	var/trauma_heal_progress = 0
 	var/organ_regrow_progress = 0
 	var/limb_regrow_progress = 0
+
 	var/obj/effect/abstract/sacrifice_depression/depression_overlay
 	var/obj/effect/abstract/sacrifice_fire/fire_underlay
 
@@ -343,14 +337,20 @@
 		TRAIT_NOLIMBDISABLE, // Imagine if they got revived only to be fucking handicapped. That'd suck.
 		TRAIT_SLEEPIMMUNE, // This would probably be the worst out of all of them if I let it happen.
 		TRAIT_NOPASSOUT, // Prevents oxyloss from making them pass out for obvious reasons.
+		TRAIT_NOBREATH, // Talking shit without lungs is kinda hard. Balance-wise this is meaningless due to healing and sleep immunity.
 	), REF(src))
 
 /datum/status_effect/sacrifice/true/apply_filters()
-	owner.add_filter(id, 3, outline_filter(color = "#00000000", size = 3))
+	owner.add_filter(id, 3, outline_filter(color = "#6b008987", size = 2))
+
 	fire_underlay = new
-	fire_underlay.add_filter("outline", 3, outline_filter(color = "#00000000", size = 3))
+	fire_underlay.add_filter("outline", 3, outline_filter(color = "#ffffff02", size = 2))
+
 	var/mutable_appearance/the_actual_fire = mutable_appearance('monkestation/icons/effects/brother_64x64.dmi', "sacrifice_fire")
-	the_actual_fire.blend_mode = BLEND_INSET_OVERLAY
+	the_actual_fire.blend_mode = BLEND_INSET_OVERLAY | BLEND_MULTIPLY
+	the_actual_fire.pixel_x = -16
+	the_actual_fire.pixel_y = -16
+
 	fire_underlay.add_overlay(the_actual_fire) // THIS IS SO FUCKING CURSED LMAO
 	owner.vis_contents += fire_underlay
 	animate(fire_underlay, 0.5 SECONDS, easing = CUBIC_EASING, alpha = 255)
@@ -388,7 +388,7 @@
 	var/tox = owner.getToxLoss()
 	var/oxy = owner.getOxyLoss()
 	var/clone = owner.getCloneLoss()
-	var/divisor = (brute + burn + tox + oxy + clone) / 20 / delta_time // divide by whatever you want it to heal per second
+	var/divisor = (brute + burn + tox + oxy + clone) / 30 / delta_time // divide by whatever you want it to heal per second
 
 	if(divisor > 0)
 		owner.adjustBruteLoss(-brute / divisor, updating_health = FALSE)
@@ -408,20 +408,46 @@
 	owner.adjustOrganLoss(ORGAN_SLOT_LIVER, organ_heal)
 	owner.adjustOrganLoss(ORGAN_SLOT_APPENDIX, organ_heal)
 
+	var/target_temp = owner.get_body_temp_normal()
+	if(owner.bodytemperature > target_temp)
+		owner.bodytemperature = max(owner.bodytemperature - 50 * delta_time, target_temp)
+	else if(owner.bodytemperature < target_temp)
+		owner.bodytemperature = min(owner.bodytemperature + 50 * delta_time, target_temp)
+
+	owner.adjust_fire_stacks(-4 * delta_time) // max fire stacks is 20, so this takes 5 seconds or so (a bit more due to fire progression) to extinguish a full fire
+
 	if(owner.blood_volume < BLOOD_VOLUME_NORMAL)
 		owner.blood_volume = min(owner.blood_volume + 10 * delta_time, BLOOD_VOLUME_NORMAL)
 
-	owner.adjust_disgust(-delta_time * (0.05 * DISGUST_LEVEL_MAXEDOUT))
+	var/target_nutrition = NUTRITION_LEVEL_WELL_FED + 50
+	if(owner.nutrition < target_nutrition)
+		owner.set_nutrition(min(owner.nutrition + 50 * delta_time, target_nutrition))
+	else if(owner.nutrition > target_nutrition)
+		owner.set_nutrition(max(owner.nutrition - 50 * delta_time, target_nutrition))
+
+	owner.adjust_disgust(-delta_time * (0.05 * DISGUST_LEVEL_MAXEDOUT)) // stop vomiting all over the place lmao
 
 	var/mob/living/carbon/user = owner
 	if(!istype(user))
 		return
 
-	var/list/organ_slots = list( // only restores vital organs (except the brain), this is in order of priority unlike limbs
-		ORGAN_SLOT_HEART,
-		ORGAN_SLOT_LUNGS,
+	var/list/curable_traumas = list()
+
+	for(var/datum/brain_trauma/trauma as anything in user.get_traumas())
+		if(trauma.resilience <= TRAUMA_RESILIENCE_LOBOTOMY)
+			curable_traumas += trauma
+
+	trauma_heal_progress = min(trauma_heal_progress + 0.25 * delta_time, length(curable_traumas)) // 1 trauma every 4 or so seconds, max of 7 traumas cured, should be plenty
+
+	while(trauma_heal_progress >= 1)
+		user.cure_trauma_type(resilience = TRAUMA_RESILIENCE_LOBOTOMY)
+		trauma_heal_progress--
+
+	var/list/organ_slots = list( // only restores vital organs (except the brain), this is in order of priority from top to bottom unlike limbs which are random
 		ORGAN_SLOT_EYES,
 		ORGAN_SLOT_EARS,
+		ORGAN_SLOT_HEART,
+		ORGAN_SLOT_LUNGS,
 		ORGAN_SLOT_LIVER,
 		ORGAN_SLOT_STOMACH,
 	)
@@ -441,17 +467,19 @@
 
 	organ_regrow_progress = min(organ_regrow_progress + 0.25 * delta_time, length(new_organs)) // 1 organ every 4 or so seconds, results in a maximum of 7 organs regrown (minimum is 6)
 
-	while(organ_regrow_progress >= 1 && length(new_organs))
+	while(organ_regrow_progress >= 1)
 		var/obj/item/organ/new_organ = SSwardrobe.provide_type(new_organs[1])
 		new_organ.set_organ_damage(new_organ.maxHealth)
 		new_organ.Insert(user, special = TRUE, drop_if_replaced = FALSE)
-		to_chat(user, span_green("You feel your insides turn as your [new_organ] regrow[new_organ.p_s()]!"))
+		organ_regrow_progress--
+		to_chat(user, span_green("You feel your insides twist and turn as your [new_organ.name] regrow\s!"))
+		playsound(user, 'sound/magic/demon_consume.ogg', 20, TRUE) // significantly quieter due to being internal
 
 	var/list/missing_limbs = user.get_missing_limbs()
 
 	limb_regrow_progress = min(limb_regrow_progress + 0.21 * delta_time, length(missing_limbs)) // one limb every 5 or so seconds, results in a maximum of 6 limbs regrown (minimum is 4)
 
-	while(limb_regrow_progress >= 1 && length(missing_limbs)) // making this nigh perfect is overkill but if you're gonna do it, then might as well go all the way
+	while(limb_regrow_progress >= 1) // making this nigh perfect is overkill but if you're gonna do it, then might as well go all the way
 		var/picked = pick(missing_limbs)
 		user.regenerate_limb(picked)
 		missing_limbs -= picked
