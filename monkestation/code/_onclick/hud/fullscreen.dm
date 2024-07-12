@@ -6,3 +6,4 @@
 /atom/movable/screen/fullscreen/sacrifice_pressure
 	icon = 'monkestation/icons/hud/fullscreen/sacrifice_pressure.dmi'
 	icon_state = "pressure"
+	alpha = 0

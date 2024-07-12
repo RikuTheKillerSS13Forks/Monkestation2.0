@@ -510,3 +510,19 @@
 	name = "True Sacrifice"
 	desc = "ONE LAST STAND!!"
 	icon_state = "sacrifice_true"
+
+/datum/status_effect/sacrifice_fear
+	id = "sacrifice_fear"
+	duration = -1
+	tick_interval = -1
+
+/datum/status_effect/sacrifice_fear/on_apply()
+	. = ..()
+	var/overlay = owner.overlay_fullscreen(id, /atom/movable/screen/fullscreen/sacrifice_pressure)
+	animate(overlay, time = 0.5 SECONDS, alpha = 255)
+	owner.playsound_local(owner, 'monkestation/sound/effects/sacrifice_pressure.ogg', vol = 50, vary = FALSE, channel = CHANNEL_SACRIFICE_PRESSURE)
+
+/datum/status_effect/sacrifice_fear/on_remove()
+	. = ..()
+	owner.clear_fullscreen(id, animated = 0.5 SECONDS)
+	owner.stop_sound_channel(CHANNEL_SACRIFICE_PRESSURE)
