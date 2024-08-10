@@ -37,8 +37,8 @@
 	else if(life_force > 25)
 		color = "#ffaaaa"
 
-	blood_display?.maptext = FORMAT_BLOODSUCKER_HUD_TEXT(color, life_force)
+	lifeforce_display?.maptext = FORMAT_BLOODSUCKER_HUD_TEXT(color, life_force)
 
 	color = BlendRGB("#ffffff", "#ffd700", vampire_rank / VAMPIRE_RANK_MAX)
 
-	vamprank_display?.maptext = FORMAT_BLOODSUCKER_HUD_TEXT(color, vampire_rank)
+	rank_display?.maptext = FORMAT_BLOODSUCKER_HUD_TEXT(color, vampire_rank)
