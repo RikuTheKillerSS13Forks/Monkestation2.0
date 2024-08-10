@@ -1,3 +1,8 @@
+/// 1 tile up
+#define UI_BLOOD_DISPLAY "WEST:6,CENTER+1:0"
+/// 1 tile down
+#define UI_VAMPRANK_DISPLAY "WEST:6,CENTER-1:-5"
+
 /atom/movable/screen/bloodsucker/blood_counter
 	name = "Blood Consumed"
 	icon_state = "blood_display"
