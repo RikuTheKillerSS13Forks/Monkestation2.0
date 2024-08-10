@@ -1,5 +1,5 @@
-/// Maptext define for Bloodsucker HUDs.
-#define FORMAT_BLOODSUCKER_HUD_TEXT(value, color) MAPTEXT("<div align='center' valign='middle' style='position:relative; top:0px; left:6px'><font color='[color]'>[round(value,1)]</font></div>")
+/// Maptext define for vampire HUDs.
+#define FORMAT_VAMPIRE_HUD_TEXT(value, color) MAPTEXT("<div align='center' valign='middle' style='position:relative; top:0px; left:6px'><font color='[color]'>[round(value,1)]</font></div>")
 
 /atom/movable/screen/vampire
 	icon = 'monkestation/icons/vampires/actions_vampire.dmi'
@@ -37,8 +37,8 @@
 	else if(life_force > 25)
 		color = "#ffaaaa"
 
-	lifeforce_display?.maptext = FORMAT_BLOODSUCKER_HUD_TEXT(color, life_force)
+	lifeforce_display?.maptext = FORMAT_VAMPIRE_HUD_TEXT(color, life_force)
 
 	color = BlendRGB("#ffffff", "#ffd700", vampire_rank / VAMPIRE_RANK_MAX)
 
-	rank_display?.maptext = FORMAT_BLOODSUCKER_HUD_TEXT(color, vampire_rank)
+	rank_display?.maptext = FORMAT_VAMPIRE_HUD_TEXT(color, vampire_rank)
