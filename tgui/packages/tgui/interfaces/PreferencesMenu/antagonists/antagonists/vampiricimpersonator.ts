@@ -1,9 +1,9 @@
 import { Antagonist, Category } from '../base';
 import { multiline } from 'common/string';
 
-const VampiricAccident: Antagonist = {
-  key: 'vampiricaccident',
-  name: 'Vampiric Accident',
+const VampiricImpersonator: Antagonist = {
+  key: 'vampiricimpersonator',
+  name: 'Vampiric Impersonator',
   description: [
     multiline`
       Your master sent you here as both a test and a chance for you to mature.
@@ -12,7 +12,7 @@ const VampiricAccident: Antagonist = {
       Just remember to keep the inquisitors off your tail.
     `,
   ],
-  category: Category.Midround,
+  category: Category.Latejoin,
 };
 
-export default VampiricAccident;
+export default VampiricImpersonator;

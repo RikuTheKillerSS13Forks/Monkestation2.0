@@ -1,3 +1,5 @@
+/* ONGOING VAMPIRE REWORK, FIX THIS ONCE YOU KNOW WTF TO DO WITH IT
+
 import { resolveAsset } from '../assets';
 import { BooleanLike } from 'common/react';
 import { useBackend, useLocalState } from '../backend';
@@ -272,3 +274,4 @@ const PowerSection = (props: any) => {
     </Section>
   );
 };
+*/
