@@ -44,3 +44,8 @@
  * Life Force Change Sources
  */
 #define LIFE_FORCE_CHANGE_THIRST "thirst"
+
+/**
+ * Vampire Rank
+ */
+#define VAMPIRE_RANK_MAX 6

@@ -37,6 +37,11 @@
 
 	RegisterSignal(target_mob, COMSIG_LIVING_LIFE, PROC_REF(on_life))
 
+	if(target_mob.hud_used)
+		on_hud_created()
+	else
+		RegisterSignal(target_mob, COMSIG_MOB_HUD_CREATED, PROC_REF(on_hud_created))
+
 /datum/antagonist/vampire/remove_innate_effects(mob/living/mob_override)
 	var/mob/living/carbon/human/target_mob = mob_override || owner.current
 	if(!istype(target_mob))
