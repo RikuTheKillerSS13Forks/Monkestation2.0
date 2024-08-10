@@ -1,8 +1,8 @@
-/datum/outfit/vampire_outfit
+/datum/outfit/vampire
 	name = "Vampire (Preview only)"
 	suit = /obj/item/clothing/suit/costume/dracula
 
-/datum/outfit/vampire_outfit/post_equip(mob/living/carbon/human/preview_target, visualsOnly = FALSE)
+/datum/outfit/vampire/post_equip(mob/living/carbon/human/preview_target, visualsOnly = FALSE)
 	preview_target.hairstyle = "Undercut"
 	preview_target.hair_color = "FFF"
 	preview_target.skin_tone = "african2"

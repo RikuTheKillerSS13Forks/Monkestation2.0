@@ -10,7 +10,7 @@
 	show_name_in_check_antagonists = TRUE
 	can_coexist_with_others = FALSE
 
-	preview_outfit = /datum/outfit/vampire_outfit
+	preview_outfit = /datum/outfit/vampire
 
 	//antag_hud_name = "vampire"
 	//hud_icon = 'monkestation/icons/vampires/vampire_icons.dmi'
