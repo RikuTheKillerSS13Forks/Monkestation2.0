@@ -23,6 +23,9 @@
 	/// Cached value made from life_force_changes. Don't modify this directly.
 	var/life_force_per_second = 0
 
+	var/atom/movable/screen/vampire/lifeforce_counter/lifeforce_display
+	var/atom/movable/screen/vampire/rank_counter/rank_display
+
 /datum/antagonist/vampire/apply_innate_effects(mob/living/mob_override)
 	var/mob/living/carbon/human/target_mob = mob_override || owner.current
 	if(!istype(target_mob))
