@@ -51,6 +51,13 @@
 
 	UnregisterSignal(target_mob, COMSIG_LIVING_LIFE)
 
+	if(target_mob.hud_used)
+		var/datum/hud/hud = target_mob.hud_used
+		hud.infodisplay -= lifeforce_display
+		hud.infodisplay -= rank_display
+		QDEL_NULL(lifeforce_display)
+		QDEL_NULL(rank_display)
+
 /datum/antagonist/vampire/proc/on_life(datum/source, seconds_per_tick, times_fired)
 	SIGNAL_HANDLER
 	life_force += life_force_per_second * seconds_per_tick
