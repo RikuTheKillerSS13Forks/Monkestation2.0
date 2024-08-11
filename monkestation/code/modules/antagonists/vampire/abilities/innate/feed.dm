@@ -151,14 +151,17 @@
 	if(!check_adjacent()) // handles its own balloon alert
 		return
 
-	if(victim.blood_volume <= 0 || victim.get_blood_id() != /datum/reagent/blood)
-		owner.balloon_alert(owner, "out of blood!")
-		stop_feeding(victim, forced = FALSE)
+	if(victim.get_blood_id() != /datum/reagent/blood)
+		owner.balloon_alert(owner, "incompatible blood!")
 		return
 
 	if(!is_suitable_limb(victim, target_zone))
 		owner.balloon_alert(owner, "limb gone!")
 		stop_feeding(victim, forced = TRUE)
+		return
+
+	if(victim.blood_volume <= 0)
+		INVOKE_ASYNC(src, PROC_REF(attempt_enthrall), victim)
 		return
 
 	var/blood_to_drain = min(victim.blood_volume, BLOOD_VOLUME_NORMAL / (feed_type == WRIST_FEED ? 60 : 30) * seconds_per_tick) // add brutality scaling later
