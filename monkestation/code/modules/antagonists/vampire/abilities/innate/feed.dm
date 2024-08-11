@@ -107,9 +107,14 @@
 	return ..()
 
 /datum/action/cooldown/vampire/feed/proc/on_victim_qdel(mob/living/carbon/victim)
+	SIGNAL_HANDLER
+
 	stop_feeding(victim, forced = TRUE)
 
 /datum/action/cooldown/vampire/feed/proc/stop_feeding(mob/living/carbon/victim, forced = FALSE, bodypart_override = null)
+	if(!is_feeding)
+		return
+
 	is_feeding = FALSE
 	target_zone = null
 	QDEL_NULL(victim_ref)
@@ -152,7 +157,7 @@
 		stop_feeding(victim, forced = TRUE)
 		return
 
-	var/blood_to_drain = min(victim.blood_volume, BLOOD_VOLUME_NORMAL * (feed_type == WRIST_FEED ? 0.05 : 0.1) * seconds_per_tick) // 20 seconds for wrist feed, 10 seconds for neck feed, add brutality scaling later
+	var/blood_to_drain = min(victim.blood_volume, BLOOD_VOLUME_NORMAL * (feed_type == WRIST_FEED ? 0.025 : 0.05) * seconds_per_tick) // 40 seconds for wrist feed, 20 seconds for neck feed, add brutality scaling later
 
 	victim.blood_volume -= blood_to_drain
 	vampire.adjust_lifeforce(blood_to_drain * BLOOD_TO_LIFEFORCE) // finally some good fucking food
@@ -170,7 +175,10 @@
 			target_zone = BODY_ZONE_L_ARM
 			return TRUE
 	else
-		if(is_suitable_limb(victim, BODY_ZONE_CHEST))
+		if(is_suitable_limb(victim, BODY_ZONE_HEAD)) // results in your feed getting canceled if someone decapitates your victim, which is funny
+			target_zone = BODY_ZONE_HEAD
+			return TRUE
+		if(is_suitable_limb(victim, BODY_ZONE_CHEST)) // but you can still feed straight from a neck stub, might add a mood event for this later
 			target_zone = BODY_ZONE_CHEST
 			return TRUE
 	return FALSE

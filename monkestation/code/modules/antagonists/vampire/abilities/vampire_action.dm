@@ -8,7 +8,7 @@
 	var/mob/living/carbon/human/user
 	var/datum/antagonist/vampire/vampire
 
-/datum/action/cooldown/vampire/proc/Grant(mob/granted_to)
+/datum/action/cooldown/vampire/Grant(mob/granted_to)
 	. = ..()
 
 	if(!ishuman(granted_to))
@@ -19,13 +19,13 @@
 	if(!vampire)
 		CRASH("Vampire action granted to non-vampire mob.")
 
-/datum/action/cooldown/vampire/proc/Remove(mob/removed_from)
+/datum/action/cooldown/vampire/Remove(mob/removed_from)
 	. = ..()
 
 	if(user == removed_from)
 		user = null
 
-/datum/action/cooldown/vampire/proc/IsAvailable(feedback)
+/datum/action/cooldown/vampire/IsAvailable(feedback)
 	if(!..())
 		return FALSE
 

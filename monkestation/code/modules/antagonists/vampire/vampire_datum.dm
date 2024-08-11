@@ -27,6 +27,16 @@
 	var/atom/movable/screen/vampire/lifeforce_counter/lifeforce_display
 	var/atom/movable/screen/vampire/rank_counter/rank_display
 
+	var/datum/action/cooldown/vampire/feed/feed_action
+
+/datum/antagonist/vampire/New()
+	. = ..()
+	feed_action = new(src)
+
+/datum/antagonist/vampire/Destroy()
+	. = ..()
+	QDEL_NULL(feed_action)
+
 /datum/antagonist/vampire/apply_innate_effects(mob/living/mob_override)
 	var/mob/living/carbon/human/target_mob = mob_override || owner.current
 	if(!istype(target_mob))
@@ -41,6 +51,8 @@
 		on_hud_created()
 	else
 		RegisterSignal(target_mob, COMSIG_MOB_HUD_CREATED, PROC_REF(on_hud_created))
+
+	feed_action?.Grant(target_mob)
 
 /datum/antagonist/vampire/remove_innate_effects(mob/living/mob_override)
 	var/mob/living/carbon/human/target_mob = mob_override || owner.current
@@ -57,6 +69,8 @@
 		hud.infodisplay -= rank_display
 		QDEL_NULL(lifeforce_display)
 		QDEL_NULL(rank_display)
+
+	feed_action?.Remove(target_mob)
 
 /datum/antagonist/vampire/proc/on_life(datum/source, seconds_per_tick, times_fired)
 	SIGNAL_HANDLER
