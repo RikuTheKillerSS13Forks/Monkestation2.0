@@ -27,23 +27,23 @@
 #define IS_VAMPIRE(mob) (mob?.mind?.has_antag_datum(/datum/antagonist/vampire))
 
 /**
- * Life Force
+ * Lifeforce
  */
-/// The maximum amount of life force a vampire can carry. This is a soft cap.
-#define LIFE_FORCE_MAXIMUM 200
-/// How much life force one human is roughly worth. Can vary wildly sometimes.
-#define LIFE_FORCE_PER_HUMAN 100
-/// How much life force is lost per second by default. 20 min/human
-#define LIFE_FORCE_DRAIN_BASE LIFE_FORCE_PER_HUMAN / -1200
-/// Multiply life force by this to get an equivalent amount of blood.
-#define LIFE_FORCE_TO_BLOOD BLOOD_VOLUME_NORMAL / LIFE_FORCE_PER_HUMAN
-/// Multiply blood by this to get an equivalent amount of life force.
-#define BLOOD_TO_LIFE_FORCE LIFE_FORCE_PER_HUMAN / BLOOD_VOLUME_NORMAL
+/// The maximum amount of lifeforce a vampire can carry. This is a soft cap.
+#define LIFEFORCE_MAXIMUM 200
+/// How much lifeforce one human is roughly worth. Can vary wildly sometimes.
+#define LIFEFORCE_PER_HUMAN 100
+/// How much lifeforce is lost per second by default. 20 min/human
+#define LIFEFORCE_DRAIN_BASE LIFEFORCE_PER_HUMAN / -1200
+/// Multiply lifeforce by this to get an equivalent amount of blood.
+#define LIFEFORCE_TO_BLOOD BLOOD_VOLUME_NORMAL / LIFEFORCE_PER_HUMAN
+/// Multiply blood by this to get an equivalent amount of lifeforce.
+#define BLOOD_TO_LIFEFORCE LIFEFORCE_PER_HUMAN / BLOOD_VOLUME_NORMAL
 
 /**
- * Life Force Change Sources
+ * Lifeforce Change Sources
  */
-#define LIFE_FORCE_CHANGE_THIRST "thirst"
+#define LIFEFORCE_CHANGE_THIRST "thirst"
 
 /**
  * Vampire Rank

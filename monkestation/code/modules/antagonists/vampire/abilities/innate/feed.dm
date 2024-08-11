@@ -1,34 +1,198 @@
-#define WRIST_FEED 1
-#define NECK_FEED 2
+#define WRIST_FEED "wrist"
+#define NECK_FEED "neck"
 
 /datum/action/cooldown/vampire/feed
 	name = "Feed"
-	desc = "Drink the blood of a victim, a more aggressive grab drinks directly from the carotid artery, stunning the victim"
+	desc = "Drink the blood of a victim, a more aggressive grab drinks directly from the carotid artery."
 	button_icon_state = "absorb_dna"
-	life_cost = 0
 	cooldown_time = 1 SECOND
-	///if we're currently drinking, used for sanity
-	var/is_drinking = FALSE
-	var/blood_taken = 0
-	///The amount of Blood a target has since our last feed, this loops and lets us not spam alerts of low blood.
-	var/warning_target_bloodvol = BLOOD_VOLUME_MAX_LETHAL
-	///Reference to the target we've fed off of
-	var/datum/weakref/target_ref
+
+	/// If we're currently feeding, used for sanity.
+	var/is_feeding = FALSE
+
+	/// The amount of blood a target has since our last feed, this loops and lets us not spam alerts of low blood.
+	var/target_blood = BLOOD_VOLUME_MAX_LETHAL
+
 	/// Whether the target was alive or not when we started feeding.
 	var/started_alive = TRUE
-	///Are we feeding with passive grab or not?
+
+	/// Whether the feed was started with a passive (wrist feed) or aggressive (neck feed) grab.
 	var/feed_type = WRIST_FEED
 
-/datum/action/cooldown/vampire/feed/can_use(mob/living/carbon/owner)
-	var/mob/living/carbon/target = owner.pulling
-	if(is_drinking)
-		owner.balloon_alert(owner, "already drinking!")
+	/// Bodypart zone we bit into.
+	var/target_zone
+
+	/// Weakref to the victim.
+	var/datum/weakref/victim_ref
+
+/datum/action/cooldown/vampire/feed/IsAvailable(feedback)
+	if(!..())
+		return FALSE
+
+	var/mob/living/carbon/victim = owner.pulling
+
+	if(is_feeding) // you need to be able to stop feeding
+		return TRUE
+
+	if(!istype(victim))
+		if(feedback)
+			owner.balloon_alert(owner, "needs grab!")
+		return FALSE
+
+	if(victim.blood_volume <= 0 || victim.get_blood_id() != /datum/reagent/blood) // this makes mobs with exotic blood or no blood immune to feeding
+		if(feedback)
+			owner.balloon_alert(owner, "no blood!")
+		return FALSE
+
+	if(victim.stat == DEAD && victim.timeofdeath + 30 SECONDS > world.time) // succumbing doesn't stop the vampire from getting a meal, only from enthralling you
+		if(feedback)
+			owner.balloon_alert(owner, "too decayed!")
+		return FALSE
+
+	feed_type = owner.grab_state == GRAB_PASSIVE ? WRIST_FEED : NECK_FEED
+
+	if(!get_suitable_limb(victim))
+		if(feedback)
+			owner.balloon_alert(owner, "no suitable [feed_type]!")
+		return FALSE
+
+	return TRUE
+
+/datum/action/cooldown/vampire/feed/Activate(atom/target)
+	var/mob/living/carbon/victim = owner.pulling
+
+	if(feed_type == WRIST_FEED)
+		to_chat(victim, span_danger("You feel [owner] tug at your wrist."))
+	else
+		to_chat(victim, span_bolddanger("[owner] opens [owner.p_their()] mouth and closes in on your neck!"))
+
+	if(!do_after(owner, 2 SECONDS, victim)) // should prevent duplicate feeds as you can't initiate multiple do_afters on a target
 		return
 
-	if(!target || !iscarbon(target))
-		owner.balloon_alert(owner, "needs grab!")
+	is_feeding = TRUE // you've secured the meal, nice
+	started_alive = victim.stat != DEAD
+	victim_ref = WEAKREF(victim)
+
+	RegisterSignal(victim, COMSIG_LIVING_LIFE, PROC_REF(on_life))
+	RegisterSignal(victim, COMSIG_QDELETING, PROC_REF(on_victim_qdel))
+	RegisterSignal(victim, COMSIG_CARBON_REMOVE_LIMB, PROC_REF(check_removed_limb))
+	RegisterSignal(victim, COMSIG_MOVABLE_MOVED, PROC_REF(check_adjacent))
+
+	if(feed_type == WRIST_FEED)
+		owner.visible_message(
+			message = span_danger("[owner] lifts [victim]'s wrist to [owner.p_their()] mouth and bites into it!"),
+			self_message = span_notice("You lift [victim]'s wrist up to your mouth and bite into it."),
+			ignored_mobs = victim
+			)
+		to_chat(victim, span_danger("[owner] lifts your wrist up to [owner.p_their()] mouth and bites into it!"))
+
+		if(!HAS_TRAIT(victim, TRAIT_ANALGESIA))
+			victim.emote("flinch")
+	else
+		owner.visible_message(
+			message = span_bolddanger("[owner] bites into [victim]'s neck!"),
+			self_message = span_boldnotice("You bite into [victim]'s neck!"),
+			ignored_mobs = victim
+		)
+		to_chat(victim, span_userdanger("[owner] bites into your neck!"))
+
+		if(!HAS_TRAIT(victim, TRAIT_ANALGESIA))
+			victim.emote("scream")
+
+	return ..()
+
+/datum/action/cooldown/vampire/feed/Remove(mob/removed_from)
+	if(is_feeding)
+		stop_feeding(victim_ref.resolve(), forced = TRUE) // victim_ref should never be null if is_feeding is true
+	return ..()
+
+/datum/action/cooldown/vampire/feed/proc/on_victim_qdel(mob/living/carbon/victim)
+	stop_feeding(victim, forced = TRUE)
+
+/datum/action/cooldown/vampire/feed/proc/stop_feeding(mob/living/carbon/victim, forced = FALSE, bodypart_override = null)
+	is_feeding = FALSE
+	target_zone = null
+	QDEL_NULL(victim_ref)
+
+	UnregisterSignal(victim, list(COMSIG_LIVING_LIFE, COMSIG_QDELETING, COMSIG_CARBON_REMOVE_LIMB, COMSIG_MOVABLE_MOVED))
+
+	var/obj/item/bodypart/target_limb = bodypart_override || (is_suitable_limb(victim, target_zone) ? victim.get_bodypart(target_zone) : null)
+
+	if(forced)
+		owner.visible_message(
+			message = span_danger("[owner]'s fangs are ripped out of [victim]'s [feed_type]!"),
+			self_message = span_danger("Your fangs are ripped out of [victim]'s [feed_type]!"),
+			ignored_mobs = victim
+		)
+		to_chat(victim, span_danger("[owner]'s fangs are ripped out of your [feed_type]!"))
+
+		if(target_limb)
+			victim.cause_wound_of_type_and_severity(WOUND_PIERCE, target_limb, WOUND_SEVERITY_MODERATE)
+	else
+		owner.visible_message(
+			message = span_notice("[owner] releases [owner.p_their()] bite on [victim]'s [feed_type]."),
+			self_message = span_notice("You release your bite on [victim]'s [feed_type]."),
+			ignored_mobs = victim
+		)
+		to_chat(victim, span_notice("[owner] releases [owner.p_their()] bite on your [feed_type]."))
+
+/datum/action/cooldown/vampire/feed/proc/on_life(mob/living/carbon/victim, seconds_per_tick, times_fired)
+	SIGNAL_HANDLER
+
+	if(!check_adjacent()) // handles its own balloon alert
 		return
-	if(owner.grab_state == GRAB_PASSIVE) //Definitely a more efficient way to do this but yk
-		return feed_type = WRIST_FEED
-	if(owner.grab_state >= GRAB_AGGRESSIVE)
-		return feed_type = NECK_FEED
+
+	if(victim.blood_volume <= 0 || victim.get_blood_id() != /datum/reagent/blood)
+		owner.balloon_alert(owner, "out of blood!")
+		stop_feeding(victim, forced = FALSE)
+		return
+
+	if(!is_suitable_limb(victim, target_zone))
+		owner.balloon_alert(owner, "limb gone!")
+		stop_feeding(victim, forced = TRUE)
+		return
+
+	var/blood_to_drain = min(victim.blood_volume, BLOOD_VOLUME_NORMAL * (feed_type == WRIST_FEED ? 0.05 : 0.1) * seconds_per_tick) // 20 seconds for wrist feed, 10 seconds for neck feed, add brutality scaling later
+
+	victim.blood_volume -= blood_to_drain
+	vampire.adjust_lifeforce(blood_to_drain * BLOOD_TO_LIFEFORCE) // finally some good fucking food
+
+/datum/action/cooldown/vampire/feed/proc/is_suitable_limb(mob/living/carbon/victim, zone)
+	var/obj/item/bodypart/limb = victim.get_bodypart(zone)
+	return limb && (limb.biological_state & BIO_BLOODED)
+
+/datum/action/cooldown/vampire/feed/proc/get_suitable_limb(mob/living/carbon/victim)
+	if(feed_type == WRIST_FEED)
+		if(is_suitable_limb(victim, BODY_ZONE_R_ARM))
+			target_zone = BODY_ZONE_R_ARM
+			return TRUE
+		if(is_suitable_limb(victim, BODY_ZONE_L_ARM))
+			target_zone = BODY_ZONE_L_ARM
+			return TRUE
+	else
+		if(is_suitable_limb(victim, BODY_ZONE_CHEST))
+			target_zone = BODY_ZONE_CHEST
+			return TRUE
+	return FALSE
+
+/datum/action/cooldown/vampire/feed/proc/check_adjacent(datum/source)
+	SIGNAL_HANDLER
+
+	var/victim = victim_ref?.resolve()
+
+	if(!owner.Adjacent(victim_ref?.resolve()))
+		owner.balloon_alert("out of range!")
+		stop_feeding(victim, forced = TRUE)
+		return FALSE
+	return TRUE
+
+/datum/action/cooldown/vampire/feed/proc/check_removed_limb(mob/living/carbon/victim, obj/item/bodypart/limb, dismembered)
+	if(limb.body_zone != target_zone)
+		return
+	if(!is_suitable_limb(victim, target_zone))
+		owner.balloon_alert(owner, "limb gone!")
+		stop_feeding(victim, forced = TRUE, bodypart_override = limb)
+		return
+
+#undef WRIST_FEED
+#undef NECK_FEED

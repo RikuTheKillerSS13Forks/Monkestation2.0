@@ -299,3 +299,9 @@
 		return ..()
 
 	return FALSE
+
+/datum/emote/living/flinch // created mainly for vampire wrist feed
+	key = "flinch"
+	key_third_person = "flinches"
+	message = "flinches!"
+	emote_type = EMOTE_VISIBLE

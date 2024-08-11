@@ -7,7 +7,7 @@ const VampiricAccident: Antagonist = {
   description: [
     multiline`
       Your master sent you here as both a test and a chance for you to mature.
-      You can feed off of the life force of other sapients through their blood.
+      You can feed off of the lifeforce of other sapients through their blood.
       Feeding from a sapient until they run dry will turn them into one of you.
       Just remember to keep the inquisitors off your tail.
     `,

@@ -5,7 +5,7 @@
 	icon = 'monkestation/icons/vampires/actions_vampire.dmi'
 
 /atom/movable/screen/vampire/lifeforce_counter
-	name = "Life Force"
+	name = "Lifeforce"
 	icon_state = "blood_display"
 	screen_loc = "WEST:6,CENTER+0.5:0" // 0.5 tiles up.
 
@@ -32,12 +32,12 @@
 /// Updates HUD displays for lifeforce and rank.
 /datum/antagonist/vampire/proc/update_hud()
 	var/color
-	if(life_force > 50)
+	if(lifeforce > 50)
 		color = "#ffdddd"
-	else if(life_force > 25)
+	else if(lifeforce > 25)
 		color = "#ffaaaa"
 
-	lifeforce_display?.maptext = FORMAT_VAMPIRE_HUD_TEXT(color, life_force)
+	lifeforce_display?.maptext = FORMAT_VAMPIRE_HUD_TEXT(color, lifeforce)
 
 	color = BlendRGB("#ffffff", "#ffd700", vampire_rank / VAMPIRE_RANK_MAX)
 
