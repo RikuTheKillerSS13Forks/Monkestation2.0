@@ -25,6 +25,8 @@
  */
 /// Returns whether a mob is a vampire.
 #define IS_VAMPIRE(mob) (mob?.mind?.has_antag_datum(/datum/antagonist/vampire))
+/// Returns whether a mob is a vampire thrall.
+#define IS_THRALL(mob) (mob?.mind?.has_antag_datum(/datum/antagonist/vampire/thrall))
 
 /**
  * Lifeforce

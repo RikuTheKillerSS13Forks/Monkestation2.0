@@ -3,7 +3,7 @@
 
 /datum/action/cooldown/vampire/feed
 	name = "Feed"
-	desc = "Drink the blood of a victim, a more aggressive grab drinks directly from the carotid artery."
+	desc = "Drink the blood of a victim, a more aggressive grab feeds directly from the carotid artery and allows you to enthrall your victim if they were alive when you started feeding."
 	button_icon_state = "absorb_dna"
 	cooldown_time = 1 SECOND
 
@@ -205,6 +205,37 @@
 		owner.balloon_alert(owner, "limb gone!")
 		stop_feeding(victim, forced = TRUE, bodypart_override = limb)
 		return
+
+/datum/action/cooldown/vampire/feed/proc/attempt_enthrall(mob/living/carbon/human/victim)
+	if(vampire.vampire_rank == 0 || !istype(victim))
+		owner.balloon_alert(owner, "out of blood!")
+		return
+
+	if(!can_enthrall(victim))
+		return
+
+	UnregisterSignal(victim, list(COMSIG_LIVING_LIFE))
+	owner.balloon_alert(owner, "enthralling...")
+
+	if(!do_after(owner, 5 SECONDS, victim, timed_action_flags = IGNORE_SLOWDOWNS, extra_checks = CALLBACK(src, PROC_REF(enthrall_extra_check))))
+		return
+
+	vampire.enthrall(victim)
+
+/datum/action/cooldown/vampire/feed/proc/can_enthrall(mob/living/carbon/victim)
+	if(!victim)
+		owner.balloon_alert("canceled!")
+		return FALSE
+	if(!victim.mind)
+		owner.balloon_alert("mindless!")
+		return FALSE
+	if(HAS_TRAIT(victim, TRAIT_MINDSHIELD))
+		owner.balloon_alert("mindshielded!")
+		return FALSE
+	return TRUE
+
+/datum/action/cooldown/vampire/feed/proc/enthrall_extra_check()
+	return can_enthrall(victim_ref?.resolve())
 
 #undef WRIST_FEED
 #undef NECK_FEED

@@ -37,6 +37,10 @@
 	. = ..()
 	QDEL_NULL(feed_action)
 
+/datum/antagonist/vampire/on_gain()
+	. = ..()
+	set_rank(starting_rank)
+
 /datum/antagonist/vampire/apply_innate_effects(mob/living/mob_override)
 	var/mob/living/carbon/human/target_mob = mob_override || owner.current
 	if(!istype(target_mob))

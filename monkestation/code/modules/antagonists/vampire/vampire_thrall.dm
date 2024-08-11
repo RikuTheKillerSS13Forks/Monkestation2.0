@@ -1,0 +1,37 @@
+/// Instantly turns the target into a thrall with this datum as its master.
+/datum/antagonist/vampire/proc/enthrall(mob/living/carbon/human/target)
+	var/datum/antagonist/vampire/thrall/thrall = new(src)
+	target.mind.add_antag_datum(thrall)
+
+/datum/antagonist/vampire/thrall
+	starting_rank = 0
+
+	/// List of our masters. Use helpers to access this.
+	var/list/masters = list()
+
+	/// How far back the master lineage goes. Counts previous masters too.
+	var/master_count = 0
+
+/datum/antagonist/vampire/thrall/New(datum/antagonist/vampire/master)
+	. = ..()
+
+	add_master(master)
+
+	if(istype(master, /datum/antagonist/vampire/thrall))
+		var/datum/antagonist/vampire/thrall/thrall_master = master
+		for(var/higher_master as anything in thrall_master.masters)
+			add_master(higher_master)
+
+/datum/antagonist/vampire/thrall/proc/add_master(datum/antagonist/vampire/master)
+	masters[master] = ++master_count
+	RegisterSignal(master, COMSIG_QDELETING, PROC_REF(remove_master))
+
+/datum/antagonist/vampire/thrall/proc/remove_master(datum/antagonist/vampire/master)
+	SIGNAL_HANDLER
+	masters -= master
+	UnregisterSignal(master, COMSIG_QDELETING)
+
+/// Returns a master index for the given vampire datum if they're one of your masters and 0 otherwise. Higher indexes have more authority over you.
+/datum/antagonist/vampire/thrall/proc/get_master_index(datum/antagonist/vampire/other_vampire)
+	var/index = masters[other_vampire]
+	return !isnull(index) ? index : 0
