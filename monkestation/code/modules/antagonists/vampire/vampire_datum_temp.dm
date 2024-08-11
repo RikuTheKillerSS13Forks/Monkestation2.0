@@ -1,11 +1,10 @@
 /datum/antagonist/vampire/proc/set_rank(var/rank_to_set)
 	vampire_rank = rank_to_set
 
-/datum/antagonist/vampire/proc/rank_up
+/datum/antagonist/vampire/proc/rank_up()
 	vampire_rank = ++vampire_rank
 
 /datum/antagonist/vampire/thrall
-	. = ..()
 	var/datum/mob/living/carbon/master_atom = null //should be set when drank dry or on_gain
 	starting_rank = 0
 
@@ -18,10 +17,8 @@
 
 /datum/antagonist/vampire/on_gain()
 	. = ..()
-	create_objectives()
-	new_owner.set_rank(starting_rank)
-	current.log_message("has been converted into a vampire!", LOG_ATTACK, color="#960000")
+	set_rank(starting_rank)
+	owner.current.log_message("has been converted into a vampire!", LOG_ATTACK, color="#960000")
 
 /datum/antagonist/vampire/on_removal()
-	remove_objectives()
 	. = ..()

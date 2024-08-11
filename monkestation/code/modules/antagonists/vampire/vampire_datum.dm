@@ -61,3 +61,4 @@
 /datum/antagonist/vampire/proc/on_life(datum/source, seconds_per_tick, times_fired)
 	SIGNAL_HANDLER
 	life_force += life_force_per_second * seconds_per_tick
+

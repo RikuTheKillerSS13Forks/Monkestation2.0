@@ -1,10 +1,12 @@
+#define WRIST_FEED 1
+#define NECK_FEED 2
+
 /datum/action/cooldown/vampire/feed
-	. = ..()
 	name = "Feed"
 	desc = "Drink the blood of a victim, a more aggressive grab drinks directly from the carotid artery, stunning the victim"
 	button_icon_state = "absorb_dna"
 	life_cost = 0
-	cooldown = 1 SECOND
+	cooldown_time = 1 SECOND
 	///if we're currently drinking, used for sanity
 	var/is_drinking = FALSE
 	var/blood_taken = 0
@@ -15,13 +17,10 @@
 	/// Whether the target was alive or not when we started feeding.
 	var/started_alive = TRUE
 	///Are we feeding with passive grab or not?
-	var/silent_feed = TRUE
+	var/feed_type = WRIST_FEED
 
-/datum/action/cooldown/vampire/feed/check_use(mob/living/carbon/owner)
+/datum/action/cooldown/vampire/feed/can_use(mob/living/carbon/owner)
 	var/mob/living/carbon/target = owner.pulling
-	if(!..())
-		return
-
 	if(is_drinking)
 		owner.balloon_alert(owner, "already drinking!")
 		return
@@ -29,9 +28,7 @@
 	if(!target || !iscarbon(target))
 		owner.balloon_alert(owner, "needs grab!")
 		return
-	if(owner_grab_state = GRAB_AGGRESSIVE)
-		return WRIST_FEED
-	if(owner_grab_state = GRAB_AGGRESSIVE)
-		return NECK_FEED
-	if(owner_grab_state = GRAB_KILL)
-		return MESSY_FEED
+	if(owner.grab_state == GRAB_PASSIVE) //Definitely a more efficient way to do this but yk
+		return feed_type = WRIST_FEED
+	if(owner.grab_state >= GRAB_AGGRESSIVE)
+		return feed_type = NECK_FEED
