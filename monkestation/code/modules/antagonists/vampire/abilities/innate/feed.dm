@@ -224,7 +224,6 @@
 
 /datum/action/cooldown/vampire/feed/proc/can_enthrall(mob/living/carbon/victim)
 	if(!victim)
-		owner.balloon_alert("canceled!")
 		return FALSE
 	if(!victim.mind)
 		owner.balloon_alert("mindless!")
