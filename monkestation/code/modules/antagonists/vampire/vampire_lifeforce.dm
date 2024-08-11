@@ -13,7 +13,12 @@
 	update_lifeforce_changes()
 
 /datum/antagonist/vampire/proc/set_lifeforce(amount)
+	var/old_amount = lifeforce
+
 	lifeforce = max(0, amount)
+
+	if(old_amount != lifeforce)
+		SEND_SIGNAL(src, COMSIG_VAMPIRE_LIFEFORCE_CHANGED, old_amount, lifeforce)
 
 	if(lifeforce <= 0)
 		to_chat(owner.current, span_userdanger("Your body turns to dust as the lifeforce that once animated it runs out!"))

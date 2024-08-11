@@ -61,6 +61,10 @@
 /datum/action/cooldown/vampire/feed/Activate(atom/target)
 	var/mob/living/carbon/victim = owner.pulling
 
+	if(is_feeding)
+		stop_feeding(victim, forced = FALSE)
+		return ..()
+
 	if(feed_type == WRIST_FEED)
 		to_chat(victim, span_danger("You feel [owner] tug at your wrist."))
 	else
@@ -117,7 +121,7 @@
 
 	is_feeding = FALSE
 	target_zone = null
-	QDEL_NULL(victim_ref)
+	victim_ref = null
 
 	UnregisterSignal(victim, list(COMSIG_LIVING_LIFE, COMSIG_QDELETING, COMSIG_CARBON_REMOVE_LIMB, COMSIG_MOVABLE_MOVED))
 
@@ -157,7 +161,7 @@
 		stop_feeding(victim, forced = TRUE)
 		return
 
-	var/blood_to_drain = min(victim.blood_volume, BLOOD_VOLUME_NORMAL * (feed_type == WRIST_FEED ? 0.025 : 0.05) * seconds_per_tick) // 40 seconds for wrist feed, 20 seconds for neck feed, add brutality scaling later
+	var/blood_to_drain = min(victim.blood_volume, BLOOD_VOLUME_NORMAL / (feed_type == WRIST_FEED ? 60 : 30) * seconds_per_tick) // add brutality scaling later
 
 	victim.blood_volume -= blood_to_drain
 	vampire.adjust_lifeforce(blood_to_drain * BLOOD_TO_LIFEFORCE) // finally some good fucking food
@@ -188,8 +192,8 @@
 
 	var/victim = victim_ref?.resolve()
 
-	if(!owner.Adjacent(victim_ref?.resolve()))
-		owner.balloon_alert("out of range!")
+	if(!victim || (owner.pulling != victim && !owner.Adjacent(victim)))
+		owner.balloon_alert(owner, "out of range!")
 		stop_feeding(victim, forced = TRUE)
 		return FALSE
 	return TRUE

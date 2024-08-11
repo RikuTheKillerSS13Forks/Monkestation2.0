@@ -8,16 +8,21 @@
 	var/mob/living/carbon/human/user
 	var/datum/antagonist/vampire/vampire
 
+/datum/action/cooldown/vampire/New(Target)
+	. = ..()
+
+	vampire = Target
+	if(!istype(vampire))
+		CRASH("Vampire action created without a linked vampire antag datum.")
+
+	RegisterSignal(vampire, COMSIG_VAMPIRE_LIFEFORCE_CHANGED, PROC_REF(update_button))
+
 /datum/action/cooldown/vampire/Grant(mob/granted_to)
 	. = ..()
 
 	if(!ishuman(granted_to))
 		CRASH("Vampire action granted to non-human mob.")
 	user = granted_to
-
-	vampire = granted_to?.mind?.has_antag_datum(/datum/antagonist/vampire)
-	if(!vampire)
-		CRASH("Vampire action granted to non-vampire mob.")
 
 /datum/action/cooldown/vampire/Remove(mob/removed_from)
 	. = ..()
@@ -37,5 +42,9 @@
 	return TRUE
 
 /datum/action/cooldown/vampire/Destroy() // assumes that the action target is always the vampire antag datum, so this should be called if vampire is qdel'd
+	UnregisterSignal(vampire, COMSIG_VAMPIRE_LIFEFORCE_CHANGED)
 	vampire = null
 	return ..()
+
+/datum/action/cooldown/vampire/proc/update_button(datum/source) // not named update_button_status as thats an action level proc, this is a signal handler for that
+	build_all_button_icons(UPDATE_BUTTON_STATUS)
