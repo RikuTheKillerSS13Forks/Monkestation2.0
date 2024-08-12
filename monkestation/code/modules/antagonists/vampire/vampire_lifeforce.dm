@@ -25,6 +25,8 @@
 		if(lifeforce > LIFEFORCE_MAXIMUM) // LIFEFORCE_MAXIMUM is a soft cap, going above it will make your lifeforce drain much faster
 			var/thirst_multiplier = 2 + (lifeforce - LIFEFORCE_MAXIMUM) * 0.02
 			set_lifeforce_change(LIFEFORCE_CHANGE_THIRST, LIFEFORCE_DRAIN_BASE * thirst_multiplier)
+		else if(old_amount > LIFEFORCE_MAXIMUM)
+			set_lifeforce_change(LIFEFORCE_CHANGE_THIRST, LIFEFORCE_DRAIN_BASE)
 
 	if(lifeforce <= 0)
 		to_chat(owner.current, span_userdanger("Your body turns to dust as the lifeforce that once animated it runs out!"))
