@@ -4,7 +4,7 @@
 /datum/action/cooldown/vampire/feed
 	name = "Feed"
 	desc = "Drink the blood of a victim, a more aggressive grab feeds directly from the carotid artery and allows you to enthrall your victim if they were alive when you started feeding."
-	button_icon_state = "absorb_dna"
+	button_icon_state = "power_feed"
 	cooldown_time = 1 SECOND
 
 	/// If we're currently feeding, used for sanity.
@@ -44,7 +44,7 @@
 			owner.balloon_alert(owner, "no blood!")
 		return FALSE
 
-	if(victim.stat == DEAD && victim.timeofdeath + 30 SECONDS > world.time) // succumbing doesn't stop the vampire from getting a meal, only from enthralling you
+	if(victim.stat == DEAD && victim.timeofdeath + 30 SECONDS < world.time) // succumbing doesn't stop the vampire from getting a meal, only from enthralling you
 		if(feedback)
 			owner.balloon_alert(owner, "too decayed!")
 		return FALSE
@@ -59,11 +59,11 @@
 	return TRUE
 
 /datum/action/cooldown/vampire/feed/Activate(atom/target)
-	var/mob/living/carbon/victim = owner.pulling
-
 	if(is_feeding)
-		stop_feeding(victim, forced = FALSE)
+		stop_feeding(victim_ref.resolve(), forced = FALSE) // victim_ref should never be null if is_feeding is true
 		return ..()
+
+	var/mob/living/carbon/victim = owner.pulling
 
 	if(feed_type == WRIST_FEED)
 		to_chat(victim, span_danger("You feel [owner] tug at your wrist."))
@@ -81,6 +81,7 @@
 	RegisterSignal(victim, COMSIG_QDELETING, PROC_REF(on_victim_qdel))
 	RegisterSignal(victim, COMSIG_CARBON_REMOVE_LIMB, PROC_REF(check_removed_limb))
 	RegisterSignal(victim, COMSIG_MOVABLE_MOVED, PROC_REF(check_adjacent))
+	RegisterSignal(owner, COMSIG_MOVABLE_MOVED, PROC_REF(check_adjacent))
 
 	if(feed_type == WRIST_FEED)
 		owner.visible_message(
@@ -124,8 +125,9 @@
 	victim_ref = null
 
 	UnregisterSignal(victim, list(COMSIG_LIVING_LIFE, COMSIG_QDELETING, COMSIG_CARBON_REMOVE_LIMB, COMSIG_MOVABLE_MOVED))
+	UnregisterSignal(owner, COMSIG_MOVABLE_MOVED)
 
-	var/obj/item/bodypart/target_limb = bodypart_override || (is_suitable_limb(victim, target_zone) ? victim.get_bodypart(target_zone) : null)
+	var/obj/item/bodypart/target_limb = bodypart_override ? bodypart_override : (is_suitable_limb(victim, target_zone) ? victim.get_bodypart(target_zone) : null)
 
 	if(forced)
 		owner.visible_message(
@@ -148,11 +150,12 @@
 /datum/action/cooldown/vampire/feed/proc/on_life(mob/living/carbon/victim, seconds_per_tick, times_fired)
 	SIGNAL_HANDLER
 
-	if(!check_adjacent()) // handles its own balloon alert
+	if(!check_adjacent()) // handles its own balloon alert and stop_feeding
 		return
 
 	if(victim.get_blood_id() != /datum/reagent/blood)
 		owner.balloon_alert(owner, "incompatible blood!")
+		stop_feeding(victim, forced = FALSE)
 		return
 
 	if(!is_suitable_limb(victim, target_zone))
@@ -210,20 +213,25 @@
 		return
 
 /datum/action/cooldown/vampire/feed/proc/attempt_enthrall(mob/living/carbon/human/victim)
-	if(vampire.vampire_rank == 0 || !istype(victim))
+	if(!started_alive || vampire.vampire_rank == 0 || !istype(victim))
 		owner.balloon_alert(owner, "out of blood!")
+		stop_feeding(victim, forced = FALSE)
 		return
 
 	if(!can_enthrall(victim))
+		stop_feeding(victim, forced = FALSE)
 		return
 
 	UnregisterSignal(victim, list(COMSIG_LIVING_LIFE))
 	owner.balloon_alert(owner, "enthralling...")
 
-	if(!do_after(owner, 5 SECONDS, victim, timed_action_flags = IGNORE_SLOWDOWNS, extra_checks = CALLBACK(src, PROC_REF(enthrall_extra_check))))
+	if(!do_after(owner, 5 SECONDS, victim, timed_action_flags = IGNORE_SLOWDOWNS | IGNORE_HELD_ITEM, extra_checks = CALLBACK(src, PROC_REF(enthrall_extra_check))))
+		stop_feeding(victim, forced = FALSE)
 		return
 
 	vampire.enthrall(victim)
+
+	stop_feeding(victim, forced = FALSE)
 
 /datum/action/cooldown/vampire/feed/proc/can_enthrall(mob/living/carbon/victim)
 	if(!victim)

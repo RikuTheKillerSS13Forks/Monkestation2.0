@@ -27,6 +27,8 @@
 	hud.infodisplay += rank_display
 
 	hud.show_hud(hud.hud_version)
+	update_hud()
+
 	UnregisterSignal(owner.current, COMSIG_MOB_HUD_CREATED)
 
 /// Updates HUD displays for lifeforce and rank.
@@ -37,8 +39,8 @@
 	else if(lifeforce > 25)
 		color = "#ffaaaa"
 
-	lifeforce_display?.maptext = FORMAT_VAMPIRE_HUD_TEXT(color, lifeforce)
+	lifeforce_display?.maptext = FORMAT_VAMPIRE_HUD_TEXT(lifeforce, color)
 
-	color = BlendRGB("#ffffff", "#ffd700", vampire_rank / VAMPIRE_RANK_MAX)
+	color = BlendRGB("#ffffff", "#c941ff", vampire_rank / VAMPIRE_RANK_MAX)
 
-	rank_display?.maptext = FORMAT_VAMPIRE_HUD_TEXT(color, vampire_rank)
+	rank_display?.maptext = FORMAT_VAMPIRE_HUD_TEXT(vampire_rank, color)

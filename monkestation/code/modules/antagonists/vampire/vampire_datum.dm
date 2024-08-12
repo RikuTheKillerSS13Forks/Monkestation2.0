@@ -78,5 +78,5 @@
 
 /datum/antagonist/vampire/proc/on_life(datum/source, seconds_per_tick, times_fired)
 	SIGNAL_HANDLER
-	lifeforce += lifeforce_per_second * seconds_per_tick
+	adjust_lifeforce(lifeforce_per_second * seconds_per_tick)
 

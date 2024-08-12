@@ -1,6 +1,7 @@
 /datum/action/cooldown/vampire
 	name = "Please ahelp"
 	desc = "If you see this ahelp IMMEDIATELY"
+	button_icon = 'monkestation/icons/vampires/actions_vampire.dmi'
 
 	/// How much lifeforce it costs to use this action.
 	var/life_cost = 0

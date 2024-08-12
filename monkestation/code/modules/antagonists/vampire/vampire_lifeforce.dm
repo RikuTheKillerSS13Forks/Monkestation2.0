@@ -19,6 +19,7 @@
 
 	if(old_amount != lifeforce)
 		SEND_SIGNAL(src, COMSIG_VAMPIRE_LIFEFORCE_CHANGED, old_amount, lifeforce)
+		update_hud()
 
 	if(lifeforce <= 0)
 		to_chat(owner.current, span_userdanger("Your body turns to dust as the lifeforce that once animated it runs out!"))
