@@ -17,7 +17,7 @@
 /**
  * Sources
  */
-/// Trait source for vampires.
+/// Trait source for the vampire antag datum, these are cleared when the datum is removed so be careful.
 #define VAMPIRE_TRAIT "vampire_trait"
 
 /**

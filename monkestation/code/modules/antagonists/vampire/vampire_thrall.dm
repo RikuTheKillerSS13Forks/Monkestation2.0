@@ -2,6 +2,7 @@
 /datum/antagonist/vampire/proc/enthrall(mob/living/carbon/human/target)
 	var/datum/antagonist/vampire/thrall/thrall = new(src)
 	target.mind.add_antag_datum(thrall)
+	target.investigate_log("has been enthralled by [key_name(owner.current)].", INVESTIGATE_DEATHS)
 
 /datum/antagonist/vampire/thrall
 	starting_rank = 0

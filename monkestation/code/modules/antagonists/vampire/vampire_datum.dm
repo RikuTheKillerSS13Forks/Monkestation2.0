@@ -49,6 +49,8 @@
 	update_lifeforce_changes()
 	handle_clown_mutation(target_mob, "Your thirst for blood has overtaken your clownish nature, allowing you to wield weapons without harming yourself.")
 
+	target_mob.add_traits(list(TRAIT_NOBLOOD, TRAIT_STABLEHEART), VAMPIRE_TRAIT) // vampires are entirely bloodless and instead run on the lifeforce they *extract* from the blood of sapients
+
 	RegisterSignal(target_mob, COMSIG_LIVING_LIFE, PROC_REF(on_life))
 
 	if(target_mob.hud_used)
@@ -64,6 +66,8 @@
 		return
 
 	handle_clown_mutation(target_mob, removing = FALSE)
+
+	REMOVE_TRAITS_IN(target_mob, VAMPIRE_TRAIT)
 
 	UnregisterSignal(target_mob, COMSIG_LIVING_LIFE)
 

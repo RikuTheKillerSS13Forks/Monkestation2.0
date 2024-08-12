@@ -3,7 +3,7 @@
 
 /datum/action/cooldown/vampire/feed
 	name = "Feed"
-	desc = "Drink the blood of a victim, a more aggressive grab feeds directly from the carotid artery and allows you to enthrall your victim if they were alive when you started feeding."
+	desc = "Drink the blood of a victim, a more aggressive grab feeds directly from the carotid artery and allows you to enthrall your victim if they remain alive."
 	button_icon_state = "power_feed"
 	cooldown_time = 1 SECOND
 
@@ -13,9 +13,6 @@
 	/// The amount of blood a target has since our last feed, this loops and lets us not spam alerts of low blood.
 	var/target_blood = BLOOD_VOLUME_MAX_LETHAL
 
-	/// Whether the target was alive or not when we started feeding.
-	var/started_alive = TRUE
-
 	/// Whether the feed was started with a passive (wrist feed) or aggressive (neck feed) grab.
 	var/feed_type = WRIST_FEED
 
@@ -24,6 +21,19 @@
 
 	/// Weakref to the victim.
 	var/datum/weakref/victim_ref
+
+/datum/action/cooldown/vampire/feed/Grant(mob/granted_to)
+	RegisterSignals(granted_to, list(COMSIG_LIVING_START_PULL, COMSIG_ATOM_NO_LONGER_PULLING), PROC_REF(update_button))
+
+	return ..()
+
+/datum/action/cooldown/vampire/feed/Remove(mob/removed_from)
+	UnregisterSignal(removed_from, list(COMSIG_LIVING_START_PULL, COMSIG_ATOM_NO_LONGER_PULLING))
+
+	if(is_feeding)
+		stop_feeding(victim_ref.resolve(), forced = TRUE) // victim_ref should never be null if is_feeding is true
+
+	return ..()
 
 /datum/action/cooldown/vampire/feed/IsAvailable(feedback)
 	if(!..())
@@ -74,8 +84,9 @@
 		return
 
 	is_feeding = TRUE // you've secured the meal, nice
-	started_alive = victim.stat != DEAD
 	victim_ref = WEAKREF(victim)
+
+	ADD_TRAIT(victim, TRAIT_NODEATH, REF(src)) // uses a ref since you can get fed on by several vampires at once
 
 	RegisterSignal(victim, COMSIG_LIVING_LIFE, PROC_REF(on_life))
 	RegisterSignal(victim, COMSIG_QDELETING, PROC_REF(on_victim_qdel))
@@ -106,11 +117,6 @@
 
 	return ..()
 
-/datum/action/cooldown/vampire/feed/Remove(mob/removed_from)
-	if(is_feeding)
-		stop_feeding(victim_ref.resolve(), forced = TRUE) // victim_ref should never be null if is_feeding is true
-	return ..()
-
 /datum/action/cooldown/vampire/feed/proc/on_victim_qdel(mob/living/carbon/victim)
 	SIGNAL_HANDLER
 
@@ -123,6 +129,8 @@
 	is_feeding = FALSE
 	target_zone = null
 	victim_ref = null
+
+	REMOVE_TRAIT(victim, TRAIT_NODEATH, REF(src))
 
 	UnregisterSignal(victim, list(COMSIG_LIVING_LIFE, COMSIG_QDELETING, COMSIG_CARBON_REMOVE_LIMB, COMSIG_MOVABLE_MOVED))
 	UnregisterSignal(owner, COMSIG_MOVABLE_MOVED)
@@ -176,6 +184,14 @@
 	victim.blood_volume -= blood_to_drain
 	vampire.adjust_lifeforce(blood_to_drain * BLOOD_TO_LIFEFORCE) // finally some good fucking food
 
+	owner.playsound_local(soundin = 'sound/effects/singlebeat.ogg', vol = 40, vary = TRUE)
+	if(feed_type == NECK_FEED) // dire straits, play it to them too to show them they're dying
+		victim.playsound_local(soundin = 'sound/effects/singlebeat.ogg', vol = 40, vary = TRUE)
+
+	if(victim.blood_volume <= 0) // otherwise the blood regen of the victim will make their blood volume just a tad bit above 0
+		INVOKE_ASYNC(src, PROC_REF(attempt_enthrall), victim)
+		return
+
 /datum/action/cooldown/vampire/feed/proc/is_suitable_limb(mob/living/carbon/victim, zone)
 	var/obj/item/bodypart/limb = victim.get_bodypart(zone)
 	return limb && (limb.biological_state & BIO_BLOODED)
@@ -217,7 +233,7 @@
 		return
 
 /datum/action/cooldown/vampire/feed/proc/attempt_enthrall(mob/living/carbon/human/victim)
-	if(!started_alive || vampire.vampire_rank == 0 || !istype(victim))
+	if(vampire.vampire_rank == 0 || !istype(victim) || victim.stat == DEAD)
 		owner.balloon_alert(owner, "out of blood!")
 		stop_feeding(victim, forced = FALSE)
 		return
@@ -229,16 +245,22 @@
 	UnregisterSignal(victim, list(COMSIG_LIVING_LIFE))
 	owner.balloon_alert(owner, "enthralling...")
 
+	to_chat(victim, span_hypnophrase("You feel a foreign presence seep into your mind..."))
+
 	if(!do_after(owner, 5 SECONDS, victim, timed_action_flags = IGNORE_SLOWDOWNS | IGNORE_HELD_ITEM, extra_checks = CALLBACK(src, PROC_REF(enthrall_extra_check))))
 		stop_feeding(victim, forced = FALSE)
 		return
 
 	vampire.enthrall(victim)
+	victim.setOxyLoss(0) // if they don't wake up from this, it's the vampire's problem
 
 	stop_feeding(victim, forced = FALSE)
 
 /datum/action/cooldown/vampire/feed/proc/can_enthrall(mob/living/carbon/victim)
 	if(!victim)
+		return FALSE
+	if(victim.stat == DEAD)
+		owner.balloon_alert("dead!")
 		return FALSE
 	if(!victim.mind)
 		owner.balloon_alert("mindless!")
