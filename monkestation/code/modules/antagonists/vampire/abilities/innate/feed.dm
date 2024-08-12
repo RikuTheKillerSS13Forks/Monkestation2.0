@@ -137,8 +137,12 @@
 		)
 		to_chat(victim, span_danger("[owner]'s fangs are ripped out of your [feed_type]!"))
 
+		if(!HAS_TRAIT(victim, TRAIT_ANALGESIA))
+			INVOKE_ASYNC(victim, TYPE_PROC_REF(/mob, emote), "scream")
+
 		if(target_limb)
-			victim.cause_wound_of_type_and_severity(WOUND_PIERCE, target_limb, WOUND_SEVERITY_MODERATE)
+			target_limb.force_wound_upwards(/datum/wound/pierce/bleed/moderate, wound_source = "vampire fangs")
+			target_limb.receive_damage(brute = 10, wound_bonus = CANT_WOUND)
 	else
 		owner.visible_message(
 			message = span_notice("[owner] releases [owner.p_their()] bite on [victim]'s [feed_type]."),
