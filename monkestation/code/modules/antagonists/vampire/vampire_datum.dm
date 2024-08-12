@@ -24,10 +24,26 @@
 	/// Cached value made from lifeforce_changes, don't change this directly.
 	var/lifeforce_per_second = 0
 
+	/// Whether or not masquerade is enabled. Masquerade hides obvious signs of being a vampire.
+	var/masquerade_enabled = TRUE
+
 	var/atom/movable/screen/vampire/lifeforce_counter/lifeforce_display
 	var/atom/movable/screen/vampire/rank_counter/rank_display
 
 	var/datum/action/cooldown/vampire/feed/feed_action
+
+	/// List of traits that are always active. Don't bloat this with 20 billion passives, reserve those for stat abilities.
+	var/static/list/innate_traits = list(
+		TRAIT_NOBLOOD,  // vampires are entirely bloodless and instead run on the lifeforce they *extract* from the blood of sapients
+		TRAIT_STABLEHEART, // which also means they don't need a heart
+		TRAIT_NOCRITDAMAGE // helps with enthralling and also helps vampires save their thralls
+	)
+
+	/// List of traits that are removed when masquerade is enabled.
+	var/static/list/visible_traits = list(
+		TRAIT_COLDBLOODED,
+		TRAIT_NO_MIRROR_REFLECTION
+	)
 
 /datum/antagonist/vampire/New()
 	. = ..()
@@ -46,10 +62,13 @@
 	if(!istype(target_mob))
 		return
 
+	update_masquerade()
 	update_lifeforce_changes()
+
 	handle_clown_mutation(target_mob, "Your thirst for blood has overtaken your clownish nature, allowing you to wield weapons without harming yourself.")
 
-	target_mob.add_traits(list(TRAIT_NOBLOOD, TRAIT_STABLEHEART), VAMPIRE_TRAIT) // vampires are entirely bloodless and instead run on the lifeforce they *extract* from the blood of sapients
+	set_masquerade(FALSE)
+	target_mob.add_traits(inherent_traits, VAMPIRE_TRAIT)
 
 	RegisterSignal(target_mob, COMSIG_LIVING_LIFE, PROC_REF(on_life))
 

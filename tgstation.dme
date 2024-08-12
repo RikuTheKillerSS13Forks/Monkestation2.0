@@ -6135,6 +6135,7 @@
 #include "monkestation\code\modules\antagonists\vampire\vampire_datum.dm"
 #include "monkestation\code\modules\antagonists\vampire\vampire_hud.dm"
 #include "monkestation\code\modules\antagonists\vampire\vampire_lifeforce.dm"
+#include "monkestation\code\modules\antagonists\vampire\vampire_masquerade.dm"
 #include "monkestation\code\modules\antagonists\vampire\vampire_objectives.dm"
 #include "monkestation\code\modules\antagonists\vampire\vampire_outfit.dm"
 #include "monkestation\code\modules\antagonists\vampire\vampire_rank.dm"

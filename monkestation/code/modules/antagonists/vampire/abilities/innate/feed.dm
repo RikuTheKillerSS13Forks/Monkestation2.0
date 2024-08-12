@@ -262,6 +262,9 @@
 	if(victim.stat == DEAD)
 		owner.balloon_alert("dead!")
 		return FALSE
+	if(victim.health - victim.getOxyLoss() < HEALTH_THRESHOLD_DEAD && HAS_TRAIT_FROM_ONLY(victim, TRAIT_NODEATH, REF(src))) // cancel if they'd die right after
+		owner.balloon_alert("too weak!")
+		return FALSE
 	if(!victim.mind)
 		owner.balloon_alert("mindless!")
 		return FALSE

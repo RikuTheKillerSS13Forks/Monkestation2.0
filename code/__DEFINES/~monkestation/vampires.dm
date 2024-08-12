@@ -11,8 +11,10 @@
 #define TRAIT_OCCULTIST "occultist"
 /// Hides signs of being a vampire, such as a total lack of blood.
 #define TRAIT_MASQUERADE "masquerade"
-/// Makes your body temperature follow room temperature. Doesn't make you immune to temperature changes.
+/// Makes your body temperature follow room temperature. Doesn't make you immune.
 #define TRAIT_COLDBLOODED "coldblooded"
+/// Makes your skin pale grey.
+#define TRAIT_PALE_GREY_SKIN
 
 /**
  * Sources
@@ -46,6 +48,8 @@
  * Lifeforce Change Sources
  */
 #define LIFEFORCE_CHANGE_THIRST "thirst"
+#define LIFEFORCE_CHANGE_OVERFLOW "overflow"
+#define LIFEFORCE_CHANGE_MASQUERADE "masquerade"
 
 /**
  * Vampire Rank

@@ -5,7 +5,10 @@
 	target.investigate_log("has been enthralled by [key_name(owner.current)].", INVESTIGATE_DEATHS)
 
 /datum/antagonist/vampire/thrall
+	name = "\improper Thrall"
+	roundend_category = "thralls"
 	starting_rank = 0
+	masquerade_enabled = FALSE
 
 	/// List of our masters. Use helpers to access this.
 	var/list/masters = list()

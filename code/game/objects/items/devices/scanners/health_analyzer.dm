@@ -391,6 +391,8 @@
 				render_list += "<span class='alert ml-1'>Blood level: <b>CRITICAL [blood_percent] %</b>, [carbontarget.blood_volume] cl,</span> [span_info("type: [blood_type]")]\n"
 			else
 				render_list += "<span class='info ml-1'>Blood level: [blood_percent] %, [carbontarget.blood_volume] cl, type: [blood_type]</span>\n"
+		else if(!HAS_TRAIT_FROM_ONLY(carbontarget, TRAIT_NOBLOOD, VAMPIRE_TRAIT) && HAS_TRAIT(carbontarget, TRAIT_MASQUERADE)) // MONKESTATION EDIT: Vampire Masquerade Check
+			render_list += "<span class='info ml-1'>Blood level: 100 %, [BLOOD_VOLUME_NORMAL] cl, type: [carbontarget.dna.blood_type]</span>\n"
 
 	// Cybernetics
 	if(iscarbon(target))
