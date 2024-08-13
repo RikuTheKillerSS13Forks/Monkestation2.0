@@ -584,7 +584,7 @@
 /mob/living/carbon/handle_environment(datum/gas_mixture/environment, seconds_per_tick, times_fired)
 	var/areatemp = get_temperature(environment)
 
-	if(stat != DEAD && !HAS_TRAIT(TRAIT_COLDBLOODED)) // If you are dead your body does not stabilize naturally MONKESTATION EDIT: TRAIT_COLDBLOODED
+	if(stat != DEAD && !HAS_TRAIT(src, TRAIT_COLDBLOODED)) // If you are dead your body does not stabilize naturally MONKESTATION EDIT: TRAIT_COLDBLOODED
 		natural_bodytemperature_stabilization(environment, seconds_per_tick, times_fired)
 
 	if(!on_fire || areatemp > bodytemperature) // If we are not on fire or the area is hotter
