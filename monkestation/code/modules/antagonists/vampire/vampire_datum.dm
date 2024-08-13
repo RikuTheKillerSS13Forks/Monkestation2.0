@@ -68,7 +68,7 @@
 	handle_clown_mutation(target_mob, "Your thirst for blood has overtaken your clownish nature, allowing you to wield weapons without harming yourself.")
 
 	set_masquerade(FALSE)
-	target_mob.add_traits(inherent_traits, VAMPIRE_TRAIT)
+	target_mob.add_traits(innate_traits, VAMPIRE_TRAIT)
 
 	RegisterSignal(target_mob, COMSIG_LIVING_LIFE, PROC_REF(on_life))
 
