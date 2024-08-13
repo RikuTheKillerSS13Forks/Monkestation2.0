@@ -43,7 +43,8 @@
 	/// List of traits that are removed when masquerade is enabled.
 	var/static/list/visible_traits = list(
 		TRAIT_COLDBLOODED,
-		TRAIT_NO_MIRROR_REFLECTION
+		TRAIT_NO_MIRROR_REFLECTION,
+		TRAIT_PALE_GREY_SKIN
 	)
 
 	/// List of traits that are added when masquerade is enabled.
@@ -69,7 +70,6 @@
 	if(!istype(target_mob))
 		return
 
-	update_masquerade()
 	update_lifeforce_changes()
 
 	handle_clown_mutation(target_mob, "Your thirst for blood has overtaken your clownish nature, allowing you to wield weapons without harming yourself.")
@@ -77,6 +77,8 @@
 	set_masquerade(FALSE)
 	target_mob.add_traits(innate_traits, VAMPIRE_TRAIT)
 	target_mob.blood_volume = BLOOD_VOLUME_NORMAL // if this somehow deviates, something is wrong as you have TRAIT_NOBLOOD and nothing should modify blood_volume if you have it
+
+	update_masquerade() // keep this below add_traits or else hulk will break our shitcode (bodypart.variable_color)
 
 	RegisterSignal(target_mob, COMSIG_LIVING_LIFE, PROC_REF(on_life))
 

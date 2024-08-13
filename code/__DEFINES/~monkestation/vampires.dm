@@ -16,7 +16,7 @@
 /// Makes your body temperature follow room temperature. Doesn't make you immune.
 #define TRAIT_COLDBLOODED "coldblooded"
 /// Makes your skin pale grey.
-#define TRAIT_PALE_GREY_SKIN
+#define TRAIT_PALE_GREY_SKIN "pale_grey_skin"
 
 /**
  * Sources
@@ -39,8 +39,8 @@
 #define LIFEFORCE_MAXIMUM 200
 /// How much lifeforce one human is roughly worth. Can vary wildly sometimes.
 #define LIFEFORCE_PER_HUMAN 100
-/// How much lifeforce is lost per second by default. 20 min/human
-#define LIFEFORCE_DRAIN_BASE LIFEFORCE_PER_HUMAN / -1200
+/// How much lifeforce is lost per second by default. 30 min/human
+#define LIFEFORCE_DRAIN_BASE LIFEFORCE_PER_HUMAN / -1800
 /// Multiply lifeforce by this to get an equivalent amount of blood.
 #define LIFEFORCE_TO_BLOOD BLOOD_VOLUME_NORMAL / LIFEFORCE_PER_HUMAN
 /// Multiply blood by this to get an equivalent amount of lifeforce.

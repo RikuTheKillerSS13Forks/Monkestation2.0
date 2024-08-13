@@ -3,10 +3,12 @@
 	if(masquerade_enabled)
 		owner.current.remove_traits(visible_traits, VAMPIRE_TRAIT)
 		owner.current.add_traits(masquerade_traits, VAMPIRE_TRAIT)
+		owner.current.RemoveElement(/datum/element/cult_eyes)
 		set_lifeforce_change(LIFEFORCE_CHANGE_MASQUERADE, LIFEFORCE_DRAIN_BASE) // doubled drain rate
 	else
 		owner.current.add_traits(visible_traits, VAMPIRE_TRAIT)
 		owner.current.remove_traits(masquerade_traits, VAMPIRE_TRAIT)
+		owner.current.AddElement(/datum/element/cult_eyes, initial_delay = 0 SECONDS)
 		clear_lifeforce_change(LIFEFORCE_CHANGE_MASQUERADE)
 
 /// Enables or disables masquerade.

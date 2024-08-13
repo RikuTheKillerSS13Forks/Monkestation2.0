@@ -24,14 +24,18 @@
 
 	update_hud()
 
-	if(lifeforce > LIFEFORCE_MAXIMUM) // LIFEFORCE_MAXIMUM is a soft cap, going above it will make your lifeforce drain much faster
-		var/thirst_multiplier = 2 + (lifeforce - LIFEFORCE_MAXIMUM) * 0.05
-		set_lifeforce_change(LIFEFORCE_CHANGE_OVERFLOW, LIFEFORCE_DRAIN_BASE * thirst_multiplier)
+	if(lifeforce > LIFEFORCE_MAXIMUM)
+		set_lifeforce_change(LIFEFORCE_CHANGE_OVERFLOW, 1 + (lifeforce - LIFEFORCE_MAXIMUM) * 0.02) // lose 1 per second initially and an additional 1 per 50 excess
 	else if(old_amount > LIFEFORCE_MAXIMUM)
 		clear_lifeforce_change(LIFEFORCE_CHANGE_OVERFLOW)
 
 	if(lifeforce <= 0)
-		to_chat(owner.current, span_userdanger("Your body turns to dust as the lifeforce that once animated it runs out!"))
+		owner.current.visible_message(
+			message = span_danger("[owner.current] lets out a scream of pure terror and turns to dust right before your eyes!"),
+			self_message = span_userdanger("Your body turns to dust as the lifeforce that once animated it runs out!"),
+			blind_message = span_hear("You hear a scream of pure terror!")
+		)
+		owner.current.emote("scream")
 		owner.current.investigate_log("has been dusted by a lack of lifeforce. (vampire)", INVESTIGATE_DEATHS)
 		owner.current.dust(drop_items = TRUE)
 
