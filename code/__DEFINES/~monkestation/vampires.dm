@@ -9,8 +9,10 @@
  */
 /// The mob has special interactions with vampires and the occult.
 #define TRAIT_OCCULTIST "occultist"
-/// Hides signs of being a vampire, such as a total lack of blood.
-#define TRAIT_MASQUERADE "masquerade"
+/// Hides TRAIT_NOBLOOD if it's only from the same sources as TRAIT_FAKEBLOOD.
+#define TRAIT_FAKEBLOOD "fakeblood"
+/// Hides TRAIT_GENELESS if it's only from the same sources as TRAIT_FAKEGENES.
+#define TRAIT_FAKEGENES "fakegenes"
 /// Makes your body temperature follow room temperature. Doesn't make you immune.
 #define TRAIT_COLDBLOODED "coldblooded"
 /// Makes your skin pale grey.

@@ -36,13 +36,20 @@
 	var/static/list/innate_traits = list(
 		TRAIT_NOBLOOD,  // vampires are entirely bloodless and instead run on the lifeforce they *extract* from the blood of sapients
 		TRAIT_STABLEHEART, // which also means they don't need a heart
-		TRAIT_NOCRITDAMAGE // helps with enthralling and also helps vampires save their thralls
+		TRAIT_NOCRITDAMAGE, // helps with enthralling and also helps vampires save their thralls
+		TRAIT_GENELESS // hulk + vampire = oh fuck no
 	)
 
 	/// List of traits that are removed when masquerade is enabled.
 	var/static/list/visible_traits = list(
 		TRAIT_COLDBLOODED,
 		TRAIT_NO_MIRROR_REFLECTION
+	)
+
+	/// List of traits that are added when masquerade is enabled.
+	var/static/list/masquerade_traits = list(
+		TRAIT_FAKEBLOOD,
+		TRAIT_FAKEGENES
 	)
 
 /datum/antagonist/vampire/New()
@@ -69,6 +76,7 @@
 
 	set_masquerade(FALSE)
 	target_mob.add_traits(innate_traits, VAMPIRE_TRAIT)
+	target_mob.blood_volume = BLOOD_VOLUME_NORMAL // if this somehow deviates, something is wrong as you have TRAIT_NOBLOOD and nothing should modify blood_volume if you have it
 
 	RegisterSignal(target_mob, COMSIG_LIVING_LIFE, PROC_REF(on_life))
 
