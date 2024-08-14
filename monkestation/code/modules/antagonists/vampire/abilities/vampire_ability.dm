@@ -9,10 +9,10 @@
 	var/static/min_rank = 0
 
 	/// The type of action to be granted to the vampire by this ability, if any.
-	var/static/datum/action/cooldown/vampire/granted_action_type = null
+	var/static/datum/action/granted_action_type = null
 
 	/// The action currently granted to the vampire by this ability, if any.
-	var/datum/action/cooldown/vampire/granted_action = null
+	var/datum/action/granted_action = null
 
 	/// The vampire who owns this ability.
 	var/datum/antagonist/vampire/owner = null
