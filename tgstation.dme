@@ -6142,6 +6142,7 @@
 #include "monkestation\code\modules\antagonists\vampire\vampire_rank.dm"
 #include "monkestation\code\modules\antagonists\vampire\vampire_stats.dm"
 #include "monkestation\code\modules\antagonists\vampire\vampire_thrall.dm"
+#include "monkestation\code\modules\antagonists\vampire\abilities\vampire_ability.dm"
 #include "monkestation\code\modules\antagonists\vampire\actions\vampire_action.dm"
 #include "monkestation\code\modules\antagonists\vampire\actions\innate\feed.dm"
 #include "monkestation\code\modules\antagonists\wizard\wizard.dm"
