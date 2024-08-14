@@ -35,7 +35,7 @@
 			self_message = span_userdanger("Your body turns to dust as the lifeforce that once animated it runs out!"),
 			blind_message = span_hear("You hear a scream of pure terror!")
 		)
-		owner.current.emote("scream")
+		INVOKE_ASYNC(owner.current, TYPE_PROC_REF(/mob, emote), "scream")
 		owner.current.investigate_log("has been dusted by a lack of lifeforce. (vampire)", INVESTIGATE_DEATHS)
 		owner.current.dust(drop_items = TRUE)
 
