@@ -1,10 +1,13 @@
 /datum/action/cooldown/vampire/masquerade
 	name = "Masquerade"
 	desc = "Hide your true nature from the prying eyes of the mortals. Drains lifeforce while active."
+	button_icon_state = "power_human"
 	cooldown_time = 1 SECOND
 
 /datum/action/cooldown/vampire/masquerade/Activate(atom/target)
 	vampire.set_masquerade(!vampire.masquerade_enabled)
+
+	owner.balloon_alert(owner, vampire.masquerade_enabled ? "enabled" : "disabled")
 
 	if(vampire.masquerade_enabled)
 		owner.visible_message(
@@ -14,7 +17,7 @@
 	else
 		owner.visible_message(
 			message = span_danger("[owner]'s skin suddenly turns a pale grey, [owner.p_their()] eyes begin to glow and a set of ferocious fangs extends from [owner.p_their()] mouth!"),
-			self_message = span_notice("You return to your icy parlor, silently hoping to never have to fool another mortal again. Alas, such is the life of our kin.")
+			self_message = span_notice("You return to your icy pallor, silently hoping to never have to fool another mortal again. Alas, such is the life of our kin.")
 		)
 
 	return ..()
