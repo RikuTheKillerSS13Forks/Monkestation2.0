@@ -2,7 +2,7 @@
 	var/old_amount = get_stat(stat)
 	if(amount < old_amount)
 		CRASH("Attempted to lower vampire stat [stat]. This is undefined behaviour and will lead to issues.")
-	var/new_amount = clamp(amount, 0, 60)
+	var/new_amount = clamp(amount, 0, VAMPIRE_SP_MAXIMUM)
 	if(new_amount == old_amount)
 		return
 	var/delta = new_amount - old_amount
