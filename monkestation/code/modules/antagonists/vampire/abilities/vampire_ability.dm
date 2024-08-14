@@ -9,7 +9,8 @@
 	var/min_rank = 0
 
 	/// The action currently granted to the vampire by this ability, if any.
-	/// If this is set to a typepath during initialization, this will be set to a newly created instance of said typepath.
+	/// If not null during initialization, attempts to create an instance of it.
+	/// DO NOT PUT ANYTHING OTHER THAN A TYPEPATH AS THE INITIAL VALUE.
 	var/datum/action/granted_action = null
 
 	/// The vampire who owns this ability.
@@ -28,10 +29,8 @@
 	RegisterSignal(owner, COMSIG_QDELETING, PROC_REF(clear_ref))
 	RegisterSignal(user, COMSIG_QDELETING, PROC_REF(clear_ref))
 
-	var/granted_action_typepath = src::granted_action
-	if(ispath(granted_action_typepath))
-		granted_action = new granted_action_typepath
-		granted_action.Grant(user)
+	granted_action = new
+	granted_action.Grant(user)
 
 	INVOKE_ASYNC(src, PROC_REF(on_grant))
 
