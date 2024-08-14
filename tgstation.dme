@@ -6145,6 +6145,7 @@
 #include "monkestation\code\modules\antagonists\vampire\abilities\vampire_ability.dm"
 #include "monkestation\code\modules\antagonists\vampire\actions\vampire_action.dm"
 #include "monkestation\code\modules\antagonists\vampire\actions\innate\feed.dm"
+#include "monkestation\code\modules\antagonists\vampire\actions\innate\masquerade.dm"
 #include "monkestation\code\modules\antagonists\wizard\wizard.dm"
 #include "monkestation\code\modules\antagonists\wizard\equipment\artefact.dm"
 #include "monkestation\code\modules\antagonists\wizard\equipment\spellbook_entries\defensive.dm"

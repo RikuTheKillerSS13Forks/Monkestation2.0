@@ -31,6 +31,7 @@
 	var/atom/movable/screen/vampire/rank_counter/rank_display
 
 	var/datum/action/cooldown/vampire/feed/feed_action
+	var/datum/action/cooldown/vampire/masquerade/masquerade_action
 
 	/// List of traits that are always active. Don't bloat this with 20 billion passives, reserve those for stat abilities.
 	var/static/list/innate_traits = list(
@@ -75,6 +76,7 @@
 /datum/antagonist/vampire/New()
 	. = ..()
 	feed_action = new(src)
+	masquerade_action = new(src)
 
 /datum/antagonist/vampire/Destroy()
 	. = ..()
@@ -93,7 +95,6 @@
 
 	handle_clown_mutation(target_mob, "Your thirst for blood has overtaken your clownish nature, allowing you to wield weapons without harming yourself.")
 
-	set_masquerade(FALSE)
 	target_mob.add_traits(innate_traits, VAMPIRE_TRAIT)
 	target_mob.blood_volume = BLOOD_VOLUME_NORMAL // if this somehow deviates, something is wrong as you have TRAIT_NOBLOOD and nothing should modify blood_volume if you have it
 
@@ -106,7 +107,8 @@
 	else
 		RegisterSignal(target_mob, COMSIG_MOB_HUD_CREATED, PROC_REF(on_hud_created))
 
-	feed_action?.Grant(target_mob)
+	feed_action?.Grant(target_mob) // move these to abilities later
+	masquerade_action?.Grant(target_mob)
 
 /datum/antagonist/vampire/remove_innate_effects(mob/living/mob_override)
 	var/mob/living/carbon/human/target_mob = mob_override || owner.current
@@ -127,6 +129,7 @@
 		QDEL_NULL(rank_display)
 
 	feed_action?.Remove(target_mob)
+	masquerade_action?.Remove(target_mob)
 
 /datum/antagonist/vampire/proc/on_life(datum/source, seconds_per_tick, times_fired)
 	SIGNAL_HANDLER
