@@ -53,6 +53,25 @@
 		TRAIT_FAKEGENES
 	)
 
+	/// How many stat points the vampire has in total. (spent + available)
+	var/stat_points = 0
+
+	/// How many available stat points the vampire has.
+	var/available_stat_points = 0
+
+	/// How many stat points the vampire has spent.
+	var/spent_stat_points = 0
+
+	/// The stats of the vampire. The cornerstone of progression alongside ranks. Don't modify this directly.
+	var/list/stats = list(
+		VAMPIRE_STAT_BRUTALITY = 0,
+		VAMPIRE_STAT_TENACITY = 0,
+		VAMPIRE_STAT_PURSUIT = 0,
+		VAMPIRE_STAT_RECOVERY = 0,
+		VAMPIRE_STAT_PERCEPTION = 0,
+		VAMPIRE_STAT_DISCRETION = 0
+	)
+
 /datum/antagonist/vampire/New()
 	. = ..()
 	feed_action = new(src)

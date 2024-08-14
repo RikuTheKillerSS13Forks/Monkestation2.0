@@ -57,3 +57,27 @@
  * Vampire Rank
  */
 #define VAMPIRE_RANK_MAX 6
+
+/**
+ * Stats
+ */
+
+/// The amount of stat points a vampire gets when they rank up.
+#define VAMPIRE_SP_PER_RANK 10
+/// The amount of *extra* stat points a Caitiff gets when they rank up.
+#define VAMPIRE_SP_CAITIFF_BONUS 5
+/// The maximum amount of stat points in any given stat. The total goes above this if you're a Caitiff.
+#define VAMPIRE_SP_MAXIMUM 60
+
+/// Grants offensive passives and abilities.
+#define VAMPIRE_STAT_BRUTALITY "Brutality"
+/// Grants defensive passives and abilities.
+#define VAMPIRE_STAT_TENACITY "Tenacity"
+/// Grants movement passives and abilities.
+#define VAMPIRE_STAT_PURSUIT "Pursuit"
+/// Grants regeneration passives and abilities.
+#define VAMPIRE_STAT_RECOVERY "Recovery"
+/// Grants information passives and abilities.
+#define VAMPIRE_STAT_PERCEPTION "Perception"
+/// Grants stealth passives and abilities.
+#define VAMPIRE_STAT_DISCRETION "Discretion"

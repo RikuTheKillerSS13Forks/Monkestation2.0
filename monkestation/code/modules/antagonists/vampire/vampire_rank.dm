@@ -5,8 +5,10 @@
 
 	update_hud()
 
-	name = vampire_rank == 0 ? "\improper Thrall" : "\improper Vampire"
-	roundend_category = vampire_rank == 0 ? "thralls" : "vampires"
+	name = rank == 0 ? "\improper Thrall" : "\improper Vampire"
+	roundend_category = rank == 0 ? "thralls" : "vampires"
+
+	set_stat_points(VAMPIRE_SP_PER_RANK * rank) // add Caitiff bonus later
 
 /datum/antagonist/vampire/proc/rank_up()
 	set_rank(vampire_rank + 1)
