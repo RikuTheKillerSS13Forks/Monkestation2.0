@@ -3,7 +3,7 @@
 		CRASH("Attempted to lower vampire rank. This is undefined behaviour and will lead to issues.")
 
 	var/old_rank = vampire_rank
-	var/new_rank = clamp(new_rank, 0, VAMPIRE_RANK_MAX)
+	new_rank = clamp(new_rank, 0, VAMPIRE_RANK_MAX)
 
 	if(new_rank == old_rank)
 		return

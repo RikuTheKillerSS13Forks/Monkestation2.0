@@ -3,8 +3,12 @@
 	desc = "If you see this ahelp IMMEDIATELY"
 
 	button_icon = 'monkestation/icons/vampires/actions_vampire.dmi'
+	background_icon = 'monkestation/icons/vampires/actions_vampire.dmi'
+	background_icon_state = "vamp_power_off"
 	base_background_icon_state = "vamp_power_off"
 	active_background_icon_state = "vamp_power_on"
+	buttontooltipstyle = "cult"
+	transparent_when_unavailable = TRUE
 
 	/// How much lifeforce it costs to use this action.
 	var/life_cost = 0
@@ -15,7 +19,7 @@
 	/// Whether this action is a toggle or not.
 	var/toggleable = FALSE
 
-	/// If toggleable, whether or not this action is currently toggled on.
+	/// If toggleable, whether or not this action is currently toggled on. Use is_active() for checks.
 	var/active = FALSE
 
 	var/mob/living/carbon/human/user
@@ -52,6 +56,14 @@
 			owner.balloon_alert(owner, "needs [life_cost] lifeforce!")
 		return FALSE
 
+	if(!toggleable)
+		return TRUE
+
+	if(is_active() && !can_toggle_off(feedback))
+		return FALSE
+	else if (!is_active() && !can_toggle_on(feedback))
+		return FALSE
+
 	return TRUE
 
 /datum/action/cooldown/vampire/Destroy() // assumes that the action target is always the vampire antag datum, so this should be called if vampire is qdel'd
@@ -63,38 +75,61 @@
 	SIGNAL_HANDLER
 	build_all_button_icons(UPDATE_BUTTON_STATUS)
 
-/datum/action/cooldown/vampire/proc/Activate(atom/target)
+/datum/action/cooldown/vampire/Activate(atom/target)
 	. = ..()
 	if(life_cost)
 		vampire.adjust_lifeforce(-life_cost)
 	if(!toggleable)
 		return
-	if(active)
+	if(is_active())
 		toggle_off()
 	else
 		toggle_on()
 
+/// Normally just returns 'active', but can be used to override it if necessary. Used for checks instead of 'active' itself.
+/datum/action/cooldown/vampire/proc/is_active()
+	return active
+
+/// Actually toggles the action on. Use on_toggle_on() for subtypes if possible.
 /datum/action/cooldown/vampire/proc/toggle_on()
-	if(active)
+	SHOULD_NOT_SLEEP(TRUE)
+
+	if(is_active())
 		return
 	active = TRUE
 
 	if(constant_life_cost)
 		vampire.set_lifeforce_change(VAMPIRE_CONSTANT_LIFEFORCE_COST(src), -constant_life_cost)
 
-	INVOKE_ASYNC(src, PROC_REF(on_toggle_on))
+	on_toggle_on()
+	build_all_button_icons() // intentionally not async because of this (if you need emotes just async those instead)
 
 /// To be implemented by subtypes. Called from toggle_on after active is set to TRUE.
 /datum/action/cooldown/vampire/proc/on_toggle_on()
 
+/// To be implemented by subtypes. Whether or not the action can be toggled on right now.
+/datum/action/cooldown/vampire/proc/can_toggle_on(feedback)
+	return TRUE
+
+/// Actually toggles the action on. Use on_toggle_off() for subtypes if possible.
 /datum/action/cooldown/vampire/proc/toggle_off()
-	if(!active)
+	SHOULD_NOT_SLEEP(TRUE)
+
+	if(!is_active())
 		return
 	active = FALSE
 
 	vampire.clear_lifeforce_change(VAMPIRE_CONSTANT_LIFEFORCE_COST(src))
 
-	INVOKE_ASYNC(src, PROC_REF(on_toggle_off))
+	on_toggle_off()
+	build_all_button_icons() // intentionally not async because of this (if you need emotes just async those instead)
 
 /// To be implemented by subtypes. Called from toggle_off after active is set to FALSE.
 /datum/action/cooldown/vampire/proc/on_toggle_off()
+
+/// To be implemented by subtypes. Whether or not the action can be toggled off right now.
+/datum/action/cooldown/vampire/proc/can_toggle_off(feedback)
+	return TRUE
+
+/datum/action/cooldown/vampire/is_action_active(atom/movable/screen/movable/action_button/current_button)
+	return ..() || is_active()
