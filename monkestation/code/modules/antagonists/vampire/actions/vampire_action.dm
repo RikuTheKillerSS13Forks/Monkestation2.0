@@ -4,7 +4,7 @@
 	button_icon = 'monkestation/icons/vampires/actions_vampire.dmi'
 
 	/// How much lifeforce it costs to use this action.
-	var/life_cost = 0
+	var/life_cost = null
 
 	var/mob/living/carbon/human/user
 	var/datum/antagonist/vampire/vampire

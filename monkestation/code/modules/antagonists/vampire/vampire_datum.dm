@@ -32,6 +32,7 @@
 
 	var/datum/action/cooldown/vampire/feed/feed_action
 	var/datum/action/cooldown/vampire/masquerade/masquerade_action
+	var/datum/action/cooldown/vampire/rank/rank_action
 
 	/// List of traits that are always active. Don't bloat this with 20 billion passives, reserve those for stat abilities.
 	var/static/list/innate_traits = list(
@@ -109,6 +110,7 @@
 
 	feed_action?.Grant(target_mob) // move these to abilities later
 	masquerade_action?.Grant(target_mob)
+	rank_action?.Grant(target_mob)
 
 /datum/antagonist/vampire/remove_innate_effects(mob/living/mob_override)
 	var/mob/living/carbon/human/target_mob = mob_override || owner.current
