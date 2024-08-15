@@ -358,7 +358,6 @@
 #include "code\__DEFINES\dcs\signals\signals_transform.dm"
 #include "code\__DEFINES\dcs\signals\signals_turf.dm"
 #include "code\__DEFINES\dcs\signals\signals_twohand.dm"
-#include "code\__DEFINES\dcs\signals\signals_vampire.dm"
 #include "code\__DEFINES\dcs\signals\signals_vehicle.dm"
 #include "code\__DEFINES\dcs\signals\signals_wash.dm"
 #include "code\__DEFINES\dcs\signals\signals_wizard.dm"

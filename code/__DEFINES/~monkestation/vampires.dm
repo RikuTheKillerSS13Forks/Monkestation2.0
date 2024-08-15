@@ -36,7 +36,7 @@
  * Lifeforce
  */
 /// The maximum amount of lifeforce a vampire can carry. This is a soft cap.
-#define LIFEFORCE_MAXIMUM 200
+#define LIFEFORCE_MAXIMUM 300
 /// How much lifeforce one human is roughly worth. Can vary wildly sometimes.
 #define LIFEFORCE_PER_HUMAN 100
 /// How much lifeforce is lost per second by default. 30 min/human
