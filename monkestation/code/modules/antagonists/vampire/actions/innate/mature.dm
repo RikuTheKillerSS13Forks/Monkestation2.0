@@ -30,3 +30,4 @@
 /datum/action/cooldown/vampire/rank/proc/update_cost()
 	SIGNAL_HANDLER
 	life_cost = VAMPIRE_RANKUP_COST + VAMPIRE_RANKUP_SCALING * vampire.vampire_rank
+	update_button()

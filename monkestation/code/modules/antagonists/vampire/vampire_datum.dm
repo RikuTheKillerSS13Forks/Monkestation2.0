@@ -78,6 +78,7 @@
 	. = ..()
 	feed_action = new(src)
 	masquerade_action = new(src)
+	rank_action = new(src)
 
 /datum/antagonist/vampire/Destroy()
 	. = ..()
@@ -132,6 +133,7 @@
 
 	feed_action?.Remove(target_mob)
 	masquerade_action?.Remove(target_mob)
+	rank_action?.Remove(target_mob)
 
 /datum/antagonist/vampire/proc/on_life(datum/source, seconds_per_tick, times_fired)
 	SIGNAL_HANDLER
