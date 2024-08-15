@@ -31,6 +31,8 @@
 #define IS_VAMPIRE(mob) (mob?.mind?.has_antag_datum(/datum/antagonist/vampire))
 /// Returns whether a mob is a vampire thrall.
 #define IS_THRALL(mob) (mob?.mind?.has_antag_datum(/datum/antagonist/vampire/thrall))
+/// Returns a lifeforce change source for the given action.
+#define VAMPIRE_CONSTANT_LIFEFORCE_COST(action) (action?.name + " constant lifeforce cost")
 
 /**
  * Lifeforce
@@ -66,7 +68,6 @@
 /**
  * Stats
  */
-
 /// The amount of stat points a vampire gets when they rank up.
 #define VAMPIRE_SP_PER_RANK 10
 /// The amount of *extra* stat points a Caitiff gets when they rank up.
