@@ -32,7 +32,7 @@
 
 	var/datum/action/cooldown/vampire/feed/feed_action
 	var/datum/action/cooldown/vampire/masquerade/masquerade_action
-	var/datum/action/cooldown/vampire/rank/rank_action
+	var/datum/action/cooldown/vampire/mature/rank_action
 
 	/// List of traits that are always active. Don't bloat this with 20 billion passives, reserve those for stat abilities.
 	var/static/list/innate_traits = list(
