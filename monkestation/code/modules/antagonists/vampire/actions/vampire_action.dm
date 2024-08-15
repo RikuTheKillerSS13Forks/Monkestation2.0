@@ -51,6 +51,9 @@
 	if(!..())
 		return FALSE
 
+	if(toggleable && is_active())
+		return TRUE
+
 	if(vampire.lifeforce < life_cost)
 		if(feedback)
 			owner.balloon_alert(owner, "needs [life_cost] lifeforce!")
@@ -77,7 +80,7 @@
 
 /datum/action/cooldown/vampire/Activate(atom/target)
 	. = ..()
-	if(life_cost)
+	if(life_cost && (!toggleable || is_active())) // deactivation shouldn't cost anything
 		vampire.adjust_lifeforce(-life_cost)
 	if(!toggleable)
 		return
