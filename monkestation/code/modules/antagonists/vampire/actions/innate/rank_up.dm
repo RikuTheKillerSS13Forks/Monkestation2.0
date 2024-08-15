@@ -1,23 +1,32 @@
 /datum/action/cooldown/vampire/rank
-	name = "Rank up" //Temp name
-	desc = "Grow more ancient with your stored life force, consumes large amounts of life force in the process."
-
+	name = "Mature"
+	desc = "Grow closer to your ancient lineage through sacrificing your lifeforce."
 	cooldown_time = 10 SECONDS
 
+/datum/action/cooldown/vampire/rank/New(Target)
+	. = ..()
+	RegisterSignal(vampire, COMSIG_VAMPIRE_RANK_CHANGED, PROC_REF(update_cost))
+
+/datum/action/cooldown/vampire/rank/Destroy()
+	. = ..()
+	UnregisterSignal(vampire, COMSIG_VAMPIRE_RANK_CHANGED)
+
+/datum/action/cooldown/vampire/rank/IsAvailable(feedback)
+	if(!..())
+		return FALSE
+
+	if(vampire.vampire_rank >= VAMPIRE_RANK_MAX)
+		owner.balloon_alert(owner, "maxed out!")
+		return FALSE
+
 /datum/action/cooldown/vampire/rank/Activate()
-	. = ..()
+	if(vampire.vampire_rank >= VAMPIRE_RANK_MAX)
+		to_chat(owner, span_boldnotice("You've done it! You've reached the epitome of vampiric prowess!"))
+	else
+		to_chat(owner, span_boldnotice("You feel your body quiver as your biology morphs closer to your ancient lineage. You feel stronger."))
+
+	vampire.set_rank(vampire.vampire_rank + 1)
+
+/datum/action/cooldown/vampire/rank/proc/update_cost()
 	SIGNAL_HANDLER
-	var/offset_value = 50 // How much it offsets the calculation
-	var/increment_value = 25 // How much it increments per rank
-	var/rank = vampire.vampire_rank
-	var/calculated_cost = ((rank + 1) * increment_value) + offset_value
-	life_cost = calculated_cost
-	vampire.rank_up()
-
-/datum/action/cooldown/vampire/rank/Grant(owner)
-	. = ..()
-	RegisterSignal(vampire, COMSIG_VAMPIRE_RANK_UP, Activate())
-
-/datum/action/cooldown/vampire/rank/Remove(owner)
-	. = ..()
-	UnregisterSignal(vampire, COMSIG_VAMPIRE_RANK_UP)
+	life_cost = VAMPIRE_RANKUP_COST + VAMPIRE_RANKUP_SCALING * vampire.vampire_rank

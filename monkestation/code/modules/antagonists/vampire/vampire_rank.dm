@@ -18,8 +18,4 @@
 
 	set_stat_points(VAMPIRE_SP_PER_RANK * new_rank) // add Caitiff bonus later
 
-	SEND_SIGNAL(src, COMSIG_VAMPIRE_RANK_UP, old_rank)
-
-/datum/antagonist/vampire/proc/rank_up()
-	set_rank(vampire_rank + 1)
-
+	SEND_SIGNAL(src, COMSIG_VAMPIRE_RANK_CHANGED, old_rank)

@@ -56,7 +56,12 @@
 /**
  * Vampire Rank
  */
+/// The maximum vampire rank achievable.
 #define VAMPIRE_RANK_MAX 6
+/// The amount of lifeforce ranking up costs initially.
+#define VAMPIRE_RANKUP_COST LIFEFORCE_PER_HUMAN
+/// The amount of extra lifeforce per rank that ranking up costs.
+#define VAMPIRE_RANKUP_SCALING LIFEFORCE_PER_HUMAN * 0.25
 
 /**
  * Stats
