@@ -25,6 +25,9 @@
 		var/datum/antagonist/vampire/thrall/thrall_master = master
 		for(var/higher_master as anything in thrall_master.masters)
 			add_master(higher_master)
+/datum/antagonist/vampire/thrall/on_gain()
+	. = ..()
+	RegisterSignal(owner, COMSIG_LIVING_DEATH, PROC_REF(de_thrall)) //DEVNOTE: Put the unregister on datum loss AND when they upgrade to full vamp
 
 /datum/antagonist/vampire/thrall/proc/add_master(datum/antagonist/vampire/master)
 	masters[master] = ++master_count
@@ -39,3 +42,10 @@
 /datum/antagonist/vampire/thrall/proc/get_master_index(datum/antagonist/vampire/other_vampire)
 	var/index = masters[other_vampire]
 	return !isnull(index) ? index : 0
+
+/datum/antagonist/vampire/thrall/proc/de_thrall()
+	SIGNAL_HANDLER
+	if(owner.current.stat == DEAD)
+		owner.current.blood_volume = 0
+		owner.remove_antag_datum(/datum/antagonist/vampire/thrall)
+
