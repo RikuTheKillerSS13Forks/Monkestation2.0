@@ -5,6 +5,6 @@
 		Shows your reflection in mirrors.<br> \
 		Fakes your blood and genes on analyzers.<br> \
 		Hides your pale grey skin and glowing eyes.<br> \
-		Cost over time scales with Discretion."
+		Cost scales with Discretion."
 	granted_action = /datum/action/cooldown/vampire/masquerade
 	min_rank = 1 // thralls can't get this
