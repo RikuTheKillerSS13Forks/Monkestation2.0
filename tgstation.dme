@@ -6154,6 +6154,7 @@
 #include "monkestation\code\modules\antagonists\vampire\actions\innate\feed.dm"
 #include "monkestation\code\modules\antagonists\vampire\actions\innate\masquerade.dm"
 #include "monkestation\code\modules\antagonists\vampire\actions\innate\mature.dm"
+#include "monkestation\code\modules\antagonists\vampire\status_effects\hunger.dm"
 #include "monkestation\code\modules\antagonists\wizard\wizard.dm"
 #include "monkestation\code\modules\antagonists\wizard\equipment\artefact.dm"
 #include "monkestation\code\modules\antagonists\wizard\equipment\spellbook_entries\defensive.dm"

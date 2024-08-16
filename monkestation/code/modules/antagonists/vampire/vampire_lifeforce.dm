@@ -30,14 +30,7 @@
 		clear_lifeforce_change(LIFEFORCE_CHANGE_OVERFLOW)
 
 	if(lifeforce <= 0)
-		owner.current.visible_message(
-			message = span_danger("[owner.current] lets out a scream of pure terror and turns to dust right before your eyes!"),
-			self_message = span_userdanger("Your body turns to dust as the lifeforce that once animated it runs out!"),
-			blind_message = span_hear("You hear a scream of pure terror!")
-		)
-		INVOKE_ASYNC(owner.current, TYPE_PROC_REF(/mob, emote), "scream")
-		owner.current.investigate_log("has been dusted by a lack of lifeforce. (vampire)", INVESTIGATE_DEATHS)
-		owner.current.dust(drop_items = TRUE)
+		owner.current.apply_status_effect(/datum/status_effect/vampire_hunger, src) // it should be impossible for this to happen multiple times, clearly you should trust me
 
 /datum/antagonist/vampire/proc/adjust_lifeforce(amount)
 	set_lifeforce(lifeforce + amount)

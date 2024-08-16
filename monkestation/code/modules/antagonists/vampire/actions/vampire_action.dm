@@ -74,7 +74,7 @@
 	vampire = null
 	return ..()
 
-/datum/action/cooldown/vampire/proc/update_button(datum/source) // not named update_button_status as thats an action level proc, this is a signal handler for that
+/datum/action/cooldown/vampire/proc/update_button() // not named update_button_status as thats an action level proc, this is a signal handler for that
 	SIGNAL_HANDLER
 	build_all_button_icons(UPDATE_BUTTON_STATUS)
 
