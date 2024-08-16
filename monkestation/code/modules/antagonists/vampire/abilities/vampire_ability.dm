@@ -32,7 +32,7 @@
 	RegisterSignal(owner, COMSIG_QDELETING, PROC_REF(clear_ref))
 	RegisterSignal(user, COMSIG_QDELETING, PROC_REF(clear_ref))
 
-	granted_action = new(owner)
+	granted_action = new granted_action(owner)
 	granted_action.Grant(user)
 
 	INVOKE_ASYNC(src, PROC_REF(on_grant))

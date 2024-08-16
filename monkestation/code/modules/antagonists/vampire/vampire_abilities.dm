@@ -1,19 +1,20 @@
-/// Initializes the list of available vampire abilities. SHOULD ONLY BE CALLED ONCE.
+/// Initializes the list of available vampire abilities.
 /datum/antagonist/vampire/proc/init_available_abilities()
+	if(available_abilities)
+		return
+
 	var/all = subtypesof(/datum/vampire_ability)
 
-	var/result = list(
+	available_abilities = list(
 		VAMPIRE_ABILITIES_ALL = all,
 		VAMPIRE_ABILITIES_RANK = list()
 	)
 
 	for(var/datum/vampire_ability/ability as anything in all)
 		if(initial(ability.min_rank) > 0)
-			result[VAMPIRE_ABILITIES_RANK] += ability
+			available_abilities[VAMPIRE_ABILITIES_RANK] += ability
 		for(var/stat as anything in initial(ability.stat_reqs))
-			result[stat] += list(stat)
-
-	return result
+			available_abilities[stat] += list(stat)
 
 /// Checks ability reqs for a the given available_abilities criteria. Criteria are stat name defines or defines under "VAMPIRE_ABILITIES_".
 /datum/antagonist/vampire/proc/check_ability_reqs_of_criteria(criteria)
@@ -24,7 +25,7 @@
 		check_ability_reqs(ability)
 
 /// Checks the requirements for the given type of ability and grants it to the vampire if they're met.
-/datum/antagonist/vampire/proc/check_ability_reqs(/datum/vampire_ability/ability_type)
+/datum/antagonist/vampire/proc/check_ability_reqs(datum/vampire_ability/ability_type)
 	if(current_abilities[ability_type])
 		return
 

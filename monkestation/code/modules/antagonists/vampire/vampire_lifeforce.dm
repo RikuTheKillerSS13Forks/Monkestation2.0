@@ -25,7 +25,7 @@
 	update_hud()
 
 	if(lifeforce > LIFEFORCE_MAXIMUM)
-		set_lifeforce_change(LIFEFORCE_CHANGE_OVERFLOW, 1 + (lifeforce - LIFEFORCE_MAXIMUM) * 0.02) // lose 1 per second initially and an additional 1 per 50 excess
+		set_lifeforce_change(LIFEFORCE_CHANGE_OVERFLOW, -1 - (lifeforce - LIFEFORCE_MAXIMUM) * 0.02) // lose 1 per second initially and an additional 1 per 50 excess
 	else if(old_amount > LIFEFORCE_MAXIMUM)
 		clear_lifeforce_change(LIFEFORCE_CHANGE_OVERFLOW)
 

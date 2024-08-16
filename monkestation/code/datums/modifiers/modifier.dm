@@ -33,47 +33,49 @@
 
 /// Sets the value of a multiplicative.
 /datum/modifier/proc/set_multiplicative(source, value)
+	if(isnull(value) || value == 1)
+		clear_multiplicative(source)
+		return
 	if(get_multiplicative(source) == value)
 		return
-	if(value == 1)
-		clear_multiplicative(source)
-	multiplicative[source] = value
+	LAZYSET(multiplicative, source, value)
 	cached_multiplier = null
 	decache_value()
 
 /// Gets the value of a multiplicative. Defaults to 1.
 /datum/modifier/proc/get_multiplicative(source)
-	var/value = multiplicative[source]
+	var/value = LAZYACCESS(multiplicative, source)
 	return isnull(value) ? 1 : value
 
 /// Clears the value of a multiplicative.
 /datum/modifier/proc/clear_multiplicative(source)
-	if(!multiplicative[source])
+	if(!LAZYACCESS(multiplicative, source))
 		return
-	multiplicative -= source
+	LAZYREMOVE(multiplicative, source)
 	cached_multiplier = null
 	decache_value()
 
 /// Sets the value of an additive.
 /datum/modifier/proc/set_additive(source, value)
+	if(isnull(value) || value == 0)
+		clear_additive(source)
+		return
 	if(get_additive(source) == value)
 		return
-	if(value == 0)
-		clear_additive(source)
-	additive[source] = value
+	LAZYSET(additive, source, value)
 	cached_increment = null
 	decache_value()
 
 /// Gets the value of an additive. Defaults to 0.
 /datum/modifier/proc/get_additive(source)
-	var/value = additive[source]
+	var/value = LAZYACCESS(additive, source)
 	return isnull(value) ? 0 : value
 
 /// Clears the value of an additive.
 /datum/modifier/proc/clear_additive(source)
-	if(!additive[source])
+	if(!LAZYACCESS(additive, source))
 		return
-	additive -= source
+	LAZYREMOVE(additive, source)
 	cached_increment = null
 	decache_value()
 
@@ -86,8 +88,8 @@
 /// Updates the cached multiplier. Done automatically.
 /datum/modifier/proc/update_multiplier()
 	var/value = 1
-	for(var/multiplier as anything in multiplicative)
-		value *= multiplier
+	for(var/source as anything in multiplicative)
+		value *= multiplicative[source]
 	cached_multiplier = value
 
 /// Returns the final increment.
@@ -99,8 +101,8 @@
 /// Updates the cached increment. Done automatically.
 /datum/modifier/proc/update_increment()
 	var/value = 0
-	for(var/increment as anything in additive)
-		value += increment
+	for(var/source as anything in additive)
+		value *= additive[source]
 	cached_increment = value
 
 /// Returns the final value.

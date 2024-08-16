@@ -83,7 +83,7 @@
 	/// And ones that have a rank requirement use VAMPIRE_ABILITIES_RANK.
 	/// There's also VAMPIRE_ABILITIES_ALL if you need it for some reason.
 	/// The abilities in here are in typepath form.
-	var/static/list/available_abilities = init_available_abilities()
+	var/static/list/available_abilities
 
 	/// The clan of the vampire, if any.
 	var/clan = null
@@ -93,6 +93,7 @@
 
 /datum/antagonist/vampire/New()
 	. = ..()
+	init_available_abilities()
 	feed_action = new(src)
 	masquerade_action = new(src)
 	rank_action = new(src)
@@ -126,9 +127,7 @@
 	else
 		RegisterSignal(target_mob, COMSIG_MOB_HUD_CREATED, PROC_REF(on_hud_created))
 
-	feed_action?.Grant(target_mob) // move these to abilities later
-	masquerade_action?.Grant(target_mob)
-	rank_action?.Grant(target_mob)
+	check_ability_reqs_of_criteria(VAMPIRE_ABILITIES_ALL) // we only do it this way once
 
 /datum/antagonist/vampire/remove_innate_effects(mob/living/mob_override)
 	var/mob/living/carbon/human/target_mob = mob_override || owner.current

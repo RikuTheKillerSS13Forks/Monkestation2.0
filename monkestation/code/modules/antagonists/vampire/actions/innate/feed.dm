@@ -68,6 +68,11 @@
 			owner.balloon_alert(owner, "too decayed!")
 		return FALSE
 
+	if(!victim.key && (!victim.lastclienttime || victim.lastclienttime + 30 SECONDS < world.time)) // same goes for ghosting
+		if(feedback)
+			owner.balloon_alert(owner, "mindless!")
+		return FALSE
+
 	feed_type = owner.grab_state == GRAB_PASSIVE ? WRIST_FEED : NECK_FEED
 
 	if(!get_suitable_limb(victim))
@@ -276,7 +281,7 @@
 	if(victim.health - victim.getOxyLoss() < HEALTH_THRESHOLD_DEAD && HAS_TRAIT_FROM_ONLY(victim, TRAIT_NODEATH, REF(src))) // cancel if they'd die right after
 		owner.balloon_alert("too weak!")
 		return FALSE
-	if(!victim.mind)
+	if(!victim.key)
 		owner.balloon_alert("mindless!")
 		return FALSE
 	if(HAS_TRAIT(victim, TRAIT_MINDSHIELD))
@@ -294,7 +299,7 @@
 	update_brutality_scaling(new_amount)
 
 /datum/action/cooldown/vampire/feed/proc/update_brutality_scaling(brutality)
-	vampire.feed_rate_modifier.set_multiplicative(VAMPIRE_STAT_BRUTALITY, brutality / VAMPIRE_SP_MAXIMUM) // 2x feed rate at max brutality
+	vampire.feed_rate_modifier.set_multiplicative(VAMPIRE_STAT_BRUTALITY, 1 + brutality / VAMPIRE_SP_MAXIMUM) // 2x feed rate at max brutality
 
 #undef WRIST_FEED
 #undef NECK_FEED
