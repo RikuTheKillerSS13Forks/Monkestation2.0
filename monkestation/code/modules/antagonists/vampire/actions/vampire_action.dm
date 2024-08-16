@@ -104,8 +104,7 @@
 	if(constant_life_cost)
 		vampire.set_lifeforce_change(VAMPIRE_CONSTANT_LIFEFORCE_COST(src), -constant_life_cost)
 
-	on_toggle_on()
-	build_all_button_icons() // intentionally not async because of this (if you need emotes just async those instead)
+	INVOKE_ASYNC(src, PROC_REF(on_toggle_on))
 
 /// To be implemented by subtypes. Called from toggle_on after active is set to TRUE.
 /datum/action/cooldown/vampire/proc/on_toggle_on()
@@ -124,8 +123,7 @@
 
 	vampire.clear_lifeforce_change(VAMPIRE_CONSTANT_LIFEFORCE_COST(src))
 
-	on_toggle_off()
-	build_all_button_icons() // intentionally not async because of this (if you need emotes just async those instead)
+	INVOKE_ASYNC(src, PROC_REF(on_toggle_off))
 
 /// To be implemented by subtypes. Called from toggle_off after active is set to FALSE.
 /datum/action/cooldown/vampire/proc/on_toggle_off()

@@ -6,6 +6,7 @@
 	desc = "Drink the blood of a victim, a more aggressive grab feeds directly from the carotid artery and allows you to enthrall your victim if they remain alive."
 	button_icon_state = "power_feed"
 	cooldown_time = 1 SECOND
+	toggleable = TRUE
 
 	/// If we're currently feeding, used for sanity.
 	var/is_feeding = FALSE
@@ -44,14 +45,16 @@
 
 	return ..()
 
-/datum/action/cooldown/vampire/feed/IsAvailable(feedback)
-	if(!..())
+/datum/action/cooldown/vampire/feed/is_active()
+	return is_feeding
+
+/datum/action/cooldown/vampire/feed/can_toggle_on(feedback)
+	. = ..()
+
+	if(LAZYACCESS(owner.do_afters, REF(src))) // you can only attempt one feed at a time
 		return FALSE
 
 	var/mob/living/carbon/victim = owner.pulling
-
-	if(is_feeding) // you need to be able to stop feeding
-		return TRUE
 
 	if(!istype(victim))
 		if(feedback)
@@ -68,10 +71,10 @@
 			owner.balloon_alert(owner, "too decayed!")
 		return FALSE
 
-	if(!victim.key && (!victim.lastclienttime || victim.lastclienttime + 30 SECONDS < world.time)) // same goes for ghosting
+	/*if(!victim.key && (!victim.lastclienttime || victim.lastclienttime + 30 SECONDS < world.time)) // same goes for ghosting
 		if(feedback)
 			owner.balloon_alert(owner, "mindless!")
-		return FALSE
+		return FALSE*/
 
 	feed_type = owner.grab_state == GRAB_PASSIVE ? WRIST_FEED : NECK_FEED
 
@@ -82,11 +85,7 @@
 
 	return TRUE
 
-/datum/action/cooldown/vampire/feed/Activate(atom/target)
-	if(is_feeding)
-		stop_feeding(victim_ref.resolve(), forced = FALSE) // victim_ref should never be null if is_feeding is true
-		return ..()
-
+/datum/action/cooldown/vampire/feed/on_toggle_on()
 	var/mob/living/carbon/victim = owner.pulling
 
 	if(feed_type == WRIST_FEED)
@@ -94,7 +93,7 @@
 	else
 		to_chat(victim, span_bolddanger("[owner] opens [owner.p_their()] mouth and closes in on your neck!"))
 
-	if(!do_after(owner, 2 SECONDS, victim)) // should prevent duplicate feeds as you can't initiate multiple do_afters on a target
+	if(!do_after(owner, 2 SECONDS, victim, interaction_key = REF(src)))
 		return
 
 	vampire.feed_rate_modifier.set_multiplicative(REF(src), feed_type == WRIST_FEED ? 1 : 2) // it's free caching, why not
@@ -131,7 +130,10 @@
 		if(!HAS_TRAIT(victim, TRAIT_ANALGESIA))
 			victim.emote("scream")
 
-	return ..()
+	build_all_button_icons()
+
+/datum/action/cooldown/vampire/feed/on_toggle_off()
+	stop_feeding(victim_ref.resolve(), forced = FALSE) // if is_feeding is true victim_ref should never be null
 
 /datum/action/cooldown/vampire/feed/proc/on_victim_qdel(mob/living/carbon/victim)
 	SIGNAL_HANDLER
@@ -174,6 +176,8 @@
 			ignored_mobs = victim
 		)
 		to_chat(victim, span_notice("[owner] releases [owner.p_their()] bite on your [feed_type]."))
+
+	build_all_button_icons()
 
 /datum/action/cooldown/vampire/feed/proc/on_life(mob/living/carbon/victim, seconds_per_tick, times_fired)
 	SIGNAL_HANDLER
