@@ -105,6 +105,7 @@
 /datum/antagonist/vampire/on_gain()
 	. = ..()
 	set_rank(starting_rank)
+	owner.current.playsound_local(get_turf(owner.current), 'monkestation/sound/vampires/vampire_alert.ogg', vol = 100, vary = FALSE, pressure_affected = FALSE, use_reverb = FALSE)
 
 /datum/antagonist/vampire/apply_innate_effects(mob/living/mob_override)
 	var/mob/living/carbon/human/target_mob = mob_override || owner.current
