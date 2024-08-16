@@ -8,6 +8,9 @@
 	/// Minimum rank required to get the ability.
 	var/min_rank = 0
 
+	/// Clan required to get the ability.
+	var/clan_req = null
+
 	/// The action currently granted to the vampire by this ability, if any.
 	/// If not null during initialization, attempts to create an instance of it.
 	/// DO NOT PUT ANYTHING OTHER THAN A TYPEPATH AS THE INITIAL VALUE.
@@ -29,7 +32,7 @@
 	RegisterSignal(owner, COMSIG_QDELETING, PROC_REF(clear_ref))
 	RegisterSignal(user, COMSIG_QDELETING, PROC_REF(clear_ref))
 
-	granted_action = new
+	granted_action = new(owner)
 	granted_action.Grant(user)
 
 	INVOKE_ASYNC(src, PROC_REF(on_grant))

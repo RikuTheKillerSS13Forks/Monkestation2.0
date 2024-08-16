@@ -1,14 +1,21 @@
 /datum/antagonist/vampire/proc/set_stat(stat, amount)
 	var/old_amount = get_stat(stat)
+
 	if(amount < old_amount)
 		CRASH("Attempted to lower vampire stat [stat]. This is undefined behaviour and will lead to issues.")
+
 	var/new_amount = clamp(amount, 0, VAMPIRE_SP_MAXIMUM)
 	if(new_amount == old_amount)
 		return
+
 	var/delta = new_amount - old_amount
 	stats[stat] = new_amount
 	spent_stat_points += delta
 	available_stat_points -= delta
+
+	check_ability_reqs_of_criteria(stat)
+
+	SEND_SIGNAL(src, COMSIG_VAMPIRE_STAT_CHANGED, stat, old_amount, new_amount)
 
 /datum/antagonist/vampire/proc/adjust_stat(stat, amount)
 	set_stat(stat, stats[stat] + amount)

@@ -16,6 +16,11 @@
 
 	update_hud()
 
-	set_stat_points(VAMPIRE_SP_PER_RANK * new_rank) // add Caitiff bonus later
+	var/new_stat_points = VAMPIRE_SP_PER_RANK * new_rank
+	if(clan == VAMPIRE_CLAN_CAITIFF)
+		new_stat_points += VAMPIRE_SP_CAITIFF_BONUS * new_rank
+	set_stat_points(new_stat_points)
+
+	check_ability_reqs_of_criteria(VAMPIRE_ABILITIES_RANK)
 
 	SEND_SIGNAL(src, COMSIG_VAMPIRE_RANK_CHANGED, old_rank)

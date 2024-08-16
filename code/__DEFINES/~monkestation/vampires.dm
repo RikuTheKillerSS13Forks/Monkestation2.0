@@ -87,3 +87,17 @@
 #define VAMPIRE_STAT_PERCEPTION "Perception"
 /// Grants stealth passives and abilities.
 #define VAMPIRE_STAT_DISCRETION "Discretion"
+
+/**
+ * Abilities
+ */
+/// Associative key for all vampire abilities.
+#define VAMPIRE_ABILITIES_ALL "All"
+/// Associative key for vampire abilities that are unlocked by ranking up. (min_rank)
+#define VAMPIRE_ABILITIES_RANK "Rank"
+
+/**
+ * Clans
+ */
+/// No special abilities, but gets extra stat points.
+#define VAMPIRE_CLAN_CAITIFF "Caitiff"

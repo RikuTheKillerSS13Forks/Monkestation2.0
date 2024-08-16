@@ -74,6 +74,23 @@
 		VAMPIRE_STAT_DISCRETION = 0
 	)
 
+	/// Associative list of abilities the vampire has unlocked.
+	/// These are instances sorted by their type.
+	var/list/current_abilities = list()
+
+	/// Associative list of available abilities by their unlock conditions.
+	/// Abilities that unlock based on a stat use the define of that stat as their key.
+	/// And ones that have a rank requirement use VAMPIRE_ABILITIES_RANK.
+	/// There's also VAMPIRE_ABILITIES_ALL if you need it for some reason.
+	/// The abilities in here are in typepath form.
+	var/static/list/available_abilities = init_available_abilities()
+
+	/// The clan of the vampire, if any.
+	var/clan = null
+
+	/// Modifier for feed rate. Value is in blood/s.
+	var/datum/modifier/feed_rate_modifier = new(base_value = BLOOD_VOLUME_NORMAL / 30)
+
 /datum/antagonist/vampire/New()
 	. = ..()
 	feed_action = new(src)

@@ -22,6 +22,15 @@
 	/// Weakref to the victim.
 	var/datum/weakref/victim_ref
 
+/datum/action/cooldown/vampire/feed/New(Target)
+	. = ..()
+	RegisterSignal(vampire, COMSIG_VAMPIRE_STAT_CHANGED, PROC_REF(on_stat_changed))
+	update_brutality_scaling(vampire.get_stat(VAMPIRE_STAT_BRUTALITY))
+
+/datum/action/cooldown/vampire/feed/Destroy()
+	. = ..()
+	UnregisterSignal(vampire, COMSIG_VAMPIRE_STAT_CHANGED)
+
 /datum/action/cooldown/vampire/feed/Grant(mob/granted_to)
 	RegisterSignals(granted_to, list(COMSIG_LIVING_START_PULL, COMSIG_ATOM_NO_LONGER_PULLING), PROC_REF(update_button))
 
@@ -82,6 +91,8 @@
 
 	if(!do_after(owner, 2 SECONDS, victim)) // should prevent duplicate feeds as you can't initiate multiple do_afters on a target
 		return
+
+	vampire.feed_rate_modifier.set_multiplicative(REF(src), feed_type == WRIST_FEED ? 1 : 2) // it's free caching, why not
 
 	is_feeding = TRUE // you've secured the meal, nice
 	victim_ref = WEAKREF(victim)
@@ -179,7 +190,7 @@
 		INVOKE_ASYNC(src, PROC_REF(attempt_enthrall), victim)
 		return
 
-	var/blood_to_drain = min(victim.blood_volume, BLOOD_VOLUME_NORMAL / (feed_type == WRIST_FEED ? 60 : 30) * seconds_per_tick) // add brutality scaling later
+	var/blood_to_drain = min(victim.blood_volume, vampire.feed_rate_modifier.get_value() * seconds_per_tick) // modifiers are cached, this is fine
 
 	victim.blood_volume -= blood_to_drain
 	vampire.adjust_lifeforce(blood_to_drain * BLOOD_TO_LIFEFORCE) // finally some good fucking food
@@ -275,6 +286,15 @@
 
 /datum/action/cooldown/vampire/feed/proc/enthrall_extra_check()
 	return can_enthrall(victim_ref?.resolve())
+
+/datum/action/cooldown/vampire/feed/proc/on_stat_changed(datum/source, stat, old_amount, new_amount)
+	SIGNAL_HANDLER
+	if(stat != VAMPIRE_STAT_BRUTALITY)
+		return
+	update_brutality_scaling(new_amount)
+
+/datum/action/cooldown/vampire/feed/proc/update_brutality_scaling(brutality)
+	vampire.feed_rate_modifier.set_multiplicative(VAMPIRE_STAT_BRUTALITY, brutality / VAMPIRE_SP_MAXIMUM) // 2x feed rate at max brutality
 
 #undef WRIST_FEED
 #undef NECK_FEED
