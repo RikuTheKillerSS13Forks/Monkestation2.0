@@ -28,9 +28,9 @@
 	else
 		to_chat(owner, span_boldnotice("You feel your body quiver as your biology morphs closer to your ancient lineage."))
 
-	vampire.set_rank(vampire.vampire_rank + 1)
+	. = ..()
 
-	return ..()
+	vampire.set_rank(vampire.vampire_rank + 1) // doing this before calling parent fucks up the cost
 
 /datum/action/cooldown/vampire/mature/proc/update_cost()
 	SIGNAL_HANDLER

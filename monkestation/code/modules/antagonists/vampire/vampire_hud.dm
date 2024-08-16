@@ -34,12 +34,16 @@
 /// Updates HUD displays for lifeforce and rank.
 /datum/antagonist/vampire/proc/update_hud()
 	var/color
-	if(lifeforce > LIFEFORCE_MAXIMUM)
-		color = "#bd6dff"
-	else if(lifeforce > 50)
-		color = "#ffdddd"
-	else if(lifeforce > 25)
-		color = "#ffaaaa"
+
+	switch(lifeforce)
+		if(LIFEFORCE_MAXIMUM to INFINITY)
+			color = "#bd6dff"
+		if(50 to LIFEFORCE_MAXIMUM)
+			color = "#ffdddd"
+		if(25 to 50)
+			color = "#ffaaaa"
+		if(-INFINITY to 25)
+			color = "#ff7070"
 
 	lifeforce_display?.maptext = FORMAT_VAMPIRE_HUD_TEXT(lifeforce, color)
 

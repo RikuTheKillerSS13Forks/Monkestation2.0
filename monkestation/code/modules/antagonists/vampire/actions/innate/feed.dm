@@ -96,6 +96,12 @@
 	if(!do_after(owner, 2 SECONDS, victim, interaction_key = REF(src)))
 		return
 
+	var/target_grab_state = vampire.get_stat(VAMPIRE_STAT_BRUTALITY) >= 20 ? GRAB_KILL : GRAB_NECK
+	if(owner.grab_state < target_grab_state)
+		owner.setGrabState(target_grab_state)
+		if(!victim.buckled && !victim.density)
+			victim.Move(owner.loc) // GET OVER HERE
+
 	vampire.feed_rate_modifier.set_multiplicative(REF(src), feed_type == WRIST_FEED ? 1 : 2) // it's free caching, why not
 
 	is_feeding = TRUE // you've secured the meal, nice
@@ -106,8 +112,7 @@
 	RegisterSignal(victim, COMSIG_LIVING_LIFE, PROC_REF(on_life))
 	RegisterSignal(victim, COMSIG_QDELETING, PROC_REF(on_victim_qdel))
 	RegisterSignal(victim, COMSIG_CARBON_REMOVE_LIMB, PROC_REF(check_removed_limb))
-	RegisterSignal(victim, COMSIG_MOVABLE_MOVED, PROC_REF(check_adjacent))
-	RegisterSignal(owner, COMSIG_MOVABLE_MOVED, PROC_REF(check_adjacent))
+	RegisterSignal(owner, COMSIG_MOVABLE_SET_GRAB_STATE, PROC_REF(check_grab))
 
 	if(feed_type == WRIST_FEED)
 		owner.visible_message(
@@ -150,8 +155,8 @@
 
 	REMOVE_TRAIT(victim, TRAIT_NODEATH, REF(src))
 
-	UnregisterSignal(victim, list(COMSIG_LIVING_LIFE, COMSIG_QDELETING, COMSIG_CARBON_REMOVE_LIMB, COMSIG_MOVABLE_MOVED))
-	UnregisterSignal(owner, COMSIG_MOVABLE_MOVED)
+	UnregisterSignal(victim, list(COMSIG_LIVING_LIFE, COMSIG_QDELETING, COMSIG_CARBON_REMOVE_LIMB))
+	UnregisterSignal(owner, COMSIG_MOVABLE_SET_GRAB_STATE)
 
 	var/obj/item/bodypart/target_limb = bodypart_override ? bodypart_override : (is_suitable_limb(victim, target_zone) ? victim.get_bodypart(target_zone) : null)
 
@@ -182,7 +187,7 @@
 /datum/action/cooldown/vampire/feed/proc/on_life(mob/living/carbon/victim, seconds_per_tick, times_fired)
 	SIGNAL_HANDLER
 
-	if(!check_adjacent()) // handles its own balloon alert and stop_feeding
+	if(!check_grab()) // handles its own balloon alert and stop_feeding
 		return
 
 	if(victim.get_blood_id() != /datum/reagent/blood)
@@ -233,13 +238,13 @@
 			return TRUE
 	return FALSE
 
-/datum/action/cooldown/vampire/feed/proc/check_adjacent(datum/source)
+/datum/action/cooldown/vampire/feed/proc/check_grab(datum/source)
 	SIGNAL_HANDLER
 
 	var/victim = victim_ref?.resolve()
 
-	if(!victim || (owner.pulling != victim && !owner.Adjacent(victim)))
-		owner.balloon_alert(owner, "out of range!")
+	if(!victim || owner.pulling != victim || owner.grab_state < (feed_type == WRIST_FEED ? GRAB_PASSIVE : GRAB_NECK))
+		owner.balloon_alert(owner, "no grab!")
 		stop_feeding(victim, forced = TRUE)
 		return FALSE
 	return TRUE

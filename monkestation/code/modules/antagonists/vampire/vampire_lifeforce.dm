@@ -20,7 +20,7 @@
 	if(old_amount == lifeforce)
 		return
 
-	SEND_SIGNAL(src, COMSIG_VAMPIRE_LIFEFORCE_CHANGED, old_amount)
+	SEND_SIGNAL(src, COMSIG_VAMPIRE_LIFEFORCE_CHANGED, old_amount, lifeforce)
 
 	update_hud()
 
