@@ -1,7 +1,7 @@
 /// Dynamic value for source-based multipliers and increments.
 /// Should be performant enough for 90% of applications.
 /datum/modifier
-	VAR_PRIVATE/base_value = 1
+	VAR_PRIVATE/base_value
 
 	/// Operation order. Refer to defines.
 	VAR_PRIVATE/order = MODIFIER_ORDER_INCREMENT_FIRST

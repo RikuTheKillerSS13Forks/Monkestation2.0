@@ -1303,7 +1303,7 @@ GLOBAL_LIST_EMPTY(features_by_species)
 				return FALSE
 		user.do_attack_animation(target, atk_effect)
 
-		var/damage = rand(attacking_bodypart.unarmed_damage_low, attacking_bodypart.unarmed_damage_high)
+		var/damage = rand(attacking_bodypart.unarmed_damage_low, attacking_bodypart.unarmed_damage_high) * user.physiology.unarmed_damage_mod // MONKESTATION EDIT: unarmed_damage_mod
 
 		var/obj/item/bodypart/affecting = target.get_bodypart(target.get_random_valid_zone(user.zone_selected))
 

@@ -97,7 +97,7 @@
 		return
 
 	if(feed_type == NECK_FEED)
-		var/target_grab_state = vampire.get_stat(VAMPIRE_STAT_BRUTALITY) >= 20 ? GRAB_KILL : GRAB_NECK
+		var/target_grab_state = (owner.istate & ISTATE_HARM) && vampire.get_stat(VAMPIRE_STAT_BRUTALITY) >= 20 ? GRAB_KILL : GRAB_NECK
 		if(owner.grab_state < target_grab_state)
 			owner.setGrabState(target_grab_state)
 			if(!victim.buckled && !victim.density)

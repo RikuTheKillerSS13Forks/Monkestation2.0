@@ -356,13 +356,15 @@
 
 	SEND_SIGNAL(src, COMSIG_LIVING_START_PULL, AM, state, force)
 
+	var/is_strong_grab = !(istate & ISTATE_SECONDARY) && HAS_TRAIT(src, TRAIT_STRONG_GRABBER) // MONKESTATION EDIT: TRAIT_STRONG_GRABBER respects ISTATE_SECONDARY, allowing you to do passive grabs if you want to
+
 	if(!supress_message)
 		var/sound_to_play = 'sound/weapons/thudswoosh.ogg'
 		if(ishuman(src))
 			var/mob/living/carbon/human/H = src
 			if(H.dna.species.grab_sound)
 				sound_to_play = H.dna.species.grab_sound
-			if(HAS_TRAIT(H, TRAIT_STRONG_GRABBER))
+			if(is_strong_grab) // MONKESTATION EDIT: is_strong_grab
 				sound_to_play = null
 		playsound(src.loc, sound_to_play, 50, TRUE, -1)
 	update_pull_hud_icon()
@@ -371,7 +373,7 @@
 		var/mob/M = AM
 
 		log_combat(src, M, "grabbed", addition="passive grab")
-		if(!supress_message && !(iscarbon(AM) && HAS_TRAIT(src, TRAIT_STRONG_GRABBER)))
+		if(!supress_message && !(iscarbon(AM) && is_strong_grab)) // MONKESTATION EDIT: is_strong_grab
 			if(ishuman(M))
 				var/mob/living/carbon/human/grabbed_human = M
 				var/grabbed_by_hands = (zone_selected == "l_arm" || zone_selected == "r_arm") && grabbed_human.usable_hands > 0
@@ -411,7 +413,7 @@
 
 			if(iscarbon(L))
 				var/mob/living/carbon/C = L
-				if(HAS_TRAIT(src, TRAIT_STRONG_GRABBER))
+				if(is_strong_grab) // MONKESTATION EDIT: is_strong_grab
 					C.grippedby(src)
 
 			update_pull_movespeed()
@@ -1151,6 +1153,19 @@
 /mob/living/resist_grab(moving_resist)
 	. = TRUE
 	if(pulledby.grab_state || body_position == LYING_DOWN || HAS_TRAIT(src, TRAIT_GRABWEAKNESS))
+		// MONKESTATION EDIT START: TRAIT_GRAB_BREAKER
+		if(HAS_TRAIT(src, TRAIT_GRAB_BREAKER))
+			visible_message(
+				message = span_danger("[src] violently breaks free of [pulledby]'s grip!"),
+				self_message = span_danger("You violently break free of [pulledby]'s grip!"),
+				ignored_mobs = pulledby
+			)
+			to_chat(pulledby, span_warning("[src] violently breaks free of your grip!"))
+			log_combat(pulledby, src, "instantly broke grab (TRAIT_GRAB_BREAKER)")
+			pulledby.stop_pulling()
+			return FALSE
+		// MONKESTATION EDIT END: TRAIT_GRAB_BREAKER
+
 		var/altered_grab_state = pulledby.grab_state
 		if((body_position == LYING_DOWN || HAS_TRAIT(src, TRAIT_GRABWEAKNESS)) && pulledby.grab_state < GRAB_KILL) //If prone, resisting out of a grab is equivalent to 1 grab state higher. won't make the grab state exceed the normal max, however
 			altered_grab_state++

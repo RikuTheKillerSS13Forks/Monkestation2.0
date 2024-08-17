@@ -16,6 +16,9 @@
 	/// DO NOT PUT ANYTHING OTHER THAN A TYPEPATH AS THE INITIAL VALUE.
 	var/datum/action/granted_action = null
 
+	/// Lazylist of granted traits.
+	var/list/granted_traits = null
+
 	/// The vampire who owns this ability.
 	var/datum/antagonist/vampire/owner = null
 
@@ -32,13 +35,21 @@
 	RegisterSignal(owner, COMSIG_QDELETING, PROC_REF(clear_ref))
 	RegisterSignal(user, COMSIG_QDELETING, PROC_REF(clear_ref))
 
-	granted_action = new granted_action(owner)
-	granted_action.Grant(user)
+	if(granted_traits)
+		user.add_traits(granted_traits, REF(src))
+
+	if(ispath(granted_action))
+		granted_action = new granted_action(owner)
+		granted_action.Grant(user)
 
 	INVOKE_ASYNC(src, PROC_REF(on_grant))
+	INVOKE_ASYNC(src, PROC_REF(on_grant_mob))
 
 /// To be implemented by subtypes. Called in grant() after setting owner and user.
 /datum/vampire_ability/proc/on_grant()
+
+/// To be implemented by subtypes. Called in grant() and after body swaps.
+/datum/vampire_ability/proc/on_grant_mob()
 
 /// Actually removes the action from the vampire. Use on_remove for subtypes if possible.
 /datum/vampire_ability/proc/remove()
@@ -47,15 +58,22 @@
 	UnregisterSignal(owner, COMSIG_QDELETING)
 	UnregisterSignal(user, COMSIG_QDELETING)
 
+	if(granted_traits)
+		user.remove_traits(granted_traits, REF(src))
+
 	QDEL_NULL(granted_action)
 
 	INVOKE_ASYNC(src, PROC_REF(on_remove))
+	INVOKE_ASYNC(src, PROC_REF(on_remove_mob))
 
 	owner = null
 	user = null
 
 /// To be implemented by subtypes. Called in remove() before unsetting owner and user.
 /datum/vampire_ability/proc/on_remove()
+
+/// To be implemented by subtypes. Called in remove() and after body swaps.
+/datum/vampire_ability/proc/on_remove_mob()
 
 /// If you pass the owner or user to this, the ability self-removes.
 /datum/vampire_ability/proc/clear_ref(datum/ref)

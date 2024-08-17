@@ -21,6 +21,11 @@
 /// Station trait for when the clown has bridge access *shudders*
 #define STATION_TRAIT_CLOWN_BRIDGE "clown_bridge"
 
+/// Allows user to instantly break any grabs.
+#define TRAIT_GRAB_BREAKER "grab_breaker"
+/// Allows user to instantly break any cuffs.
+#define TRAIT_CUFF_BREAKER "cuff_breaker"
+
 // /datum/mind
 /// Prevents any sort of antagonist/brainwashing conversion.
 #define TRAIT_UNCONVERTABLE "unconvertable"

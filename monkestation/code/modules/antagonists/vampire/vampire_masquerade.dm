@@ -11,6 +11,8 @@
 		owner.current.AddElement(/datum/element/cult_eyes, initial_delay = 0 SECONDS)
 		clear_lifeforce_change(LIFEFORCE_CHANGE_MASQUERADE)
 
+	SEND_SIGNAL(src, COMSIG_VAMPIRE_MASQUERADE, masquerade_enabled)
+
 /// Enables or disables masquerade.
 /datum/antagonist/vampire/proc/set_masquerade(enabled)
 	if(enabled == masquerade_enabled)

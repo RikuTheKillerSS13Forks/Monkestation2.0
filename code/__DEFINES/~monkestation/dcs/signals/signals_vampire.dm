@@ -4,3 +4,5 @@
 #define COMSIG_VAMPIRE_RANK_CHANGED "vampire_rank_changed"
 /// Sent by the vampire antag datum when one of it's stat amounts changes. New stat is always higher than the old. (stat, old_amount, new_amount)
 #define COMSIG_VAMPIRE_STAT_CHANGED "vampire_stat_changed"
+/// Sent by the vampire antag datum when it enters or leaves masquerade. (enabled)
+#define COMSIG_VAMPIRE_MASQUERADE "vampire_masquerade"
