@@ -93,14 +93,15 @@
 	else
 		to_chat(victim, span_bolddanger("[owner] opens [owner.p_their()] mouth and closes in on your neck!"))
 
-	if(!do_after(owner, 2 SECONDS, victim, interaction_key = REF(src)))
+	if(!do_after(owner, 2 SECONDS, victim, extra_checks = CALLBACK(src, PROC_REF(check_grab)), interaction_key = REF(src)))
 		return
 
-	var/target_grab_state = vampire.get_stat(VAMPIRE_STAT_BRUTALITY) >= 20 ? GRAB_KILL : GRAB_NECK
-	if(owner.grab_state < target_grab_state)
-		owner.setGrabState(target_grab_state)
-		if(!victim.buckled && !victim.density)
-			victim.Move(owner.loc) // GET OVER HERE
+	if(feed_type == NECK_FEED)
+		var/target_grab_state = vampire.get_stat(VAMPIRE_STAT_BRUTALITY) >= 20 ? GRAB_KILL : GRAB_NECK
+		if(owner.grab_state < target_grab_state)
+			owner.setGrabState(target_grab_state)
+			if(!victim.buckled && !victim.density)
+				victim.Move(owner.loc) // GET OVER HERE
 
 	vampire.feed_rate_modifier.set_multiplicative(REF(src), feed_type == WRIST_FEED ? 1 : 2) // it's free caching, why not
 
@@ -112,7 +113,7 @@
 	RegisterSignal(victim, COMSIG_LIVING_LIFE, PROC_REF(on_life))
 	RegisterSignal(victim, COMSIG_QDELETING, PROC_REF(on_victim_qdel))
 	RegisterSignal(victim, COMSIG_CARBON_REMOVE_LIMB, PROC_REF(check_removed_limb))
-	RegisterSignal(owner, COMSIG_MOVABLE_SET_GRAB_STATE, PROC_REF(check_grab))
+	RegisterSignals(owner, list(COMSIG_ATOM_NO_LONGER_PULLING, COMSIG_MOVABLE_SET_GRAB_STATE), PROC_REF(check_grab))
 
 	if(feed_type == WRIST_FEED)
 		owner.visible_message(
@@ -121,6 +122,8 @@
 			ignored_mobs = victim
 			)
 		to_chat(victim, span_danger("[owner] lifts your wrist up to [owner.p_their()] mouth and bites into it!"))
+
+		playsound(victim, 'sound/effects/wounds/blood1.ogg', vol = 20, vary = TRUE, extrarange = SILENCED_SOUND_EXTRARANGE) // the sound from having your fangs ripped out is also on the victim as it's a wound, so this is consistent
 
 		if(!HAS_TRAIT(victim, TRAIT_ANALGESIA))
 			victim.emote("flinch")
@@ -131,6 +134,8 @@
 			ignored_mobs = victim
 		)
 		to_chat(victim, span_userdanger("[owner] bites into your neck!"))
+
+		playsound(victim, 'sound/effects/wounds/blood2.ogg', vol = 30, vary = TRUE, extrarange = SHORT_RANGE_SOUND_EXTRARANGE)
 
 		if(!HAS_TRAIT(victim, TRAIT_ANALGESIA))
 			victim.emote("scream")
@@ -156,7 +161,7 @@
 	REMOVE_TRAIT(victim, TRAIT_NODEATH, REF(src))
 
 	UnregisterSignal(victim, list(COMSIG_LIVING_LIFE, COMSIG_QDELETING, COMSIG_CARBON_REMOVE_LIMB))
-	UnregisterSignal(owner, COMSIG_MOVABLE_SET_GRAB_STATE)
+	UnregisterSignal(owner, list(COMSIG_ATOM_NO_LONGER_PULLING, COMSIG_MOVABLE_SET_GRAB_STATE))
 
 	var/obj/item/bodypart/target_limb = bodypart_override ? bodypart_override : (is_suitable_limb(victim, target_zone) ? victim.get_bodypart(target_zone) : null)
 
@@ -172,7 +177,7 @@
 			INVOKE_ASYNC(victim, TYPE_PROC_REF(/mob, emote), "scream")
 
 		if(target_limb)
-			target_limb.force_wound_upwards(/datum/wound/pierce/bleed/moderate, wound_source = "vampire fangs")
+			target_limb.force_wound_upwards(/datum/wound/pierce/bleed/moderate, wound_source = "vampire fangs") // the wound makes a fitting sound, no need to play one manually
 			target_limb.receive_damage(brute = 10, wound_bonus = CANT_WOUND)
 	else
 		owner.visible_message(
@@ -181,6 +186,8 @@
 			ignored_mobs = victim
 		)
 		to_chat(victim, span_notice("[owner] releases [owner.p_their()] bite on your [feed_type]."))
+
+		playsound(victim, 'sound/effects/wounds/pierce1.ogg', vol = 20, vary = TRUE, extrarange = SILENCED_SOUND_EXTRARANGE)
 
 	build_all_button_icons()
 
@@ -241,11 +248,9 @@
 /datum/action/cooldown/vampire/feed/proc/check_grab(datum/source)
 	SIGNAL_HANDLER
 
-	var/victim = victim_ref?.resolve()
-
-	if(!victim || owner.pulling != victim || owner.grab_state < (feed_type == WRIST_FEED ? GRAB_PASSIVE : GRAB_NECK))
-		owner.balloon_alert(owner, "no grab!")
-		stop_feeding(victim, forced = TRUE)
+	if(!owner.pulling || owner.grab_state < (feed_type == WRIST_FEED ? GRAB_PASSIVE : (is_feeding ? GRAB_NECK : GRAB_AGGRESSIVE)))
+		owner.balloon_alert(owner, "grab lost!")
+		stop_feeding(victim_ref?.resolve(), forced = TRUE)
 		return FALSE
 	return TRUE
 

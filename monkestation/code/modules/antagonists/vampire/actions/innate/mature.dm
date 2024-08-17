@@ -1,6 +1,7 @@
 /datum/action/cooldown/vampire/mature
 	name = "Mature"
 	desc = "Grow closer to your ancient lineage through sacrificing your lifeforce."
+	button_icon_state = "power_mature"
 	cooldown_time = 10 SECONDS
 
 /datum/action/cooldown/vampire/mature/New(Target)
