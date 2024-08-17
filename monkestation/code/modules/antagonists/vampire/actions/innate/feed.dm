@@ -217,8 +217,7 @@
 	vampire.adjust_lifeforce(blood_to_drain * BLOOD_TO_LIFEFORCE) // finally some good fucking food
 
 	owner.playsound_local(soundin = 'sound/effects/singlebeat.ogg', vol = 40, vary = TRUE)
-	if(feed_type == NECK_FEED) // dire straits, play it to them too to show them they're dying
-		victim.playsound_local(soundin = 'sound/effects/singlebeat.ogg', vol = 40, vary = TRUE)
+	victim.playsound_local(soundin = 'sound/effects/singlebeat.ogg', vol = 40, vary = TRUE)
 
 	if(victim.blood_volume <= 0) // otherwise the blood regen of the victim will make their blood volume just a tad bit above 0
 		INVOKE_ASYNC(src, PROC_REF(attempt_enthrall), victim)
