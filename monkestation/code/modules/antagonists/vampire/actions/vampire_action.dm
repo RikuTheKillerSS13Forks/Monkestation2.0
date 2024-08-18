@@ -1,6 +1,7 @@
 /datum/action/cooldown/vampire
 	name = "Please ahelp"
 	desc = "If you see this ahelp IMMEDIATELY"
+	cooldown_time = 0.5 SECONDS
 
 	button_icon = 'monkestation/icons/vampires/actions_vampire.dmi'
 	background_icon = 'monkestation/icons/vampires/actions_vampire.dmi'
@@ -77,11 +78,10 @@
 	build_all_button_icons(UPDATE_BUTTON_STATUS)
 
 /datum/action/cooldown/vampire/Activate(atom/target)
-	. = ..()
 	if(life_cost && (!toggleable || is_active())) // deactivation shouldn't cost anything
 		vampire.adjust_lifeforce(-life_cost)
 	if(!toggleable)
-		return
+		return ..()
 	if(is_active())
 		toggle_off()
 	else
@@ -105,6 +105,8 @@
 	INVOKE_ASYNC(src, PROC_REF(on_toggle_on))
 	build_all_button_icons()
 
+	StartCooldown(0.5 SECONDS)
+
 /// To be implemented by subtypes. Called from toggle_on after active is set to TRUE.
 /datum/action/cooldown/vampire/proc/on_toggle_on()
 
@@ -124,6 +126,8 @@
 
 	INVOKE_ASYNC(src, PROC_REF(on_toggle_off))
 	build_all_button_icons()
+
+	StartCooldown(cooldown_time)
 
 /// To be implemented by subtypes. Called from toggle_off after active is set to FALSE.
 /datum/action/cooldown/vampire/proc/on_toggle_off()

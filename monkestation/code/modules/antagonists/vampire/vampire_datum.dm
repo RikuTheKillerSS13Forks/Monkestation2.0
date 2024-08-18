@@ -91,6 +91,9 @@
 	/// Modifier for feed rate. Value is in blood/s.
 	var/datum/modifier/feed_rate_modifier = new(base_value = BLOOD_VOLUME_NORMAL / 30)
 
+	/// Associative list of stat modifiers. Applied as multipliers. Don't modify this directly.
+	var/list/stat_mods = list()
+
 /datum/antagonist/vampire/New()
 	. = ..()
 	init_available_abilities()

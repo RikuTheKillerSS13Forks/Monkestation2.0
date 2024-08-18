@@ -17,6 +17,8 @@
 #define TRAIT_COLDBLOODED "coldblooded"
 /// Makes your skin pale grey.
 #define TRAIT_PALE_GREY_SKIN "pale_grey_skin"
+/// Trait for the vampire frenzy. Applied to the antag datum.
+#define TRAIT_VAMPIRE_FRENZY "vampire_frenzy"
 
 /**
  * Sources

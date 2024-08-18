@@ -23,7 +23,7 @@
 	update_modifier()
 
 /datum/vampire_ability/efficient/proc/update_modifier()
-	user.add_or_update_variable_actionspeed_modifier(/datum/actionspeed_modifier/vampire_brutality, multiplicative_slowdown = owner.get_stat(VAMPIRE_STAT_BRUTALITY) / VAMPIRE_SP_MAXIMUM)
+	user.add_or_update_variable_actionspeed_modifier(/datum/actionspeed_modifier/vampire_brutality, multiplicative_slowdown = owner.get_stat_modified(VAMPIRE_STAT_BRUTALITY) / VAMPIRE_SP_MAXIMUM)
 
 /datum/actionspeed_modifier/vampire_brutality
 	variable = TRUE

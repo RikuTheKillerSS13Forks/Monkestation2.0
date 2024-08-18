@@ -2,7 +2,6 @@
 	name = "Masquerade"
 	desc = "Hide your true nature from the prying eyes of the mortals. Drains lifeforce while active."
 	button_icon_state = "power_human"
-	cooldown_time = 1 SECOND
 	toggleable = TRUE // constant_life_cost is handled in set_masquerade
 
 /datum/action/cooldown/vampire/masquerade/on_toggle_on()

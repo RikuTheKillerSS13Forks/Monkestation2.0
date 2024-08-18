@@ -5,7 +5,6 @@
 	name = "Feed"
 	desc = "Drink the blood of a victim, a more aggressive grab feeds directly from the carotid artery and allows you to enthrall your victim if they remain alive."
 	button_icon_state = "power_feed"
-	cooldown_time = 1 SECOND
 	toggleable = TRUE
 
 	/// If we're currently feeding, used for sanity.

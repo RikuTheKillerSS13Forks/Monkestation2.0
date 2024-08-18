@@ -7,13 +7,13 @@
 	var/damage_mod
 
 /datum/vampire_ability/bonebreaker/on_grant()
-	RegisterSignal(owner, COMSIG_VAMPIRE_STAT_CHANGED, PROC_REF(on_stat_changed))
+	RegisterSignal(owner, COMSIG_VAMPIRE_STAT_CHANGED_MOD, PROC_REF(on_stat_changed))
 
 /datum/vampire_ability/bonebreaker/on_grant_mob()
 	update_mod()
 
 /datum/vampire_ability/bonebreaker/on_remove()
-	RegisterSignal(owner, COMSIG_VAMPIRE_STAT_CHANGED, PROC_REF(on_stat_changed))
+	RegisterSignal(owner, COMSIG_VAMPIRE_STAT_CHANGED_MOD, PROC_REF(on_stat_changed))
 
 /datum/vampire_ability/bonebreaker/on_remove_mob()
 	user.physiology.unarmed_damage_mod /= damage_mod

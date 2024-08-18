@@ -8,18 +8,28 @@
 	if(new_amount == old_amount)
 		return
 
+	var/old_modified_amount = get_stat_modified(stat)
+
 	var/delta = new_amount - old_amount
 	stats[stat] = new_amount
 	spent_stat_points += delta
 	available_stat_points -= delta
 
+	var/new_modified_amount = get_stat_modified(stat)
+
 	check_ability_reqs_of_criteria(stat)
 
 	SEND_SIGNAL(src, COMSIG_VAMPIRE_STAT_CHANGED, stat, old_amount, new_amount)
 
+	if(old_modified_amount == new_modified_amount)
+		return
+
+	SEND_SIGNAL(src, COMSIG_VAMPIRE_STAT_CHANGED_MOD, stat, old_modified_amount, new_modified_amount)
+
 /datum/antagonist/vampire/proc/adjust_stat(stat, amount)
 	set_stat(stat, stats[stat] + amount)
 
+/// Gets the value of a stat. Ignores stat_mods, use get_stat_modified() for scaling.
 /datum/antagonist/vampire/proc/get_stat(stat)
 	var/amount = stats[stat]
 	return amount ? amount : 0
@@ -34,3 +44,45 @@
 
 /datum/antagonist/vampire/proc/adjust_stat_points(amount)
 	set_stat_points(stat_points + amount)
+
+/// Same as get_stat() but it's affected by modifiers. Can be a decimal. Use for scaling.
+/datum/antagonist/vampire/proc/get_stat_modified(stat)
+	var/value = get_stat(stat)
+	var/datum/modifier/mod = stat_mods[stat]
+	if(mod)
+		value *= mod.get_value()
+	return value
+
+/datum/antagonist/vampire/proc/set_stat_multiplier(stat, source, multiplier)
+	var/datum/modifier/modifier = stat_mods[stat]
+
+	if(!modifier)
+		modifier = new // technically not perfectly memory efficient as it's never destroyed even if it has no effect, but everything is cached and modifiers use lazylists so it's irrelevant
+
+	var/old_modified_amount = get_stat_modified(stat)
+
+	modifier.set_multiplicative(source, multiplier)
+
+	var/new_modified_amount = get_stat_modified(stat)
+
+	if(old_modified_amount == new_modified_amount)
+		return
+
+	SEND_SIGNAL(src, COMSIG_VAMPIRE_STAT_CHANGED_MOD, stat, old_modified_amount, new_modified_amount)
+
+/datum/antagonist/vampire/proc/clear_stat_multiplier(stat, source)
+	var/datum/modifier/modifier = stat_mods[stat]
+
+	if(!modifier)
+		return
+
+	var/old_modified_amount = get_stat_modified(stat)
+
+	modifier.clear_multiplicative(source)
+
+	var/new_modified_amount = get_stat_modified(stat)
+
+	if(old_modified_amount == new_modified_amount)
+		return
+
+	SEND_SIGNAL(src, COMSIG_VAMPIRE_STAT_CHANGED_MOD, stat, old_modified_amount, new_modified_amount)
