@@ -1,11 +1,11 @@
-/datum/antagonist/vampire/proc/set_rank(new_rank)
+/datum/antagonist/vampire/proc/set_rank(new_rank, force_update = FALSE)
 	if(new_rank < vampire_rank)
 		CRASH("Attempted to lower vampire rank. This is undefined behaviour and will lead to issues.")
 
 	var/old_rank = vampire_rank
 	new_rank = clamp(new_rank, 0, VAMPIRE_RANK_MAX)
 
-	if(new_rank == old_rank)
+	if(new_rank == old_rank && !force_update)
 		return
 
 	if(old_rank == 0) // Thrall -> Vampire

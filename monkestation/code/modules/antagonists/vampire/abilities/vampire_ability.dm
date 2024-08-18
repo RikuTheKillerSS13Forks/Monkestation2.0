@@ -2,8 +2,8 @@
 	var/name = "ERROR"
 	var/desc = "TELL THE ADMEMES"
 
-	/// Associative list of stat requirements for the ability.
-	var/list/stat_reqs = list()
+	/// Associative lazylist of stat requirements for the ability.
+	var/list/stat_reqs = null
 
 	/// Minimum rank required to get the ability.
 	var/min_rank = 0
@@ -24,6 +24,21 @@
 
 	/// The current mob using this ability.
 	var/mob/living/carbon/human/user = null
+
+/// Returns whether the given vampire meets the requirements to get this ability.
+/datum/vampire_ability/proc/check_reqs(datum/antagonist/vampire/vampire)
+	if(vampire.vampire_rank < min_rank)
+		return FALSE
+
+	if(clan_req && vampire.clan != clan_req)
+		return FALSE
+
+	if(islist(stat_reqs))
+		for(var/stat as anything in stat_reqs)
+			if(vampire.get_stat(stat) < stat_reqs[stat])
+				return FALSE
+
+	return TRUE
 
 /// Actually grants the action to the vampire. Use on_grant for subtypes if possible.
 /datum/vampire_ability/proc/grant(datum/antagonist/vampire/new_owner)

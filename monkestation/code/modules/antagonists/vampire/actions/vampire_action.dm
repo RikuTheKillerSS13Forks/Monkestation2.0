@@ -44,6 +44,9 @@
 /datum/action/cooldown/vampire/Remove(mob/removed_from)
 	. = ..()
 
+	if(toggleable && is_active())
+		toggle_off() // doesn't matter if can_toggle_off would return false here, just do it anyway
+
 	if(user == removed_from)
 		user = null
 
@@ -51,7 +54,7 @@
 	if(!..())
 		return FALSE
 
-	if(toggleable && is_active())
+	if(toggleable && is_active() && can_toggle_off())
 		return TRUE
 
 	if(vampire.lifeforce < life_cost)
@@ -59,12 +62,7 @@
 			owner.balloon_alert(owner, "needs [life_cost] lifeforce!")
 		return FALSE
 
-	if(!toggleable)
-		return TRUE
-
-	if(is_active() && !can_toggle_off(feedback))
-		return FALSE
-	else if (!is_active() && !can_toggle_on(feedback))
+	if(toggleable && !is_active() && !can_toggle_on(feedback))
 		return FALSE
 
 	return TRUE
@@ -105,6 +103,7 @@
 		vampire.set_lifeforce_change(VAMPIRE_CONSTANT_LIFEFORCE_COST(src), -constant_life_cost)
 
 	INVOKE_ASYNC(src, PROC_REF(on_toggle_on))
+	build_all_button_icons()
 
 /// To be implemented by subtypes. Called from toggle_on after active is set to TRUE.
 /datum/action/cooldown/vampire/proc/on_toggle_on()
@@ -124,6 +123,7 @@
 	vampire.clear_lifeforce_change(VAMPIRE_CONSTANT_LIFEFORCE_COST(src))
 
 	INVOKE_ASYNC(src, PROC_REF(on_toggle_off))
+	build_all_button_icons()
 
 /// To be implemented by subtypes. Called from toggle_off after active is set to FALSE.
 /datum/action/cooldown/vampire/proc/on_toggle_off()

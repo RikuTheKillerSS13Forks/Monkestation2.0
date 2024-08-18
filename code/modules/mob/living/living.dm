@@ -356,15 +356,13 @@
 
 	SEND_SIGNAL(src, COMSIG_LIVING_START_PULL, AM, state, force)
 
-	var/is_strong_grab = !(istate & ISTATE_SECONDARY) && HAS_TRAIT(src, TRAIT_STRONG_GRABBER) // MONKESTATION EDIT: TRAIT_STRONG_GRABBER respects ISTATE_SECONDARY, allowing you to do passive grabs if you want to
-
 	if(!supress_message)
 		var/sound_to_play = 'sound/weapons/thudswoosh.ogg'
 		if(ishuman(src))
 			var/mob/living/carbon/human/H = src
 			if(H.dna.species.grab_sound)
 				sound_to_play = H.dna.species.grab_sound
-			if(is_strong_grab) // MONKESTATION EDIT: is_strong_grab
+			if(HAS_TRAIT(H, TRAIT_STRONG_GRABBER))
 				sound_to_play = null
 		playsound(src.loc, sound_to_play, 50, TRUE, -1)
 	update_pull_hud_icon()
@@ -373,7 +371,7 @@
 		var/mob/M = AM
 
 		log_combat(src, M, "grabbed", addition="passive grab")
-		if(!supress_message && !(iscarbon(AM) && is_strong_grab)) // MONKESTATION EDIT: is_strong_grab
+		if(!supress_message && !(iscarbon(AM) && HAS_TRAIT(src, TRAIT_STRONG_GRABBER)))
 			if(ishuman(M))
 				var/mob/living/carbon/human/grabbed_human = M
 				var/grabbed_by_hands = (zone_selected == "l_arm" || zone_selected == "r_arm") && grabbed_human.usable_hands > 0
@@ -413,7 +411,7 @@
 
 			if(iscarbon(L))
 				var/mob/living/carbon/C = L
-				if(is_strong_grab) // MONKESTATION EDIT: is_strong_grab
+				if(HAS_TRAIT(src, TRAIT_STRONG_GRABBER)) // MONKESTATION EDIT: is_strong_grab
 					C.grippedby(src)
 
 			update_pull_movespeed()

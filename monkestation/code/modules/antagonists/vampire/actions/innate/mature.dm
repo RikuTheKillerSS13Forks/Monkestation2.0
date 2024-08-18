@@ -7,6 +7,7 @@
 /datum/action/cooldown/vampire/mature/New(Target)
 	. = ..()
 	RegisterSignal(vampire, COMSIG_VAMPIRE_RANK_CHANGED, PROC_REF(update_cost))
+	update_cost()
 
 /datum/action/cooldown/vampire/mature/Destroy()
 	. = ..()

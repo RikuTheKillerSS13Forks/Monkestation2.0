@@ -1,6 +1,6 @@
 /datum/vampire_ability/efficient
 	name = "Efficient"
-	desc = "Your action delays are shorter.<br> \
+	desc = "You do things a lot faster.<br> \
 		Scales with Brutality."
 	stat_reqs = list(VAMPIRE_STAT_BRUTALITY = 10)
 

@@ -13,8 +13,6 @@
 		self_message = span_notice("You hide your true nature, skin turning vibrant and eyes no longer glowing. You can easily pass for a mortal now.")
 	)
 
-	build_all_button_icons()
-
 /datum/action/cooldown/vampire/masquerade/on_toggle_off()
 	vampire.set_masquerade(FALSE)
 
@@ -22,8 +20,6 @@
 		message = span_danger("[owner]'s skin suddenly turns a pale grey, [owner.p_their()] eyes begin to glow and a set of ferocious fangs extends from [owner.p_their()] mouth!"),
 		self_message = span_notice("You return to your icy pallor, silently hoping to never have to fool another mortal again. Alas, such is the life of our kin.")
 	)
-
-	build_all_button_icons()
 
 /datum/action/cooldown/vampire/masquerade/is_active()
 	return vampire.masquerade_enabled

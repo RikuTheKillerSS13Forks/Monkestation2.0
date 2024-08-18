@@ -6160,6 +6160,7 @@
 #include "monkestation\code\modules\antagonists\vampire\actions\innate\feed.dm"
 #include "monkestation\code\modules\antagonists\vampire\actions\innate\masquerade.dm"
 #include "monkestation\code\modules\antagonists\vampire\actions\innate\mature.dm"
+#include "monkestation\code\modules\antagonists\vampire\actions\innate\strong_grip.dm"
 #include "monkestation\code\modules\antagonists\vampire\status_effects\thirst.dm"
 #include "monkestation\code\modules\antagonists\wizard\wizard.dm"
 #include "monkestation\code\modules\antagonists\wizard\equipment\artefact.dm"
