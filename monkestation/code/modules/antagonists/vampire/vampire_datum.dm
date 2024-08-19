@@ -30,10 +30,6 @@
 	var/atom/movable/screen/vampire/lifeforce_counter/lifeforce_display
 	var/atom/movable/screen/vampire/rank_counter/rank_display
 
-	var/datum/action/cooldown/vampire/feed/feed_action
-	var/datum/action/cooldown/vampire/masquerade/masquerade_action
-	var/datum/action/cooldown/vampire/mature/rank_action
-
 	/// List of traits that are always active. Don't bloat this with 20 billion passives, reserve those for stat abilities.
 	var/static/list/innate_traits = list(
 		TRAIT_NOBLOOD,  // vampires are entirely bloodless and instead run on the lifeforce they *extract* from the blood of sapients
@@ -97,9 +93,6 @@
 /datum/antagonist/vampire/New()
 	. = ..()
 	init_available_abilities()
-	feed_action = new(src)
-	masquerade_action = new(src)
-	rank_action = new(src)
 
 /datum/antagonist/vampire/Destroy()
 	. = ..()
@@ -152,9 +145,7 @@
 		QDEL_NULL(lifeforce_display)
 		QDEL_NULL(rank_display)
 
-	feed_action?.Remove(target_mob)
-	masquerade_action?.Remove(target_mob)
-	rank_action?.Remove(target_mob)
+	clear_abilities()
 
 /datum/antagonist/vampire/proc/on_life(datum/source, seconds_per_tick, times_fired)
 	SIGNAL_HANDLER
