@@ -10,7 +10,7 @@
 	RegisterSignal(owner, COMSIG_VAMPIRE_STAT_CHANGED_MOD, PROC_REF(on_stat_changed))
 
 /datum/vampire_ability/bonebreaker/on_grant_mob()
-	update_mod()
+	update_mod(owner.get_stat_modified(VAMPIRE_STAT_BRUTALITY))
 
 /datum/vampire_ability/bonebreaker/on_remove()
 	RegisterSignal(owner, COMSIG_VAMPIRE_STAT_CHANGED_MOD, PROC_REF(on_stat_changed))
@@ -18,15 +18,15 @@
 /datum/vampire_ability/bonebreaker/on_remove_mob()
 	user.physiology.unarmed_damage_mod /= damage_mod
 
-/datum/vampire_ability/bonebreaker/proc/on_stat_changed(datum/source, stat)
+/datum/vampire_ability/bonebreaker/proc/on_stat_changed(datum/source, stat, old_value, new_value)
 	SIGNAL_HANDLER
 	if(stat != VAMPIRE_STAT_BRUTALITY)
 		return
-	update_mod()
+	update_mod(new_value)
 
-/datum/vampire_ability/bonebreaker/proc/update_mod()
+/datum/vampire_ability/bonebreaker/proc/update_mod(brutality)
 	if(!isnull(damage_mod))
 		user.physiology.unarmed_damage_mod /= damage_mod
 
-	damage_mod = 1 + (owner.get_stat(VAMPIRE_STAT_BRUTALITY) / VAMPIRE_SP_MAXIMUM) * 2 // 3x punch damage at max
+	damage_mod = 1 + (brutality / VAMPIRE_SP_MAXIMUM) * 2 // 3x punch damage at max (even more with frenzy)
 	user.physiology.unarmed_damage_mod *= damage_mod

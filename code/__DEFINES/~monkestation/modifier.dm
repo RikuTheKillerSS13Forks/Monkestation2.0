@@ -1,4 +1,4 @@
-/// Additive modifiers are calculated before multiplicative ones.
+/// Increments are calculated before multipliers.
 #define MODIFIER_ORDER_INCREMENT_FIRST 0
-/// Multiplicative modifiers are calculated before additive ones.
+/// Multipliers are calculated before increments.
 #define MODIFIER_ORDER_MULTIPLY_FIRST 1

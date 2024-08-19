@@ -8,3 +8,5 @@
 #define COMSIG_VAMPIRE_STAT_CHANGED_MOD "vampire_stat_changed_mod"
 /// Sent by the vampire antag datum when it enters or leaves masquerade. (enabled)
 #define COMSIG_VAMPIRE_MASQUERADE "vampire_masquerade"
+/// Sent by the vampire frenzy status effect to the vampire antag datum when it ends. Used by the frenzy action.
+#define COMSIG_VAMPIRE_END_FRENZY "vampire_end_frenzy"

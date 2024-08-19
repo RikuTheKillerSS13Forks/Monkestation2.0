@@ -94,10 +94,6 @@
 	. = ..()
 	init_available_abilities()
 
-/datum/antagonist/vampire/Destroy()
-	. = ..()
-	QDEL_NULL(feed_action)
-
 /datum/antagonist/vampire/on_gain()
 	vampire_rank = starting_rank
 	owner.current.playsound_local(get_turf(owner.current), 'monkestation/sound/vampires/vampire_alert.ogg', vol = 100, vary = FALSE, pressure_affected = FALSE, use_reverb = FALSE)

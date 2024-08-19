@@ -93,7 +93,7 @@
 
 /// Actually toggles the action on. Use on_toggle_on() for subtypes if possible.
 /datum/action/cooldown/vampire/proc/toggle_on()
-	SHOULD_NOT_SLEEP(TRUE)
+	SIGNAL_HANDLER
 
 	if(is_active())
 		return
@@ -116,7 +116,7 @@
 
 /// Actually toggles the action on. Use on_toggle_off() for subtypes if possible.
 /datum/action/cooldown/vampire/proc/toggle_off()
-	SHOULD_NOT_SLEEP(TRUE)
+	SIGNAL_HANDLER
 
 	if(!is_active())
 		return

@@ -57,7 +57,8 @@
 	var/datum/modifier/modifier = stat_mods[stat]
 
 	if(!modifier)
-		modifier = new // technically not perfectly memory efficient as it's never destroyed even if it has no effect, but everything is cached and modifiers use lazylists so it's irrelevant
+		modifier = new // a single undestroyed datum costs fuckall and modifiers exclusively use lazylists anyway, so this is fine
+		stat_mods[stat] = modifier
 
 	var/old_modified_amount = get_stat_modified(stat)
 
