@@ -43,8 +43,8 @@
 #define LIFEFORCE_MAXIMUM 300
 /// How much lifeforce one human is roughly worth. Can vary wildly sometimes.
 #define LIFEFORCE_PER_HUMAN 100
-/// How much lifeforce is lost per second by default. 30 min/human
-#define LIFEFORCE_DRAIN_BASE LIFEFORCE_PER_HUMAN / -1800
+/// How much lifeforce is lost per second by default. 40 min/human
+#define LIFEFORCE_DRAIN_BASE LIFEFORCE_PER_HUMAN / -2400
 /// Multiply lifeforce by this to get an equivalent amount of blood.
 #define LIFEFORCE_TO_BLOOD BLOOD_VOLUME_NORMAL / LIFEFORCE_PER_HUMAN
 /// Multiply blood by this to get an equivalent amount of lifeforce.

@@ -24,12 +24,12 @@
 
 /datum/action/cooldown/vampire/feed/New(Target)
 	. = ..()
-	RegisterSignal(vampire, COMSIG_VAMPIRE_STAT_CHANGED, PROC_REF(on_stat_changed))
+	RegisterSignal(vampire, COMSIG_VAMPIRE_STAT_CHANGED_MOD, PROC_REF(on_stat_changed))
 	update_brutality_scaling(vampire.get_stat_modified(VAMPIRE_STAT_BRUTALITY))
 
 /datum/action/cooldown/vampire/feed/Destroy()
 	. = ..()
-	UnregisterSignal(vampire, COMSIG_VAMPIRE_STAT_CHANGED)
+	UnregisterSignal(vampire, COMSIG_VAMPIRE_STAT_CHANGED_MOD)
 
 /datum/action/cooldown/vampire/feed/Grant(mob/granted_to)
 	RegisterSignals(granted_to, list(COMSIG_LIVING_START_PULL, COMSIG_ATOM_NO_LONGER_PULLING), PROC_REF(update_button))
@@ -50,7 +50,7 @@
 /datum/action/cooldown/vampire/feed/can_toggle_on(feedback)
 	. = ..()
 
-	if(LAZYACCESS(owner.do_afters, REF(src))) // you can only attempt one feed at a time
+	if(DOING_INTERACTION(owner, REF(src))) // you can only attempt one feed at a time
 		return FALSE
 
 	var/mob/living/carbon/victim = owner.pulling
@@ -281,7 +281,7 @@
 
 	to_chat(victim, span_hypnophrase("You feel a foreign presence seep into your mind..."))
 
-	if(!do_after(owner, 5 SECONDS, victim, timed_action_flags = IGNORE_SLOWDOWNS | IGNORE_HELD_ITEM, extra_checks = CALLBACK(src, PROC_REF(enthrall_extra_check))))
+	if(!do_after(owner, 8 SECONDS, victim, timed_action_flags = IGNORE_SLOWDOWNS | IGNORE_HELD_ITEM, extra_checks = CALLBACK(src, PROC_REF(enthrall_extra_check))))
 		stop_feeding(victim, forced = FALSE)
 		return
 

@@ -11,6 +11,8 @@
 	if(old_rank == 0) // Thrall -> Vampire
 		name = "\improper Vampire"
 		roundend_category = "Vampire"
+		UnregisterSignal(owner, COMSIG_LIVING_DEATH) // unregisters de_thrall so that after becoming a full vampire you cannot be reverted
+		regen_rate_modifier.clear_multiplicative(REF(src)) // removes thrall debuff from regen rate
 
 	vampire_rank = new_rank
 

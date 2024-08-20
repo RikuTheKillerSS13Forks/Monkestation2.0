@@ -87,6 +87,9 @@
 	/// Modifier for feed rate. Value is in blood/s.
 	var/datum/modifier/feed_rate_modifier = new(base_value = BLOOD_VOLUME_NORMAL / 30)
 
+	/// Modifier for regen rate. Value is in health/s.
+	var/datum/modifier/regen_rate_modifier = new(base_value = 1)
+
 	/// Associative list of stat modifiers. Applied as multipliers. Don't modify this directly.
 	var/list/stat_mods = list()
 

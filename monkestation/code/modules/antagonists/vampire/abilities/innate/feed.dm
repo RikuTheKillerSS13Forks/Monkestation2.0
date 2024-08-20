@@ -7,5 +7,5 @@
 		Succeeding in a neck feed will automatically put the victim in a neck grab.<br> \
 		If the victim is wearing a garlic or cross necklace, you can't neck feed.<br> \
 		Drinking someone dry will enthrall them with you as their master.<br> \
-		Feed rate scales with Brutality."
+		Rate scales with Brutality."
 	granted_action = /datum/action/cooldown/vampire/feed

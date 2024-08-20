@@ -1,5 +1,6 @@
 /datum/vampire_ability/strong_grip
 	name = "Strong Grip"
-	desc = "While active, your grabs are stronger and neck feeding puts your victim in a kill grab."
+	desc = "Strengthen your grip, making your grabs stronger.<br> \
+		Also causes neck feeding to strangle the victim."
 	stat_reqs = list(VAMPIRE_STAT_BRUTALITY = 40)
 	granted_action = /datum/action/cooldown/vampire/strong_grip
