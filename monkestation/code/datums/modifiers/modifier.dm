@@ -3,9 +3,6 @@
 /datum/modifier
 	VAR_PRIVATE/base_value
 
-	/// Operation order. Refer to defines.
-	VAR_PRIVATE/order = MODIFIER_ORDER_INCREMENT_FIRST
-
 	/// Lazylist of multiplicatives.
 	VAR_PRIVATE/list/multiplicative
 	/// Lazylist of additives.
@@ -15,9 +12,8 @@
 	VAR_PRIVATE/cached_increment
 	VAR_PRIVATE/cached_value
 
-/datum/modifier/New(base_value = 1, order = MODIFIER_ORDER_INCREMENT_FIRST)
+/datum/modifier/New(base_value = 1)
 	src.base_value = base_value
-	src.order = order
 	cached_value = base_value
 
 /// Sets the base value.
@@ -25,7 +21,8 @@
 	if(base_value == value)
 		return
 	base_value = value
-	decache_value()
+	if(isnull(cached_multiplier) || cached_multiplier != 0) // anything multiplied by 0 is 0
+		decache_value()
 
 /// Gets the base value.
 /datum/modifier/proc/get_base_value()
@@ -39,8 +36,7 @@
 	if(get_multiplicative(source) == value)
 		return
 	LAZYSET(multiplicative, source, value)
-	cached_multiplier = null
-	decache_value()
+	decache_multiplier()
 
 /// Gets the value of a multiplicative. Defaults to 1.
 /datum/modifier/proc/get_multiplicative(source)
@@ -52,8 +48,7 @@
 	if(!LAZYACCESS(multiplicative, source))
 		return
 	LAZYREMOVE(multiplicative, source)
-	cached_multiplier = null
-	decache_value()
+	decache_multiplier()
 
 /// Sets the value of an additive.
 /datum/modifier/proc/set_additive(source, value)
@@ -63,8 +58,7 @@
 	if(get_additive(source) == value)
 		return
 	LAZYSET(additive, source, value)
-	cached_increment = null
-	decache_value()
+	decache_increment()
 
 /// Gets the value of an additive. Defaults to 0.
 /datum/modifier/proc/get_additive(source)
@@ -76,8 +70,7 @@
 	if(!LAZYACCESS(additive, source))
 		return
 	LAZYREMOVE(additive, source)
-	cached_increment = null
-	decache_value()
+	decache_increment()
 
 /// Returns the final multiplier.
 /datum/modifier/proc/get_multiplier()
@@ -92,18 +85,30 @@
 		value *= multiplicative[source]
 	cached_multiplier = value
 
+/// Invalidates the cached multiplier.
+/datum/modifier/proc/decache_multiplier()
+	cached_multiplier = null
+	if (isnull(cached_increment) || cached_increment != -base_value) // anything multiplied by 0 is 0
+		decache_value()
+
 /// Returns the final increment.
 /datum/modifier/proc/get_increment()
 	if(isnull(cached_increment))
 		update_increment()
 	return cached_increment
 
-/// Updates the cached increment. Done automatically.
+/// Updates the cached increment.
 /datum/modifier/proc/update_increment()
 	var/value = 0
 	for(var/source as anything in additive)
 		value *= additive[source]
 	cached_increment = value
+
+/// Invalidates the cached increment.
+/datum/modifier/proc/decache_increment()
+	cached_increment = null
+	if (isnull(cached_multiplier) || cached_multiplier != 0) // anything multiplied by 0 is 0
+		decache_value()
 
 /// Returns the final value.
 /datum/modifier/proc/get_value()
@@ -111,20 +116,14 @@
 		update_value()
 	return cached_value
 
-/// Updates the cached value. Done automatically.
+/// Updates the cached value.
 /datum/modifier/proc/update_value()
 	var/value = base_value
-
-	if(order == MODIFIER_ORDER_INCREMENT_FIRST)
-		value += get_increment()
-		value *= get_multiplier()
-	else
-		value *= get_multiplier()
-		value += get_increment()
-
+	value += get_increment()
+	value *= get_multiplier()
 	cached_value = value
 
-/// Invalidates the cached value. Done automatically.
+/// Invalidates the cached value.
 /datum/modifier/proc/decache_value()
 	PRIVATE_PROC(TRUE)
 
