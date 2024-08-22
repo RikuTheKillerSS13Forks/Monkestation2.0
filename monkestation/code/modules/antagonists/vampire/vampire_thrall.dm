@@ -25,9 +25,11 @@
 		var/datum/antagonist/vampire/thrall/thrall_master = master
 		for(var/higher_master as anything in thrall_master.masters)
 			add_master(higher_master)
+
 /datum/antagonist/vampire/thrall/on_gain()
 	. = ..()
 	RegisterSignal(owner, COMSIG_LIVING_DEATH, PROC_REF(de_thrall)) //DEVNOTE: Put the unregister on datum loss AND when they upgrade to full vamp
+	regen_rate_modifier.set_multiplicative(REF(src), 0.5) // thralls have halved regeneration
 
 /datum/antagonist/vampire/thrall/proc/add_master(datum/antagonist/vampire/master)
 	masters[master] = ++master_count

@@ -24,12 +24,12 @@
 
 /datum/action/cooldown/vampire/feed/New(Target)
 	. = ..()
-	RegisterSignal(vampire, COMSIG_VAMPIRE_STAT_CHANGED, PROC_REF(on_stat_changed))
-	update_brutality_scaling(vampire.get_stat(VAMPIRE_STAT_BRUTALITY))
+	RegisterSignal(vampire, COMSIG_VAMPIRE_STAT_CHANGED_MOD, PROC_REF(on_stat_changed))
+	update_brutality_scaling(vampire.get_stat_modified(VAMPIRE_STAT_BRUTALITY))
 
 /datum/action/cooldown/vampire/feed/Destroy()
 	. = ..()
-	UnregisterSignal(vampire, COMSIG_VAMPIRE_STAT_CHANGED)
+	UnregisterSignal(vampire, COMSIG_VAMPIRE_STAT_CHANGED_MOD)
 
 /datum/action/cooldown/vampire/feed/Grant(mob/granted_to)
 	RegisterSignals(granted_to, list(COMSIG_LIVING_START_PULL, COMSIG_ATOM_NO_LONGER_PULLING), PROC_REF(update_button))
@@ -50,7 +50,7 @@
 /datum/action/cooldown/vampire/feed/can_toggle_on(feedback)
 	. = ..()
 
-	if(LAZYACCESS(owner.do_afters, REF(src))) // you can only attempt one feed at a time
+	if(DOING_INTERACTION(owner, REF(src))) // you can only attempt one feed at a time
 		return FALSE
 
 	var/mob/living/carbon/victim = owner.pulling
@@ -102,7 +102,7 @@
 			if(!victim.buckled && !victim.density)
 				victim.Move(owner.loc) // GET OVER HERE
 
-	vampire.feed_rate_modifier.set_multiplicative(REF(src), feed_type == WRIST_FEED ? 1 : 2) // it's free caching, why not
+	vampire.feed_rate_modifier.set_multiplicative(NECK_FEED, feed_type == WRIST_FEED ? 1 : 2) // it's free caching, why not
 
 	is_feeding = TRUE // you've secured the meal, nice
 	victim_ref = WEAKREF(victim)
@@ -112,7 +112,7 @@
 	RegisterSignal(victim, COMSIG_LIVING_LIFE, PROC_REF(on_life))
 	RegisterSignal(victim, COMSIG_QDELETING, PROC_REF(on_victim_qdel))
 	RegisterSignal(victim, COMSIG_CARBON_REMOVE_LIMB, PROC_REF(check_removed_limb))
-	RegisterSignals(owner, list(COMSIG_ATOM_NO_LONGER_PULLING, COMSIG_MOVABLE_SET_GRAB_STATE), PROC_REF(check_grab))
+	RegisterSignals(owner, list(COMSIG_ATOM_NO_LONGER_PULLING, COMSIG_MOVABLE_SET_GRAB_STATE), PROC_REF(check_grab)) // how this specific line causes a signal override is byond me considering both are unregistered afaik
 
 	if(feed_type == WRIST_FEED)
 		owner.visible_message(
@@ -281,7 +281,7 @@
 
 	to_chat(victim, span_hypnophrase("You feel a foreign presence seep into your mind..."))
 
-	if(!do_after(owner, 5 SECONDS, victim, timed_action_flags = IGNORE_SLOWDOWNS | IGNORE_HELD_ITEM, extra_checks = CALLBACK(src, PROC_REF(enthrall_extra_check))))
+	if(!do_after(owner, 8 SECONDS, victim, timed_action_flags = IGNORE_SLOWDOWNS | IGNORE_HELD_ITEM, extra_checks = CALLBACK(src, PROC_REF(enthrall_extra_check))))
 		stop_feeding(victim, forced = FALSE)
 		return
 
@@ -294,16 +294,16 @@
 	if(!victim)
 		return FALSE
 	if(victim.stat == DEAD)
-		owner.balloon_alert("dead!")
+		owner.balloon_alert(owner, "dead!")
 		return FALSE
 	if(victim.health - victim.getOxyLoss() < HEALTH_THRESHOLD_DEAD && HAS_TRAIT_FROM_ONLY(victim, TRAIT_NODEATH, REF(src))) // cancel if they'd die right after
-		owner.balloon_alert("too weak!")
+		owner.balloon_alert(owner, "too weak!")
 		return FALSE
 	if(!victim.key)
-		owner.balloon_alert("mindless!")
+		owner.balloon_alert(owner, "mindless!")
 		return FALSE
 	if(HAS_TRAIT(victim, TRAIT_MINDSHIELD))
-		owner.balloon_alert("mindshielded!")
+		owner.balloon_alert(owner, "mindshielded!")
 		return FALSE
 	return TRUE
 
@@ -317,7 +317,7 @@
 	update_brutality_scaling(new_amount)
 
 /datum/action/cooldown/vampire/feed/proc/update_brutality_scaling(brutality)
-	vampire.feed_rate_modifier.set_multiplicative(VAMPIRE_STAT_BRUTALITY, 1 + brutality / VAMPIRE_SP_MAXIMUM) // 2x feed rate at max brutality
+	vampire.feed_rate_modifier.set_multiplicative(VAMPIRE_STAT_BRUTALITY, 1 + brutality / VAMPIRE_SP_MAXIMUM) // 2x feed rate at max brutality (even more with frenzy)
 
 #undef WRIST_FEED
 #undef NECK_FEED

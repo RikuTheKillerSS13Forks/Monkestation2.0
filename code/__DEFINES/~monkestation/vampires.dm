@@ -17,7 +17,7 @@
 #define TRAIT_COLDBLOODED "coldblooded"
 /// Makes your skin pale grey.
 #define TRAIT_PALE_GREY_SKIN "pale_grey_skin"
-/// Trait for the vampire frenzy. Applied to the antag datum.
+/// Trait for the vampire frenzy.
 #define TRAIT_VAMPIRE_FRENZY "vampire_frenzy"
 
 /**
@@ -43,8 +43,8 @@
 #define LIFEFORCE_MAXIMUM 300
 /// How much lifeforce one human is roughly worth. Can vary wildly sometimes.
 #define LIFEFORCE_PER_HUMAN 100
-/// How much lifeforce is lost per second by default. 30 min/human
-#define LIFEFORCE_DRAIN_BASE LIFEFORCE_PER_HUMAN / -1800
+/// How much lifeforce is lost per second by default. 1 hr/human
+#define LIFEFORCE_DRAIN_BASE LIFEFORCE_PER_HUMAN / -3600
 /// Multiply lifeforce by this to get an equivalent amount of blood.
 #define LIFEFORCE_TO_BLOOD BLOOD_VOLUME_NORMAL / LIFEFORCE_PER_HUMAN
 /// Multiply blood by this to get an equivalent amount of lifeforce.

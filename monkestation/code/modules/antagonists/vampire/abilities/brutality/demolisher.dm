@@ -4,7 +4,9 @@
 	stat_reqs = list(VAMPIRE_STAT_BRUTALITY = 60)
 
 /datum/vampire_ability/demolisher/on_grant_mob()
-	user.AddElement(/datum/element/wall_tearer, allow_reinforced = TRUE, tear_time = 1 SECOND) // capstone ability, it's very strong for a reason
+	// While this is a capstone ability (and thus should be strong), I had to reign it in so they don't tear apart entire departments.
+	// It's also loud to the point where using it is guaranteed to make you incredibly suspicious if not immediately getting you lynched.
+	user.AddElement(/datum/element/wall_tearer, allow_reinforced = TRUE, tear_time = 5 SECONDS, reinforced_multiplier = 3)
 
 /datum/vampire_ability/demolisher/on_remove_mob()
-	user.RemoveElement(/datum/element/wall_tearer, allow_reinforced = TRUE, tear_time = 1 SECOND)
+	user.RemoveElement(/datum/element/wall_tearer, allow_reinforced = TRUE, tear_time = 5 SECONDS, reinforced_multiplier = 3)

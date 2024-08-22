@@ -1,16 +1,16 @@
 /// Dynamic value for source-based multipliers and increments.
 /// Should be performant enough for 90% of applications.
 /datum/modifier
-	VAR_PRIVATE/base_value
+	VAR_PROTECTED/base_value
 
 	/// Lazylist of multiplicatives.
-	VAR_PRIVATE/list/multiplicative
+	VAR_PROTECTED/list/multiplicative
 	/// Lazylist of additives.
-	VAR_PRIVATE/list/additive
+	VAR_PROTECTED/list/additive
 
-	VAR_PRIVATE/cached_multiplier
-	VAR_PRIVATE/cached_increment
-	VAR_PRIVATE/cached_value
+	VAR_PROTECTED/cached_multiplier
+	VAR_PROTECTED/cached_increment
+	VAR_PROTECTED/cached_value
 
 /datum/modifier/New(base_value = 1)
 	src.base_value = base_value
@@ -80,6 +80,8 @@
 
 /// Updates the cached multiplier. Done automatically.
 /datum/modifier/proc/update_multiplier()
+	PROTECTED_PROC(TRUE)
+
 	var/value = 1
 	for(var/source as anything in multiplicative)
 		value *= multiplicative[source]
@@ -99,9 +101,11 @@
 
 /// Updates the cached increment.
 /datum/modifier/proc/update_increment()
+	PROTECTED_PROC(TRUE)
+
 	var/value = 0
 	for(var/source as anything in additive)
-		value *= additive[source]
+		value += additive[source]
 	cached_increment = value
 
 /// Invalidates the cached increment.
@@ -118,6 +122,8 @@
 
 /// Updates the cached value.
 /datum/modifier/proc/update_value()
+	PROTECTED_PROC(TRUE)
+
 	var/value = base_value
 	value += get_increment()
 	value *= get_multiplier()
@@ -125,7 +131,7 @@
 
 /// Invalidates the cached value.
 /datum/modifier/proc/decache_value()
-	PRIVATE_PROC(TRUE)
+	PROTECTED_PROC(TRUE)
 
 	var/old_value = cached_value
 	cached_value = null

@@ -30,7 +30,7 @@
 		clear_lifeforce_change(LIFEFORCE_CHANGE_OVERFLOW)
 
 	if(lifeforce <= 0)
-		owner.current.apply_status_effect(/datum/status_effect/vampire_thirst, src) // it should be impossible for this to happen multiple times, clearly you should trust me
+		owner.current.apply_status_effect(/datum/status_effect/vampire/thirst, src) // it should be impossible for this to happen multiple times, clearly you should trust me
 
 /datum/antagonist/vampire/proc/adjust_lifeforce(amount)
 	set_lifeforce(lifeforce + amount)
