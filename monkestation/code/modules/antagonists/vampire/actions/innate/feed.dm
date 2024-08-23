@@ -28,20 +28,18 @@
 	update_brutality_scaling(vampire.get_stat_modified(VAMPIRE_STAT_BRUTALITY))
 
 /datum/action/cooldown/vampire/feed/Destroy()
-	. = ..()
 	UnregisterSignal(vampire, COMSIG_VAMPIRE_STAT_CHANGED_MOD)
+	victim_ref = null
+	return ..()
 
 /datum/action/cooldown/vampire/feed/Grant(mob/granted_to)
 	RegisterSignals(granted_to, list(COMSIG_LIVING_START_PULL, COMSIG_ATOM_NO_LONGER_PULLING), PROC_REF(update_button))
-
 	return ..()
 
 /datum/action/cooldown/vampire/feed/Remove(mob/removed_from)
 	UnregisterSignal(removed_from, list(COMSIG_LIVING_START_PULL, COMSIG_ATOM_NO_LONGER_PULLING))
-
 	if(is_feeding)
 		stop_feeding(victim_ref.resolve(), forced = TRUE) // victim_ref should never be null if is_feeding is true
-
 	return ..()
 
 /datum/action/cooldown/vampire/feed/is_active()
@@ -146,7 +144,6 @@
 
 /datum/action/cooldown/vampire/feed/proc/on_victim_qdel(mob/living/carbon/victim)
 	SIGNAL_HANDLER
-
 	stop_feeding(victim, forced = TRUE)
 
 /datum/action/cooldown/vampire/feed/proc/stop_feeding(mob/living/carbon/victim, forced = FALSE, bodypart_override = null)

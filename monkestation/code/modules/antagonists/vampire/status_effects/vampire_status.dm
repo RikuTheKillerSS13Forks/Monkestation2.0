@@ -1,24 +1,22 @@
 /datum/status_effect/vampire
 	status_type = STATUS_EFFECT_MULTIPLE // helps with body swaps, accidentally dusting the wrong mob via thirst would be disasterous
 	show_duration = TRUE // this is the whole point of these
-
+	/// The vampire antag datum of the user afflicted by this status effect.
 	var/datum/antagonist/vampire/vampire
-
 	/// Allows subtypes to tell if they're being removed via mind transfer. Used by frenzy.
 	var/is_transfer = FALSE
 
 /datum/status_effect/vampire/New(list/arguments)
 	. = ..()
 	vampire = arguments[2]
-
 	if(!vampire)
 		CRASH("Vampire status effect created without an associated vampire antag datum passed as an argument, someone messed up.")
 
 	RegisterSignal(vampire, COMSIG_QDELETING, PROC_REF(self_destruct))
 
 /datum/status_effect/vampire/Destroy()
-	. = ..()
 	vampire = null
+	return ..()
 
 /datum/status_effect/vampire/on_apply()
 	. = ..()

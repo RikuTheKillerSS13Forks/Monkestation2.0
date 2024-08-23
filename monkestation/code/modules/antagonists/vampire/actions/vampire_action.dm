@@ -28,26 +28,27 @@
 
 /datum/action/cooldown/vampire/New(Target)
 	. = ..()
-
 	vampire = Target
 	if(!istype(vampire))
 		CRASH("Vampire action created without a linked vampire antag datum.")
-
 	RegisterSignal(vampire, COMSIG_VAMPIRE_LIFEFORCE_CHANGED, PROC_REF(update_button))
+
+/datum/action/cooldown/vampire/Destroy() // assumes that the action target is always the vampire antag datum, so this should be called if vampire is qdel'd
+	UnregisterSignal(vampire, COMSIG_VAMPIRE_LIFEFORCE_CHANGED)
+	vampire = null
+	user = null
+	return ..()
 
 /datum/action/cooldown/vampire/Grant(mob/granted_to)
 	. = ..()
-
 	if(!ishuman(granted_to))
 		CRASH("Vampire action granted to non-human mob.")
 	user = granted_to
 
 /datum/action/cooldown/vampire/Remove(mob/removed_from)
 	. = ..()
-
 	if(toggleable && is_active())
 		toggle_off() // doesn't matter if can_toggle_off would return false here, just do it anyway
-
 	if(user == removed_from)
 		user = null
 
@@ -67,11 +68,6 @@
 		return FALSE
 
 	return TRUE
-
-/datum/action/cooldown/vampire/Destroy() // assumes that the action target is always the vampire antag datum, so this should be called if vampire is qdel'd
-	UnregisterSignal(vampire, COMSIG_VAMPIRE_LIFEFORCE_CHANGED)
-	vampire = null
-	return ..()
 
 /datum/action/cooldown/vampire/proc/update_button() // not named update_button_status as thats an action level proc, this is a signal handler for that
 	SIGNAL_HANDLER
@@ -94,17 +90,13 @@
 /// Actually toggles the action on. Use on_toggle_on() for subtypes if possible.
 /datum/action/cooldown/vampire/proc/toggle_on()
 	SIGNAL_HANDLER
-
 	if(is_active())
 		return
 	active = TRUE
-
 	if(constant_life_cost)
 		vampire.set_lifeforce_change(VAMPIRE_CONSTANT_LIFEFORCE_COST(src), -constant_life_cost)
-
 	INVOKE_ASYNC(src, PROC_REF(on_toggle_on))
 	build_all_button_icons()
-
 	StartCooldown(0.5 SECONDS)
 
 /// To be implemented by subtypes. Called from toggle_on after active is set to TRUE.
@@ -117,16 +109,12 @@
 /// Actually toggles the action on. Use on_toggle_off() for subtypes if possible.
 /datum/action/cooldown/vampire/proc/toggle_off()
 	SIGNAL_HANDLER
-
 	if(!is_active())
 		return
 	active = FALSE
-
 	vampire.clear_lifeforce_change(VAMPIRE_CONSTANT_LIFEFORCE_COST(src))
-
 	INVOKE_ASYNC(src, PROC_REF(on_toggle_off))
 	build_all_button_icons()
-
 	StartCooldown(cooldown_time)
 
 /// To be implemented by subtypes. Called from toggle_off after active is set to FALSE.

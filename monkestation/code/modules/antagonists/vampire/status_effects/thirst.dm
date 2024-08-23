@@ -3,19 +3,13 @@
 	duration = 30 SECONDS // good luck, you're on borrowed time
 	show_duration = TRUE
 	alert_type = /atom/movable/screen/alert/status_effect/vampire/thirst
-
 	var/cleared = FALSE
-
 	var/stasis_start_time
 
 /datum/status_effect/vampire/thirst/New(list/arguments)
 	. = ..()
 	vampire = arguments[2]
 	RegisterSignal(vampire, COMSIG_VAMPIRE_LIFEFORCE_CHANGED, PROC_REF(on_lifeforce_changed))
-
-/datum/status_effect/vampire/thirst/Destroy()
-	. = ..()
-	vampire = null
 
 /datum/status_effect/vampire/thirst/on_apply()
 	. = ..()

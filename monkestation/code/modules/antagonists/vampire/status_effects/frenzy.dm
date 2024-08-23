@@ -5,7 +5,7 @@
 
 /datum/status_effect/vampire/frenzy/on_remove()
 	. = ..()
-	if (is_transfer)
+	if(is_transfer)
 		return
 	SEND_SIGNAL(vampire, COMSIG_VAMPIRE_END_FRENZY)
 

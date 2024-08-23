@@ -30,7 +30,7 @@
 	set_stat(stat, stats[stat] + amount)
 
 /// Gets the value of a stat. Ignores stat_mods, use get_stat_modified() for scaling.
-/datum/antagonist/vampire/proc/get_stat(stat)
+/datum/antagonist/vampire/proc/get_stat(stat) as num
 	var/amount = stats[stat]
 	return amount ? amount : 0
 
@@ -46,7 +46,7 @@
 	set_stat_points(stat_points + amount)
 
 /// Same as get_stat() but it's affected by modifiers. Can be a decimal. Use for scaling.
-/datum/antagonist/vampire/proc/get_stat_modified(stat)
+/datum/antagonist/vampire/proc/get_stat_modified(stat) as num
 	var/value = get_stat(stat)
 	var/datum/modifier/mod = stat_mods[stat]
 	if(mod)
