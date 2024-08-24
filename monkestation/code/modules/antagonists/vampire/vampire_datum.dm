@@ -174,6 +174,9 @@
 
 	return data + ..()
 
+/datum/antagonist/vampire/ui_assets(mob/user)
+	return list(get_asset_datum(/datum/asset/simple/vampire_icons))
+
 /datum/antagonist/vampire/ui_act(action, params, datum/tgui/ui)
 	. = ..()
 	if(.)
