@@ -1,10 +1,39 @@
-import { useLocalState } from '../backend';
+import { resolveAsset } from '../assets';
+import { BooleanLike } from 'common/react';
+import { useBackend, useLocalState } from '../backend';
 import {
+  Box,
+  Button,
+  Divider,
+  Dropdown,
   Section,
   Stack,
   Tabs,
 } from '../components';
 import { Window } from '../layouts';
+import { ObjectivePrintout, Objective } from './common/Objectives';
+
+type Info = {
+  objectives: Objective[];
+};
+
+type VampireInfo = {
+  clan: ClanInfo[];
+  in_clan: BooleanLike;
+  power: PowerInfo[];
+};
+
+type ClanInfo = {
+  clan_name: string;
+  clan_description: string;
+  clan_icon: string;
+};
+
+type PowerInfo = {
+  power_name: string;
+  power_explanation: string;
+  power_icon: string;
+};
 
 export const AntagInfoVampire = (props: any) => {
   const [tab, setTab] = useLocalState('tab', 1);
@@ -30,15 +59,15 @@ export const AntagInfoVampire = (props: any) => {
           </Tabs.Tab>
         </Tabs>
         {tab === 1 && <VampireIntro />}
-        {/*
         {tab === 2 && <VampireClan />}
-        */}
       </Window.Content>
     </Window>
   );
 };
 
 const VampireIntro = () => {
+  const { data } = useBackend<Info>();
+  const { objectives } = data;
   return (
     <Stack vertical fill>
       <Stack.Item minHeight="16rem">
@@ -48,11 +77,12 @@ const VampireIntro = () => {
               You are a vampire, an undead blood-seeking monster living
               aboard the station.
             </Stack.Item>
-            {/*
             <Stack.Item>
-              <ObjectivePrintout />
+              <ObjectivePrintout
+                objectives={objectives}
+                titleMessage="Your family lord has given you these goals"
+              />
             </Stack.Item>
-            */}
           </Stack>
         </Section>
       </Stack.Item>
@@ -82,12 +112,13 @@ const VampireIntro = () => {
         <Section fill title="Items">
           <Stack vertical>
             <Stack.Item>
-              You can rest in a <b>Coffin</b> to recover from more gruesome injuries.
+              You can rest in a <b>coffin</b> to recover from more gruesome injuries.
               <br />
               If you lack adequate protection, <b>starlight</b> will burn you to death.
               <br />
               Your appearance and lack of blood or genes are your defining traits.
-              Masquerade can be used to disguise yourself as a mortal.
+              <br />
+              Masquerade can be used to disguise yourself as a mortal, at a cost.
               <br />
             </Stack.Item>
             <Stack.Item>
@@ -101,5 +132,121 @@ const VampireIntro = () => {
         </Section>
       </Stack.Item>
     </Stack>
+  );
+};
+
+const VampireClan = (props: any) => {
+  const { act, data } = useBackend<VampireInfo>();
+  const { clan, in_clan } = data;
+
+  if (!in_clan) {
+    return (
+      <Section minHeight="220px">
+        <Box mt={5} bold textAlign="center" fontSize="40px">
+          You are not in a Clan.
+        </Box>
+        <Box mt={3}>
+          <Button
+            fluid
+            icon="users"
+            content="Join Clan"
+            textAlign="center"
+            fontSize="30px"
+            lineHeight={2}
+            onClick={() => act('join_clan')}
+          />
+        </Box>
+      </Section>
+    );
+  }
+
+  return (
+    <Stack vertical fill>
+      <Stack.Item minHeight="20rem">
+        <Section scrollable fill>
+          <Stack vertical>
+            <Stack.Item>
+              {clan.map((ClanInfo) => (
+                <>
+                  <Box
+                    as="img"
+                    height="20rem"
+                    opacity={0.25}
+                    src={resolveAsset(`bloodsucker.${ClanInfo.clan_icon}.png`)}
+                    style={{
+                      '-ms-interpolation-mode': 'nearest-neighbor',
+                      position: 'absolute',
+                    }}
+                  />
+                  <Stack.Item fontSize="20px" textAlign="center">
+                    You are part of the {ClanInfo.clan_name}
+                  </Stack.Item>
+                  <Stack.Item fontSize="16px">
+                    {ClanInfo.clan_description}
+                  </Stack.Item>
+                </>
+              ))}
+            </Stack.Item>
+          </Stack>
+        </Section>
+        <PowerSection />
+      </Stack.Item>
+    </Stack>
+  );
+};
+
+const PowerSection = (props: any) => {
+  const { act, data } = useBackend<VampireInfo>();
+  const { power } = data;
+  if (!power) {
+    return <Section minHeight="220px" />;
+  }
+
+  const [selectedPower, setSelectedPower] = useLocalState('power', power[0]);
+
+  return (
+    <Section
+      fill
+      scrollable={!!power}
+      title="Powers"
+      buttons={
+        <Button
+          icon="info"
+          tooltipPosition="left"
+          tooltip={
+            'Select a Power using the dropdown menu for an in-depth explanation.'
+          }
+        />
+      }
+    >
+      <Stack>
+        <Stack.Item grow>
+          <Dropdown
+            displayText={selectedPower.power_name}
+            selected={selectedPower.power_name}
+            width="100%"
+            options={power.map((powers) => powers.power_name)}
+            onSelected={(powerName: string) =>
+              setSelectedPower(
+                power.find((p) => p.power_name === powerName) || power[0],
+              )
+            }
+          />
+          {selectedPower && (
+            <Box
+              position="absolute"
+              height="12rem"
+              as="img"
+              src={resolveAsset(`bloodsucker.${selectedPower.power_icon}.png`)}
+            />
+          )}
+          <Divider Vertical />
+        </Stack.Item>
+        <Stack.Divider />
+        <Stack.Item scrollable grow={1} fontSize="16px">
+          {selectedPower && selectedPower.power_explanation}
+        </Stack.Item>
+      </Stack>
+    </Section>
   );
 };
