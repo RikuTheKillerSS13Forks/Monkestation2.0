@@ -58,6 +58,11 @@
 			owner.balloon_alert(owner, "needs grab!")
 		return FALSE
 
+	if(user.is_mouth_covered() && !isplasmaman(owner))
+		if(feedback)
+			owner.balloon_alert(owner, "mouth covered!")
+		return FALSE
+
 	if(victim.blood_volume <= 0 || victim.get_blood_id() != /datum/reagent/blood) // this makes mobs with exotic blood or no blood immune to feeding
 		if(feedback)
 			owner.balloon_alert(owner, "no blood!")
@@ -104,6 +109,8 @@
 
 	is_feeding = TRUE // you've secured the meal, nice
 	victim_ref = WEAKREF(victim)
+
+	ADD_TRAIT(owner, TRAIT_MUTE, REF(src)) // feeding covers your mouth, making you unable to talk
 
 	ADD_TRAIT(victim, TRAIT_NODEATH, REF(src)) // uses a ref since you can get fed on by several vampires at once
 
