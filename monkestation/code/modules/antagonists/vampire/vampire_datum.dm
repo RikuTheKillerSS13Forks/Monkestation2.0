@@ -15,10 +15,10 @@
 	//antag_hud_name = "vampire"
 	//hud_icon = 'monkestation/icons/vampires/vampire_icons.dmi'
 
-	//ui_name = "AntagInfoVampire"
+	ui_name = "AntagInfoVampire"
 
 	/// Current amount of lifeforce.
-	var/lifeforce = LIFEFORCE_PER_HUMAN // 1 human is worth 20 minutes
+	var/lifeforce = LIFEFORCE_PER_HUMAN // 1 human is worth an hour (30 min in masquerade)
 	/// Lifeforce changes per second. Don't modify this directly.
 	var/list/lifeforce_changes = list(LIFEFORCE_CHANGE_THIRST = LIFEFORCE_DRAIN_BASE)
 	/// Cached value made from lifeforce_changes, don't change this directly.
@@ -33,7 +33,7 @@
 	/// List of traits that are always active. Don't bloat this with 20 billion passives, reserve those for stat abilities.
 	var/static/list/innate_traits = list(
 		TRAIT_NOBLOOD,  // vampires are entirely bloodless and instead run on the lifeforce they *extract* from the blood of sapients
-		TRAIT_STABLEHEART, // which also means they don't need a heart
+		TRAIT_STABLEHEART, // which also means they don't need a heart (stakes are... special, okay?)
 		TRAIT_NOCRITDAMAGE, // helps with enthralling and also helps vampires save their thralls
 		TRAIT_GENELESS // hulk + vampire = oh fuck no
 	)
