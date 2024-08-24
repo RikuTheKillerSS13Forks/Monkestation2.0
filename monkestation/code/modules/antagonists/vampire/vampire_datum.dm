@@ -81,11 +81,8 @@
 	/// The abilities in here are in typepath form.
 	var/static/list/available_abilities
 
-	/// The clan name of the vampire, if any.
-	var/clan = null
-
 	/// The vampire clan datum of the vampire, if any.
-	var/datum/vampire_clan/clan_datum = null
+	var/datum/vampire_clan/clan = null
 
 	/// Modifier for feed rate. Value is in blood/s.
 	var/datum/modifier/feed_rate_modifier = new(base_value = BLOOD_VOLUME_NORMAL / 30)
@@ -152,6 +149,30 @@
 /datum/antagonist/vampire/proc/on_life(datum/source, seconds_per_tick, times_fired)
 	SIGNAL_HANDLER
 	adjust_lifeforce(lifeforce_per_second * seconds_per_tick)
+
+/datum/antagonist/vampire/ui_static_data(mob/user)
+	var/list/data = list()
+
+	data["in_clan"] = !!clan
+
+	var/list/clan_data = list()
+	if(clan)
+		clan_data["clan_name"] = clan.name
+		clan_data["clan_desc"] = clan.desc
+		clan_data["clan_icon"] = clan.icon_state
+
+	data["clan"] += list(clan_data)
+
+	for(var/datum/vampire_ability/ability as anything in current_abilities)
+		var/list/ability_data = list()
+
+		ability_data["ability_name"] = ability.name
+		ability_data["ability_desc"] = ability.desc
+		ability_data["ability_icon"] = ability.granted_action?.button_icon_state
+
+		data["ability"] += list(ability_data)
+
+	return data + ..()
 
 /datum/antagonist/vampire/ui_act(action, params, datum/tgui/ui)
 	. = ..()

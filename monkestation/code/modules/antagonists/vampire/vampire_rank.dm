@@ -19,7 +19,7 @@
 	update_hud()
 
 	var/new_stat_points = VAMPIRE_SP_PER_RANK * new_rank
-	if(clan == VAMPIRE_CLAN_CAITIFF)
+	if(istype(clan, /datum/vampire_clan/caitiff))
 		new_stat_points += VAMPIRE_SP_CAITIFF_BONUS * new_rank
 	set_stat_points(new_stat_points)
 

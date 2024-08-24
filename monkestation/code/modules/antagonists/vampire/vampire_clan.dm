@@ -21,17 +21,17 @@
 
 	var/chosen_clan = show_radial_menu(person_selecting, owner.current, radial_display)
 	chosen_clan = options[chosen_clan]
+
 	if(QDELETED(src) || QDELETED(owner.current))
 		return FALSE
 	if(!chosen_clan)
 		to_chat(person_selecting, span_announce("You choose to remain ignorant, for now."))
 		return
-	clan_datum = new chosen_clan(src)
-	clan = clan_datum.name
+
+	clan = new chosen_clan(src)
 
 /datum/antagonist/vampire/proc/remove_clan()
-	QDEL_NULL(clan_datum)
-	clan = null
+	QDEL_NULL(clan)
 	to_chat(owner.current, span_announce("You have been forced out of your clan! You can re-enter one by regular means."))
 
 /datum/antagonist/vampire/proc/admin_set_clan(mob/admin)

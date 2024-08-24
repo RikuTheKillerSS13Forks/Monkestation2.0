@@ -20,19 +20,19 @@ type Info = {
 type VampireInfo = {
   clan: ClanInfo[];
   in_clan: BooleanLike;
-  power: PowerInfo[];
+  ability: AbilityInfo[];
 };
 
 type ClanInfo = {
   clan_name: string;
-  clan_description: string;
+  clan_desc: string;
   clan_icon: string;
 };
 
-type PowerInfo = {
-  power_name: string;
-  power_explanation: string;
-  power_icon: string;
+type AbilityInfo = {
+  ability_name: string;
+  ability_desc: string;
+  ability_icon: string;
 };
 
 export const AntagInfoVampire = (props: any) => {
@@ -55,7 +55,7 @@ export const AntagInfoVampire = (props: any) => {
             selected={tab === 2}
             onClick={() => setTab(2)}
           >
-            Clan & Powers
+            Clan & Abilities
           </Tabs.Tab>
         </Tabs>
         {tab === 1 && <VampireIntro />}
@@ -182,39 +182,39 @@ const VampireClan = (props: any) => {
                     You are part of the {ClanInfo.clan_name}
                   </Stack.Item>
                   <Stack.Item fontSize="16px">
-                    {ClanInfo.clan_description}
+                    {ClanInfo.clan_desc}
                   </Stack.Item>
                 </>
               ))}
             </Stack.Item>
           </Stack>
         </Section>
-        <PowerSection />
+        <AbilitySection />
       </Stack.Item>
     </Stack>
   );
 };
 
-const PowerSection = (props: any) => {
+const AbilitySection = (props: any) => {
   const { act, data } = useBackend<VampireInfo>();
-  const { power } = data;
-  if (!power) {
+  const { ability } = data;
+  if (!ability) {
     return <Section minHeight="220px" />;
   }
 
-  const [selectedPower, setSelectedPower] = useLocalState('power', power[0]);
+  const [selectedAbility, setSelectedAbility] = useLocalState('ability', ability[0]);
 
   return (
     <Section
       fill
-      scrollable={!!power}
-      title="Powers"
+      scrollable={!!ability}
+      title="Abilities"
       buttons={
         <Button
           icon="info"
           tooltipPosition="left"
           tooltip={
-            'Select a Power using the dropdown menu for an in-depth explanation.'
+            'Select an ability using the dropdown menu for an in-depth explanation.'
           }
         />
       }
@@ -222,29 +222,29 @@ const PowerSection = (props: any) => {
       <Stack>
         <Stack.Item grow>
           <Dropdown
-            displayText={selectedPower.power_name}
-            selected={selectedPower.power_name}
+            displayText={selectedAbility.ability_name}
+            selected={selectedAbility.ability_name}
             width="100%"
-            options={power.map((powers) => powers.power_name)}
-            onSelected={(powerName: string) =>
-              setSelectedPower(
-                power.find((p) => p.power_name === powerName) || power[0],
+            options={ability.map((abilities) => abilities.ability_name)}
+            onSelected={(abilityName: string) =>
+              setSelectedAbility(
+                ability.find((p) => p.ability_name === abilityName) || ability[0],
               )
             }
           />
-          {selectedPower && (
+          {selectedAbility && selectedAbility.ability_icon && (
             <Box
               position="absolute"
               height="12rem"
               as="img"
-              src={resolveAsset(`vampire.${selectedPower.power_icon}.png`)}
+              src={resolveAsset(`vampire.${selectedAbility.ability_icon}.png`)}
             />
           )}
           <Divider Vertical />
         </Stack.Item>
         <Stack.Divider />
         <Stack.Item scrollable grow={1} fontSize="16px">
-          {selectedPower && selectedPower.power_explanation}
+          {selectedAbility && selectedAbility.ability_desc}
         </Stack.Item>
       </Stack>
     </Section>

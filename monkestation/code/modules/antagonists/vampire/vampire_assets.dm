@@ -9,5 +9,5 @@
 
 	return ..()
 
-/datum/asset/simple/vampire_icons/proc/add_vampire_icon(vampire_icon, vampire_icon_state)
-	assets[SANITIZE_FILENAME("vampire.[vampire_icon_state].png")] = icon(vampire_icon, vampire_icon_state)
+/datum/asset/simple/vampire_icons/proc/add_vampire_icon(icon, icon_state)
+	assets[SANITIZE_FILENAME("vampire.[icon_state].png")] = icon(icon, icon_state)
