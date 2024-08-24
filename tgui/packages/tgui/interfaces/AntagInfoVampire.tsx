@@ -141,9 +141,9 @@ const VampireClan = (props: any) => {
 
   if (!in_clan) {
     return (
-      <Section minHeight="220px">
-        <Box mt={5} bold textAlign="center" fontSize="40px">
-          You are not in a Clan.
+      <Section>
+        <Box mt={5} bold textColor="red" textAlign="center" fontSize="40px">
+          You are not in a clan.
         </Box>
         <Box mt={3}>
           <Button
@@ -172,7 +172,7 @@ const VampireClan = (props: any) => {
                     as="img"
                     height="20rem"
                     opacity={0.25}
-                    src={resolveAsset(`bloodsucker.${ClanInfo.clan_icon}.png`)}
+                    src={resolveAsset(`vampire.${ClanInfo.clan_icon}.png`)}
                     style={{
                       '-ms-interpolation-mode': 'nearest-neighbor',
                       position: 'absolute',
@@ -237,7 +237,7 @@ const PowerSection = (props: any) => {
               position="absolute"
               height="12rem"
               as="img"
-              src={resolveAsset(`bloodsucker.${selectedPower.power_icon}.png`)}
+              src={resolveAsset(`vampire.${selectedPower.power_icon}.png`)}
             />
           )}
           <Divider Vertical />

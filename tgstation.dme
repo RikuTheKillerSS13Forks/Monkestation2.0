@@ -6165,6 +6165,8 @@
 #include "monkestation\code\modules\antagonists\vampire\actions\innate\masquerade.dm"
 #include "monkestation\code\modules\antagonists\vampire\actions\innate\mature.dm"
 #include "monkestation\code\modules\antagonists\vampire\actions\innate\recuperation.dm"
+#include "monkestation\code\modules\antagonists\vampire\clans\base_clan.dm"
+#include "monkestation\code\modules\antagonists\vampire\clans\caitiff.dm"
 #include "monkestation\code\modules\antagonists\vampire\status_effects\frenzy.dm"
 #include "monkestation\code\modules\antagonists\vampire\status_effects\thirst.dm"
 #include "monkestation\code\modules\antagonists\vampire\status_effects\vampire_status.dm"
