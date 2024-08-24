@@ -6136,6 +6136,7 @@
 #include "monkestation\code\modules\antagonists\traitor\objectives\final_objective\final_objective.dm"
 #include "monkestation\code\modules\antagonists\vampire\bloodsucker_guardian.dm"
 #include "monkestation\code\modules\antagonists\vampire\vampire_abilities.dm"
+#include "monkestation\code\modules\antagonists\vampire\vampire_assets.dm"
 #include "monkestation\code\modules\antagonists\vampire\vampire_datum.dm"
 #include "monkestation\code\modules\antagonists\vampire\vampire_hud.dm"
 #include "monkestation\code\modules\antagonists\vampire\vampire_lifeforce.dm"
