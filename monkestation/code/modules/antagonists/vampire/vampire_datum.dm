@@ -85,7 +85,7 @@
 	var/clan = null
 
 	/// The vampire clan datum of the vampire, if any.
-	var/datum/vampire_clan/clan_datum
+	var/datum/vampire_clan/clan_datum = null
 
 	/// Modifier for feed rate. Value is in blood/s.
 	var/datum/modifier/feed_rate_modifier = new(base_value = BLOOD_VOLUME_NORMAL / 30)
@@ -165,6 +165,3 @@
 			assign_clan()
 			ui.send_full_update(force = TRUE)
 			return
-
-/datum/antagonist/vampire/proc/assign_clan()
-
