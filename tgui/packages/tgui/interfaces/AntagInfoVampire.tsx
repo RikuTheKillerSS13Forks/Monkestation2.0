@@ -18,7 +18,7 @@ type Info = {
 };
 
 type VampireInfo = {
-  clan: ClanInfo[];
+  clan: ClanInfo;
   in_clan: BooleanLike;
   ability: AbilityInfo[];
 };
@@ -38,7 +38,7 @@ type AbilityInfo = {
 export const AntagInfoVampire = (props: any) => {
   const [tab, setTab] = useLocalState('tab', 1);
   return (
-    <Window width={620} height={580} theme="spookyconsole">
+    <Window width={620} height={620} theme="spookyconsole">
       <Window.Content>
         <Tabs>
           <Tabs.Tab
@@ -69,7 +69,7 @@ const VampireIntro = () => {
   const { data } = useBackend<Info>();
   const { objectives } = data;
   return (
-    <Stack vertical fill>
+    <Stack vertical fill overflowY="auto" overflowX="hidden">
       <Stack.Item minHeight="16rem">
         <Section scrollable fill>
           <Stack vertical>
@@ -95,8 +95,13 @@ const VampireIntro = () => {
                 of living sapients to sustain yourself. Don&apos;t abstain from
                 indulging in blood for too long, or else you&apos;ll
               </span>
-              <span className={'color-red'}> turn to dust!</span><br />
-              <br />
+              <span className={'color-red'}> turn to dust!</span>
+              <br /><br />
+              <span>
+                Your appearance and lack of blood or genes are your defining traits.
+                Masquerade can be used to disguise yourself as a mortal, at a cost.
+              </span>
+              <br /><br />
               <span>
                 Avoid being detected by the masses, or else the crew
                 may obtain countermeasures such as garlic or silver.
@@ -115,11 +120,6 @@ const VampireIntro = () => {
               You can rest in a <b>coffin</b> to recover from more gruesome injuries.
               <br />
               If you lack adequate protection, <b>starlight</b> will burn you to death.
-              <br />
-              Your appearance and lack of blood or genes are your defining traits.
-              <br />
-              Masquerade can be used to disguise yourself as a mortal, at a cost.
-              <br />
             </Stack.Item>
             <Stack.Item>
               <Section textAlign="center" textColor="red" fontSize="20px">
@@ -161,8 +161,8 @@ const VampireClan = (props: any) => {
   }
 
   return (
-    <Stack vertical fill>
-      <Stack.Item minHeight="20rem">
+    <Stack vertical fill overflowY="auto">
+      <Stack.Item>
         <Section scrollable fill>
           <Stack vertical>
             <Stack.Item>
