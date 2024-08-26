@@ -1,7 +1,7 @@
 /datum/vampire_ability/regeneration
 	name = "Recuperation"
-	desc = "Greatly increase your recovery rate from physical injuries.\
-		The process is completely imperceptible, but drains lifeforce.\
-		Ineffective against severe injuries such as broken bones.\
+	desc = "Greatly increase your recovery rate from physical injuries. \
+		The process is completely imperceptible, but drains lifeforce. \
+		Ineffective against severe injuries such as broken bones. \
 		Rate scales with Recovery."
 	granted_action = /datum/action/cooldown/vampire/recuperation

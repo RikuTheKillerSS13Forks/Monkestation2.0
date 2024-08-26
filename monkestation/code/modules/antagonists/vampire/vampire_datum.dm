@@ -161,7 +161,7 @@
 		clan_data["clan_desc"] = clan.desc
 		clan_data["clan_icon"] = clan.icon_state
 
-	data["clan"] += list(clan_data)
+	data["clan"] = clan_data
 
 	for(var/datum/vampire_ability/ability as anything in current_abilities)
 		var/list/ability_data = list()

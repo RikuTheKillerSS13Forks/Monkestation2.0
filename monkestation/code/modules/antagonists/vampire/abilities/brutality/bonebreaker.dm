@@ -1,6 +1,6 @@
 /datum/vampire_ability/bonebreaker
 	name = "Bonebreaker"
-	desc = "Your punches deal more damage.\
+	desc = "Your punches deal more damage. \
 		Scales with Brutality."
 	stat_reqs = list(VAMPIRE_STAT_BRUTALITY = 1)
 

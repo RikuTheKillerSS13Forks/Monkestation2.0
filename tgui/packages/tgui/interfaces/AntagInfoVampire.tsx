@@ -38,7 +38,7 @@ type AbilityInfo = {
 export const AntagInfoVampire = (props: any) => {
   const [tab, setTab] = useLocalState('tab', 1);
   return (
-    <Window width={620} height={620} theme="spookyconsole">
+    <Window width={620} height={530} theme="spookyconsole">
       <Window.Content>
         <Tabs>
           <Tabs.Tab
@@ -70,8 +70,8 @@ const VampireIntro = () => {
   const { objectives } = data;
   return (
     <Stack vertical fill overflowY="auto" overflowX="hidden">
-      <Stack.Item minHeight="16rem">
-        <Section scrollable fill>
+      <Stack.Item>
+        <Section fill>
           <Stack vertical>
             <Stack.Item textColor="red" fontSize="20px">
               You are a vampire, an undead blood-seeking monster living
@@ -163,31 +163,23 @@ const VampireClan = (props: any) => {
   return (
     <Stack vertical fill overflowY="auto">
       <Stack.Item>
-        <Section scrollable fill>
-          <Stack vertical>
-            <Stack.Item>
-              {clan.map((ClanInfo) => (
-                <>
-                  <Box
-                    as="img"
-                    height="20rem"
-                    opacity={0.25}
-                    src={resolveAsset(`vampire.${ClanInfo.clan_icon}.png`)}
-                    style={{
-                      '-ms-interpolation-mode': 'nearest-neighbor',
-                      position: 'absolute',
-                    }}
-                  />
-                  <Stack.Item fontSize="20px" textAlign="center">
-                    You are part of the {ClanInfo.clan_name}
-                  </Stack.Item>
-                  <Stack.Item fontSize="16px">
-                    {ClanInfo.clan_desc}
-                  </Stack.Item>
-                </>
-              ))}
-            </Stack.Item>
-          </Stack>
+        <Section>
+          <Box
+            as="img"
+            height="20rem"
+            opacity={0.25}
+            src={resolveAsset(`vampire.${clan.clan_icon}.png`)}
+            style={{
+              '-ms-interpolation-mode': 'nearest-neighbor',
+              position: 'absolute',
+            }}
+          />
+          <Stack.Item fontSize="20px" textAlign="center">
+            You are part of the {clan.clan_name}
+          </Stack.Item>
+          <Stack.Item fontSize="16px">
+            {clan.clan_desc}
+          </Stack.Item>
         </Section>
         <AbilitySection />
       </Stack.Item>
@@ -206,8 +198,6 @@ const AbilitySection = (props: any) => {
 
   return (
     <Section
-      fill
-      scrollable={!!ability}
       title="Abilities"
       buttons={
         <Button
@@ -219,8 +209,8 @@ const AbilitySection = (props: any) => {
         />
       }
     >
-      <Stack>
-        <Stack.Item grow>
+      <Stack fill>
+        <Stack.Item minWidth="20%">
           <Dropdown
             displayText={selectedAbility.ability_name}
             selected={selectedAbility.ability_name}
@@ -232,18 +222,18 @@ const AbilitySection = (props: any) => {
               )
             }
           />
-          {selectedAbility && selectedAbility.ability_icon && (
+          {/*selectedAbility && selectedAbility.ability_icon && (
             <Box
               position="absolute"
               height="12rem"
               as="img"
               src={resolveAsset(`vampire.${selectedAbility.ability_icon}.png`)}
             />
-          )}
+          )*/}
           <Divider Vertical />
         </Stack.Item>
         <Stack.Divider />
-        <Stack.Item scrollable grow={1} fontSize="16px">
+        <Stack.Item grow fontSize="16px">
           {selectedAbility && selectedAbility.ability_desc}
         </Stack.Item>
       </Stack>
