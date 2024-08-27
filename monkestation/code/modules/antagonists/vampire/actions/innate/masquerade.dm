@@ -1,8 +1,9 @@
 /datum/action/cooldown/vampire/masquerade
 	name = "Masquerade"
-	desc = "Hide your true nature from the prying eyes of the mortals. Drains lifeforce while active."
+	desc = "Hide your true nature from the prying eyes of the mortals. Drains lifeforce and disables most of your abilities while active."
 	button_icon_state = "power_human"
 	toggleable = TRUE // constant_life_cost is handled in set_masquerade
+	works_in_masquerade = TRUE
 
 /datum/action/cooldown/vampire/masquerade/Grant(mob/granted_to)
 	. = ..()

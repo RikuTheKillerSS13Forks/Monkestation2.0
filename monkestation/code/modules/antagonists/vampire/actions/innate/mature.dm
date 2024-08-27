@@ -3,6 +3,7 @@
 	desc = "Grow closer to your ancient lineage through sacrificing your lifeforce."
 	button_icon_state = "power_mature"
 	cooldown_time = 10 SECONDS
+	works_in_masquerade = TRUE
 
 /datum/action/cooldown/vampire/mature/New(Target)
 	. = ..()

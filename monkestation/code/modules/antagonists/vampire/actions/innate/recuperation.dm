@@ -1,8 +1,9 @@
 /datum/action/cooldown/vampire/recuperation
 	name = "Recuperation"
-	desc = "Greatly increase your recovery rate from physical injuries. Drains lifeforce when healing."
+	desc = "Greatly increase your recovery rate from physical injuries. Drains lifeforce when healing and doesn't work in masquerade."
 	button_icon_state = "power_recup"
 	toggleable = TRUE
+	works_in_masquerade = TRUE // on_life still prevents it from working, but you can toggle it if you want
 
 /datum/action/cooldown/vampire/recuperation/New(Target)
 	. = ..()
@@ -25,6 +26,9 @@
 
 /datum/action/cooldown/vampire/recuperation/proc/on_life(datum/source, seconds_per_tick, times_fired)
 	SIGNAL_HANDLER
+
+	if(vampire.masquerade_enabled)
+		return
 
 	var/brute = user.getBruteLoss()
 	var/burn = user.getFireLoss()

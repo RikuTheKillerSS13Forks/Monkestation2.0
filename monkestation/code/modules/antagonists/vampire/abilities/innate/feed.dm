@@ -8,5 +8,5 @@
 		You can't neck feed from victims wearing a garlic or cross necklace. \
 		Drinking someone dry will enthrall them with you as their master. \
 		You are unable to talk while feeding. \
-		Rate scales with Brutality."
+		Neck feed rate scales with Brutality."
 	granted_action = /datum/action/cooldown/vampire/feed

@@ -1,6 +1,7 @@
 /datum/vampire_ability/masquerade
 	name = "Masquerade"
 	desc = "Hide your vampiric traits. \
+		Disables most of your abilities. \
 		Regulates your body temperature. \
 		Shows your reflection in mirrors. \
 		Fakes your blood and genes on analyzers. \

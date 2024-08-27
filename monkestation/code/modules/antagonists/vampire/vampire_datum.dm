@@ -81,10 +81,15 @@
 	/// The abilities in here are in typepath form.
 	var/static/list/available_abilities
 
+	/// The action that grants us night vision at will.
+	var/datum/action/adjust_vision/vampire/vision_action
+
 	/// The vampire clan datum of the vampire, if any.
 	var/datum/vampire_clan/clan = null
 
 	/// Modifier for feed rate. Value is in blood/s.
+	/// The handling for this is weird as it only affects neck feeding.
+	/// Wrist feeding uses the base value, neck feeding uses *double* the final value.
 	var/datum/modifier/feed_rate_modifier = new(base_value = BLOOD_VOLUME_NORMAL / 30)
 
 	/// Modifier for regen rate. Value is in health/s.

@@ -25,6 +25,12 @@
 	/// The current mob using this ability.
 	var/mob/living/carbon/human/user = null
 
+	/// Whether this ability is pseudo-removed when masquerade is enabled. (calls on_remove, on_mob_remove, etc.)
+	var/works_in_masquerade = FALSE
+
+	/// Whether this ability is currently blocked by masquerade.
+	var/blocked = FALSE
+
 /// Returns whether the given vampire meets the requirements to get this ability.
 /datum/vampire_ability/proc/check_reqs(datum/antagonist/vampire/vampire)
 	if(vampire.vampire_rank < min_rank)
@@ -47,18 +53,35 @@
 	owner = new_owner
 	user = owner.owner.current
 
+	if(!works_in_masquerade)
+		RegisterSignal(owner, COMSIG_VAMPIRE_MASQUERADE, PROC_REF(on_masquerade))
+		blocked = owner.masquerade_enabled
+
 	RegisterSignal(owner, COMSIG_QDELETING, PROC_REF(clear_ref))
 	RegisterSignal(user, COMSIG_QDELETING, PROC_REF(clear_ref))
-
-	if(granted_traits)
-		user.add_traits(granted_traits, REF(src))
 
 	if(ispath(granted_action))
 		granted_action = new granted_action(owner)
 		granted_action.Grant(user)
 
+	if(!blocked)
+		enable()
+
+/// Called when the ability is enabled. This is what actually calls on_grant and on_grant_mob. If absolutely required for some asinine logic, you may override this.
+/datum/vampire_ability/proc/enable()
+	if(granted_traits)
+		user.add_traits(granted_traits, REF(src))
+
 	INVOKE_ASYNC(src, PROC_REF(on_grant))
 	INVOKE_ASYNC(src, PROC_REF(on_grant_mob))
+
+/// Called when the ability is disabled. This is what actually calls on_remove and on_remove_mob. If absolutely required for some asinine logic, you may override this.
+/datum/vampire_ability/proc/disable()
+	if(granted_traits)
+		user.remove_traits(granted_traits, REF(src))
+
+	INVOKE_ASYNC(src, PROC_REF(on_remove))
+	INVOKE_ASYNC(src, PROC_REF(on_remove_mob))
 
 /// To be implemented by subtypes. Called in grant() after setting owner and user.
 /datum/vampire_ability/proc/on_grant()
@@ -70,16 +93,13 @@
 /datum/vampire_ability/proc/remove()
 	SHOULD_NOT_SLEEP(TRUE)
 
-	UnregisterSignal(owner, COMSIG_QDELETING)
+	UnregisterSignal(owner, list(COMSIG_VAMPIRE_MASQUERADE, COMSIG_QDELETING))
 	UnregisterSignal(user, COMSIG_QDELETING)
-
-	if(granted_traits)
-		user.remove_traits(granted_traits, REF(src))
 
 	QDEL_NULL(granted_action)
 
-	INVOKE_ASYNC(src, PROC_REF(on_remove))
-	INVOKE_ASYNC(src, PROC_REF(on_remove_mob))
+	if(!blocked)
+		disable()
 
 	owner = null
 	user = null
@@ -95,6 +115,15 @@
 	SIGNAL_HANDLER
 	if(ref == owner || ref == user)
 		remove()
+
+/// Handles pseudo removing/adding the action if it's supposed to be disabled while in masquerade.
+/datum/vampire_ability/proc/on_masquerade(datum/source, enabled)
+	SIGNAL_HANDLER
+	if(!blocked && enabled)
+		disable()
+	else if(blocked && !enabled)
+		enable()
+	blocked = enabled
 
 /datum/vampire_ability/Destroy(force)
 	. = ..()

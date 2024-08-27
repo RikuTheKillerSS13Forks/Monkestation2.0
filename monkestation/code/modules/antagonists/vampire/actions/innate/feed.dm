@@ -6,12 +6,13 @@
 	desc = "Drink the blood of a victim, a more aggressive grab feeds directly from the carotid artery and allows you to enthrall your victim if they remain alive."
 	button_icon_state = "power_feed"
 	toggleable = TRUE
+	works_in_masquerade = TRUE
 
 	/// If we're currently feeding, used for sanity.
 	var/is_feeding = FALSE
 
-	/// The amount of blood a target has since our last feed, this loops and lets us not spam alerts of low blood.
-	var/target_blood = BLOOD_VOLUME_MAX_LETHAL
+	/// Last blood alert threshold met, used to avoid alert spam.
+	var/last_threshold = BLOOD_VOLUME_MAX_LETHAL
 
 	/// Whether the feed was started with a passive (wrist feed) or aggressive (neck feed) grab.
 	var/feed_type = WRIST_FEED
@@ -99,16 +100,16 @@
 		return
 
 	if(feed_type == NECK_FEED)
-		var/target_grab_state = HAS_TRAIT(owner, TRAIT_STRONG_GRABBER) ? GRAB_KILL : GRAB_NECK
+		var/target_grab_state = (vampire.current_abilities[/datum/vampire_ability/strong_grip] && (owner.istate & ISTATE_HARM)) ? GRAB_KILL : GRAB_NECK
 		if(owner.grab_state < target_grab_state)
 			owner.setGrabState(target_grab_state)
 			if(!victim.buckled && !victim.density)
 				victim.Move(owner.loc) // GET OVER HERE
 
-	vampire.feed_rate_modifier.set_multiplicative(NECK_FEED, feed_type == WRIST_FEED ? 1 : 2) // it's free caching, why not
-
 	is_feeding = TRUE // you've secured the meal, nice
 	victim_ref = WEAKREF(victim)
+
+	last_threshold = initial(last_threshold) // used for warnings so it needs to be reset
 
 	ADD_TRAIT(owner, TRAIT_MUTE, REF(src)) // feeding covers your mouth, making you unable to talk
 
@@ -220,10 +221,13 @@
 	if(feed_type == NECK_FEED)
 		victim.adjustOxyLoss(5 * feed_rate / base_feed_rate)
 
-	var/blood_to_drain = min(victim.blood_volume, feed_rate * seconds_per_tick)
+	var/blood_to_drain = min(victim.blood_volume, (feed_type == WRIST_FEED ? base_feed_rate : feed_rate * 2) * seconds_per_tick)
 
 	victim.blood_volume -= blood_to_drain
 	vampire.adjust_lifeforce(blood_to_drain * BLOOD_TO_LIFEFORCE) // finally some good fucking food
+
+	if(victim.blood_volume > 0)
+		handle_warnings(victim.blood_volume)
 
 	owner.playsound_local(soundin = 'sound/effects/singlebeat.ogg', vol = 40, vary = TRUE)
 	victim.playsound_local(soundin = 'sound/effects/singlebeat.ogg', vol = 40, vary = TRUE)
@@ -231,6 +235,33 @@
 	if(victim.blood_volume <= 0) // otherwise the blood regen of the victim will make their blood volume just a tad bit above 0
 		INVOKE_ASYNC(src, PROC_REF(attempt_enthrall), victim)
 		return
+
+/datum/action/cooldown/vampire/feed/proc/handle_warnings(blood_volume)
+	var/threshold = BLOOD_VOLUME_MAXIMUM
+	var/message
+
+	switch(blood_volume)
+		if(BLOOD_VOLUME_SAFE to INFINITY)
+			threshold = BLOOD_VOLUME_MAXIMUM
+		if(BLOOD_VOLUME_OKAY to BLOOD_VOLUME_SAFE)
+			threshold = BLOOD_VOLUME_SAFE
+			message = "blood level unsafe"
+		if(BLOOD_VOLUME_BAD to BLOOD_VOLUME_OKAY)
+			threshold = BLOOD_VOLUME_OKAY
+			message = "blood level low"
+		if(BLOOD_VOLUME_SURVIVE to BLOOD_VOLUME_BAD)
+			threshold = BLOOD_VOLUME_BAD
+			message = "blood level critical"
+		if(-INFINITY to BLOOD_VOLUME_SURVIVE)
+			threshold = BLOOD_VOLUME_SURVIVE
+			message = "blood level fatal"
+
+	if(threshold >= last_threshold)
+		return
+	last_threshold = threshold
+
+	if(message)
+		owner.balloon_alert(owner, message)
 
 /datum/action/cooldown/vampire/feed/proc/is_suitable_limb(mob/living/carbon/victim, zone)
 	var/obj/item/bodypart/limb = victim.get_bodypart(zone)

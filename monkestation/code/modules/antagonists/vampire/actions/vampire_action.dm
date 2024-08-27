@@ -23,7 +23,13 @@
 	/// If toggleable, whether or not this action is currently toggled on. Use is_active() for checks.
 	var/active = FALSE
 
+	/// Whether this ability can be activated or toggled on during masquerade.
+	var/works_in_masquerade = FALSE
+
+	/// The current human mob that owns this action.
 	var/mob/living/carbon/human/user
+
+	/// The vampire antag datum that owns this action. Also the target of the action.
 	var/datum/antagonist/vampire/vampire
 
 /datum/action/cooldown/vampire/New(Target)
@@ -31,10 +37,11 @@
 	vampire = Target
 	if(!istype(vampire))
 		CRASH("Vampire action created without a linked vampire antag datum.")
-	RegisterSignal(vampire, COMSIG_VAMPIRE_LIFEFORCE_CHANGED, PROC_REF(update_button))
+	RegisterSignal(vampire, COMSIG_VAMPIRE_LIFEFORCE_CHANGED, PROC_REF(on_lifeforce_changed))
+	RegisterSignal(vampire, COMSIG_VAMPIRE_MASQUERADE, PROC_REF(update_button))
 
 /datum/action/cooldown/vampire/Destroy() // assumes that the action target is always the vampire antag datum, so this should be called if vampire is qdel'd
-	UnregisterSignal(vampire, COMSIG_VAMPIRE_LIFEFORCE_CHANGED)
+	UnregisterSignal(vampire, list(COMSIG_VAMPIRE_LIFEFORCE_CHANGED, COMSIG_VAMPIRE_MASQUERADE))
 	vampire = null
 	user = null
 	return ..()
@@ -59,6 +66,11 @@
 	if(toggleable && is_active() && can_toggle_off())
 		return TRUE
 
+	if(!works_in_masquerade && vampire.masquerade_enabled)
+		if(feedback)
+			owner.balloon_alert(owner, "in masquerade!")
+		return FALSE
+
 	if(vampire.lifeforce < life_cost)
 		if(feedback)
 			owner.balloon_alert(owner, "needs [life_cost] lifeforce!")
@@ -68,6 +80,12 @@
 		return FALSE
 
 	return TRUE
+
+/datum/action/cooldown/vampire/proc/on_lifeforce_changed(datum/source, old_amount, new_amount)
+	SIGNAL_HANDLER
+	if(new_amount == 0 && toggleable && can_toggle_off())
+		toggle_off()
+	update_button()
 
 /datum/action/cooldown/vampire/proc/update_button() // not named update_button_status as thats an action level proc, this is a signal handler for that
 	SIGNAL_HANDLER
