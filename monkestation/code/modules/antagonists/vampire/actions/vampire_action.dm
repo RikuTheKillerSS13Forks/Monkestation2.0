@@ -83,7 +83,7 @@
 
 /datum/action/cooldown/vampire/proc/on_lifeforce_changed(datum/source, old_amount, new_amount)
 	SIGNAL_HANDLER
-	if(new_amount == 0 && toggleable && can_toggle_off())
+	if(new_amount == 0 && constant_life_cost && toggleable && can_toggle_off())
 		toggle_off()
 	update_button()
 
