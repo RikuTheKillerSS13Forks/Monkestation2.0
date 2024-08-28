@@ -17,6 +17,9 @@
 	/// How much lifeforce this action uses over time while active. Toggle-only.
 	var/constant_life_cost = 0
 
+	/// Override for constant_life_cost that makes the ability require lifeforce even with both costs being 0.
+	var/has_custom_life_cost = FALSE
+
 	/// Whether this action is a toggle or not.
 	var/toggleable = FALSE
 
@@ -38,13 +41,13 @@
 	if(!istype(vampire))
 		CRASH("Vampire action created without a linked vampire antag datum.")
 	RegisterSignal(vampire, COMSIG_VAMPIRE_LIFEFORCE_CHANGED, PROC_REF(on_lifeforce_changed))
-	RegisterSignal(vampire, COMSIG_VAMPIRE_MASQUERADE, PROC_REF(update_button))
+	RegisterSignal(vampire, COMSIG_VAMPIRE_MASQUERADE, PROC_REF(on_masquerade))
 
 /datum/action/cooldown/vampire/Destroy() // assumes that the action target is always the vampire antag datum, so this should be called if vampire is qdel'd
+	. = ..()
 	UnregisterSignal(vampire, list(COMSIG_VAMPIRE_LIFEFORCE_CHANGED, COMSIG_VAMPIRE_MASQUERADE))
 	vampire = null
 	user = null
-	return ..()
 
 /datum/action/cooldown/vampire/Grant(mob/granted_to)
 	. = ..()
@@ -53,18 +56,18 @@
 	user = granted_to
 
 /datum/action/cooldown/vampire/Remove(mob/removed_from)
-	. = ..()
 	if(toggleable && is_active())
 		toggle_off() // doesn't matter if can_toggle_off would return false here, just do it anyway
 	if(user == removed_from)
 		user = null
+	return ..()
 
 /datum/action/cooldown/vampire/IsAvailable(feedback)
 	if(!..())
 		return FALSE
 
-	if(toggleable && is_active() && can_toggle_off())
-		return TRUE
+	if(toggleable && is_active())
+		return can_toggle_off(feedback)
 
 	if(!works_in_masquerade && vampire.masquerade_enabled)
 		if(feedback)
@@ -76,14 +79,24 @@
 			owner.balloon_alert(owner, "needs [life_cost] lifeforce!")
 		return FALSE
 
-	if(toggleable && !is_active() && !can_toggle_on(feedback))
+	if(toggleable && (has_custom_life_cost && vampire.lifeforce == 0) || (vampire.lifeforce < constant_life_cost))
+		if(feedback)
+			owner.balloon_alert(owner, "needs lifeforce!")
 		return FALSE
+
+	if(toggleable && !is_active())
+		return can_toggle_on(feedback)
 
 	return TRUE
 
 /datum/action/cooldown/vampire/proc/on_lifeforce_changed(datum/source, old_amount, new_amount)
 	SIGNAL_HANDLER
-	if(new_amount == 0 && constant_life_cost && toggleable && can_toggle_off())
+	if(new_amount == 0 && (has_custom_life_cost || constant_life_cost) && toggleable && can_toggle_off())
+		toggle_off()
+	update_button()
+
+/datum/action/cooldown/vampire/proc/on_masquerade(datum/source, enabled)
+	if(enabled && !works_in_masquerade && toggleable && is_active() && can_toggle_off())
 		toggle_off()
 	update_button()
 

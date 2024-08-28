@@ -5,6 +5,6 @@
 	Disables Masquerade until the duration ends. \
 	Rapidly drains lifeforce while active. \
 	Has a cooldown of 2 minutes. \
-	Can be ended early."
+	Can't be ended early."
 	granted_action = /datum/action/cooldown/vampire/frenzy
 	stat_reqs = list(VAMPIRE_STAT_BRUTALITY = 30)

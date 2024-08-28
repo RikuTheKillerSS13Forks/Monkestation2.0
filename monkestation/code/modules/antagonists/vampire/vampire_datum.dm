@@ -62,12 +62,12 @@
 
 	/// The stats of the vampire. The cornerstone of progression alongside ranks. Don't modify this directly.
 	var/list/stats = list(
-		VAMPIRE_STAT_BRUTALITY = 0,
-		VAMPIRE_STAT_TENACITY = 0,
-		VAMPIRE_STAT_PURSUIT = 0,
-		VAMPIRE_STAT_RECOVERY = 0,
-		VAMPIRE_STAT_PERCEPTION = 0,
-		VAMPIRE_STAT_DISCRETION = 0
+		VAMPIRE_STAT_BRUTALITY = 60, // DEBUG STATS, REMEMBER TO REVERT THESE LATER
+		VAMPIRE_STAT_TENACITY = 60,
+		VAMPIRE_STAT_PURSUIT = 60,
+		VAMPIRE_STAT_RECOVERY = 60,
+		VAMPIRE_STAT_PERCEPTION = 60,
+		VAMPIRE_STAT_DISCRETION = 60
 	)
 
 	/// Associative list of abilities the vampire has unlocked.
@@ -123,6 +123,7 @@
 	update_masquerade() // keep this below add_traits or else hulk will break our shitcode (bodypart.variable_color)
 
 	RegisterSignal(target_mob, COMSIG_LIVING_LIFE, PROC_REF(on_life))
+	RegisterSignal(target_mob, COMSIG_CARBON_POST_ATTACH_LIMB, PROC_REF(masq_limb))
 
 	if(target_mob.hud_used)
 		on_hud_created()
@@ -140,14 +141,10 @@
 
 	REMOVE_TRAITS_IN(target_mob, VAMPIRE_TRAIT)
 
-	UnregisterSignal(target_mob, COMSIG_LIVING_LIFE)
+	UnregisterSignal(target_mob, list(COMSIG_LIVING_LIFE, COMSIG_CARBON_POST_ATTACH_LIMB))
 
-	if(target_mob.hud_used)
-		var/datum/hud/hud = target_mob.hud_used
-		hud.infodisplay -= lifeforce_display
-		hud.infodisplay -= rank_display
-		QDEL_NULL(lifeforce_display)
-		QDEL_NULL(rank_display)
+	QDEL_NULL(lifeforce_display)
+	QDEL_NULL(rank_display)
 
 	clear_abilities()
 

@@ -15,8 +15,8 @@
 	RegisterSignal(vampire, COMSIG_QDELETING, PROC_REF(self_destruct))
 
 /datum/status_effect/vampire/Destroy()
+	. = ..()
 	vampire = null
-	return ..()
 
 /datum/status_effect/vampire/on_apply()
 	. = ..()

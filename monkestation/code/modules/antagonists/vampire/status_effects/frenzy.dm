@@ -4,10 +4,10 @@
 	alert_type = /atom/movable/screen/alert/status_effect/vampire_frenzy
 
 /datum/status_effect/vampire/frenzy/on_remove()
-	. = ..()
 	if(is_transfer)
-		return
+		return ..()
 	SEND_SIGNAL(vampire, COMSIG_VAMPIRE_END_FRENZY)
+	return ..()
 
 /atom/movable/screen/alert/status_effect/vampire_frenzy
 	name = "Frenzy"

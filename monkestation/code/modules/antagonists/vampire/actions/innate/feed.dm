@@ -34,7 +34,8 @@
 	return ..()
 
 /datum/action/cooldown/vampire/feed/Grant(mob/granted_to)
-	RegisterSignals(granted_to, list(COMSIG_LIVING_START_PULL, COMSIG_ATOM_NO_LONGER_PULLING), PROC_REF(update_button))
+	RegisterSignal(granted_to, COMSIG_LIVING_START_PULL, PROC_REF(update_button))
+	RegisterSignal(granted_to, COMSIG_ATOM_NO_LONGER_PULLING, PROC_REF(on_stop_pulling))
 	return ..()
 
 /datum/action/cooldown/vampire/feed/Remove(mob/removed_from)
@@ -118,7 +119,7 @@
 	RegisterSignal(victim, COMSIG_LIVING_LIFE, PROC_REF(on_life))
 	RegisterSignal(victim, COMSIG_QDELETING, PROC_REF(on_victim_qdel))
 	RegisterSignal(victim, COMSIG_CARBON_REMOVE_LIMB, PROC_REF(check_removed_limb))
-	RegisterSignals(owner, list(COMSIG_ATOM_NO_LONGER_PULLING, COMSIG_MOVABLE_SET_GRAB_STATE), PROC_REF(check_grab)) // how this specific line causes a signal override is byond me considering both are unregistered afaik
+	RegisterSignal(owner, COMSIG_MOVABLE_SET_GRAB_STATE, PROC_REF(check_grab)) // how this specific line causes a signal override is byond me considering both are unregistered afaik
 
 	if(feed_type == WRIST_FEED)
 		owner.visible_message(
@@ -150,6 +151,12 @@
 /datum/action/cooldown/vampire/feed/on_toggle_off()
 	stop_feeding(victim_ref.resolve(), forced = FALSE) // if is_feeding is true victim_ref should never be null
 
+/datum/action/cooldown/vampire/feed/proc/on_stop_pulling(datum/source)
+	SIGNAL_HANDLER
+	update_button()
+	if (is_feeding)
+		check_grab(source)
+
 /datum/action/cooldown/vampire/feed/proc/on_victim_qdel(mob/living/carbon/victim)
 	SIGNAL_HANDLER
 	stop_feeding(victim, forced = TRUE)
@@ -165,7 +172,7 @@
 	REMOVE_TRAIT(victim, TRAIT_NODEATH, REF(src))
 
 	UnregisterSignal(victim, list(COMSIG_LIVING_LIFE, COMSIG_QDELETING, COMSIG_CARBON_REMOVE_LIMB))
-	UnregisterSignal(owner, list(COMSIG_ATOM_NO_LONGER_PULLING, COMSIG_MOVABLE_SET_GRAB_STATE))
+	UnregisterSignal(owner, COMSIG_MOVABLE_SET_GRAB_STATE)
 
 	var/obj/item/bodypart/target_limb = bodypart_override ? bodypart_override : (is_suitable_limb(victim, target_zone) ? victim.get_bodypart(target_zone) : null)
 

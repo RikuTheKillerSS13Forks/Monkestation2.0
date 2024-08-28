@@ -19,3 +19,10 @@
 		return
 	masquerade_enabled = enabled
 	update_masquerade()
+
+/datum/antagonist/vampire/proc/masq_limb(mob/living/carbon/human/user, obj/item/bodypart/limb)
+	SIGNAL_HANDLER
+	if(!masquerade_enabled)
+		return
+	limb.variable_color = "#b8b8b8" // stupid fucking hardcoded bullshit (variable body color will be refactored EVENTUALLY anyway)
+	user.update_body_parts()
