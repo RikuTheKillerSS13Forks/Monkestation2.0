@@ -43,7 +43,7 @@
 
 	var/regen_rate = vampire.regen_rate_modifier.get_value()
 	var/base_regen_rate = vampire.regen_rate_modifier.get_base_value()
-	var/regen_level = max(regen_rate / base_regen_rate - 1, 0) * VAMPIRE_SP_MAXIMUM / 2 // gets the increase in regen rate in multiplicative form, then matches it to recovery scaling
+	var/regen_level = vampire.get_stat(VAMPIRE_STAT_RECOVERY)
 
 	if(owner.stat == DEAD)
 		if(regen_level < REGEN_THRESHOLD_REVIVE)
