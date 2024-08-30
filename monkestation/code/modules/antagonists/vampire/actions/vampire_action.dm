@@ -2,6 +2,7 @@
 	name = "Please ahelp"
 	desc = "If you see this ahelp IMMEDIATELY"
 	cooldown_time = 0.5 SECONDS
+	check_flags = AB_CHECK_CONSCIOUS
 
 	button_icon = 'monkestation/icons/vampires/actions_vampire.dmi'
 	background_icon = 'monkestation/icons/vampires/actions_vampire.dmi'
@@ -51,28 +52,34 @@
 
 /datum/action/cooldown/vampire/Grant(mob/granted_to)
 	. = ..()
+
+	RegisterSignal(granted_to, COMSIG_LIVING_DEATH, PROC_REF(on_death))
+
 	if(!ishuman(granted_to))
 		CRASH("Vampire action granted to non-human mob.")
 	user = granted_to
 
 /datum/action/cooldown/vampire/Remove(mob/removed_from)
+	UnregisterSignal(removed_from, COMSIG_LIVING_DEATH)
+
 	if(toggleable && is_active())
 		toggle_off() // doesn't matter if can_toggle_off would return false here, just do it anyway
 	if(user == removed_from)
 		user = null
+
 	return ..()
 
 /datum/action/cooldown/vampire/IsAvailable(feedback)
 	if(!..())
 		return FALSE
 
-	if(toggleable && is_active())
-		return can_toggle_off(feedback)
-
 	if(!works_in_masquerade && vampire.masquerade_enabled)
 		if(feedback)
 			owner.balloon_alert(owner, "in masquerade!")
 		return FALSE
+
+	if(toggleable && is_active())
+		return can_toggle_off(feedback)
 
 	if(vampire.lifeforce < life_cost)
 		if(feedback)
@@ -95,8 +102,15 @@
 		toggle_off()
 	update_button()
 
+/datum/action/cooldown/vampire/proc/on_death(datum/source, gibbed)
+	SIGNAL_HANDLER
+	if((check_flags & AB_CHECK_CONSCIOUS) && toggleable && can_toggle_off())
+		toggle_off()
+	update_button()
+
 /datum/action/cooldown/vampire/proc/on_masquerade(datum/source, enabled)
-	if(enabled && !works_in_masquerade && toggleable && is_active() && can_toggle_off())
+	SIGNAL_HANDLER
+	if(enabled && !works_in_masquerade && toggleable && can_toggle_off())
 		toggle_off()
 	update_button()
 
@@ -105,7 +119,7 @@
 	build_all_button_icons(UPDATE_BUTTON_STATUS)
 
 /datum/action/cooldown/vampire/Activate(atom/target)
-	if(life_cost && (!toggleable || is_active())) // deactivation shouldn't cost anything
+	if(life_cost && !(toggleable && is_active())) // deactivation shouldn't cost anything
 		vampire.adjust_lifeforce(-life_cost)
 	if(!toggleable)
 		return ..()

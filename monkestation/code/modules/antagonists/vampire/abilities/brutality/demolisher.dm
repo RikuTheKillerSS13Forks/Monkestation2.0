@@ -1,7 +1,7 @@
 /datum/vampire_ability/demolisher
 	name = "Demolisher"
 	desc = "You can tear down walls with your bare hands."
-	stat_reqs = list(VAMPIRE_STAT_BRUTALITY = 60)
+	stat_reqs = list(VAMPIRE_STAT_BRUTALITY = 12)
 
 /datum/vampire_ability/demolisher/on_grant_mob()
 	// While this is a capstone ability (and thus should be strong), I had to reign it in so they don't tear apart entire departments.

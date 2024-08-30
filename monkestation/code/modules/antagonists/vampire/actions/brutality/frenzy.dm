@@ -38,6 +38,8 @@
 	user.remove_status_effect(/datum/status_effect/vampire/frenzy)
 
 /datum/action/cooldown/vampire/frenzy/can_toggle_off(feedback)
+	if(owner.stat == DEAD)
+		return TRUE
 	if(feedback)
 		owner.balloon_alert(owner, "too bloodlusted!")
 	return FALSE

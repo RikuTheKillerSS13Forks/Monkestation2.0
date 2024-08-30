@@ -1,23 +1,20 @@
-// these thresholds are in recovery stat points
-#define REGEN_THRESHOLD_TOX 15 // heals tox and clone
-#define REGEN_THRESHOLD_WOUNDS 20 // heals wounds
-#define REGEN_THRESHOLD_OXY 25 // heals oxy
-#define REGEN_THRESHOLD_ORGANS 30 // heals organs and mild brain traumas
-#define REGEN_THRESHOLD_PURGE 35 // purges toxic reagents
-#define REGEN_THRESHOLD_REGROW_LIMBS 40 // regrows limbs
-#define REGEN_THRESHOLD_REGROW_ORGANS 45 // regrows organs and heals severe brain traumas
-#define REGEN_THRESHOLD_REVIVE 50 // revives from death
-
 /datum/action/cooldown/vampire/recuperation
 	name = "Recuperation"
-	desc = "Greatly increase your recovery rate from physical injuries. Drains lifeforce when healing and doesn't work in masquerade."
+	desc = "Greatly increase your recovery rate beyond that of any mortal. The process drains lifeforce and doesn't work in masquerade."
 	button_icon_state = "power_recup"
+	check_flags = NONE
 	toggleable = TRUE
 	works_in_masquerade = TRUE // on_life still prevents it from working, but you can toggle it if you want
 	has_custom_life_cost = TRUE
 
 	/// To avoid situations where a vampire has to wait 2 years to regrow stuff because of RNG, it uses slightly randomized accumulation instead. If this reaches 1, something regrows.
 	var/regrow_accumulation = 0
+
+	/// Increments while when we're dead and able to revive, resets otherwise. If this reaches 1, we revive.
+	var/revival_progress = 0
+
+	/// Accumulation var for brain traumas, when this reaches 1, we heal a brain trauma.
+	var/trauma_heal_progress = 0
 
 /datum/action/cooldown/vampire/recuperation/New(Target)
 	. = ..()
@@ -37,6 +34,8 @@
 
 /datum/action/cooldown/vampire/recuperation/on_toggle_off()
 	UnregisterSignal(owner, COMSIG_LIVING_LIFE)
+	regrow_accumulation = 0
+	revival_progress = 0
 
 /datum/action/cooldown/vampire/recuperation/proc/on_life(datum/source, seconds_per_tick, times_fired)
 	SIGNAL_HANDLER
@@ -47,8 +46,11 @@
 	var/regen_rate = vampire.regen_rate_modifier.get_value()
 	var/regen_level = vampire.get_stat(VAMPIRE_STAT_RECOVERY)
 
+	if(regen_rate <= 0) // sanity check
+		return
+
 	if(owner.stat == DEAD)
-		if(regen_level < REGEN_THRESHOLD_REVIVE)
+		if(regen_level < VAMPIRE_REGEN_THRESHOLD_REVIVE)
 			return
 		regen_rate *= 1.5 // regen faster while dead
 
@@ -57,11 +59,11 @@
 		BURN = user.getFireLoss()
 	)
 
-	if(regen_level >= REGEN_THRESHOLD_TOX)
+	if(regen_level >= VAMPIRE_REGEN_THRESHOLD_TOX)
 		dmg[TOX] = user.getToxLoss()
 		dmg[CLONE] = user.getCloneLoss()
 
-	if(regen_level >= REGEN_THRESHOLD_OXY)
+	if(regen_level >= VAMPIRE_REGEN_THRESHOLD_OXY)
 		dmg[OXY] = user.getOxyLoss()
 
 	var/total_damage = 0
@@ -83,30 +85,89 @@
 			user.heal_damage_type(-damage_regen_amount * ratios[dmgType], dmgType)
 		total_life_cost += min(total_damage, damage_regen_amount) / 6 // 1 lifeforce per 6 damage healed
 
-	if(regen_level >= REGEN_THRESHOLD_ORGANS)
-		var/organ_regen_amount = regen_rate * 0.1 * seconds_per_tick // 0.2 - 0.3 healing per second in practice (about 5 minutes to heal 100 at 60 recovery)
+	if(regen_level >= VAMPIRE_REGEN_THRESHOLD_WOUNDS)
+		var/wound_count = length(user.all_wounds)
+		if(wound_count > 0) // no division by zero please
+			var/wound_regen_amount = regen_rate * seconds_per_tick / 30 / wound_count // 10 seconds per severity at max if you only have one wound
+			for(var/datum/wound/wound as anything in user.all_wounds)
+				wound.heal(wound_regen_amount)
+			total_life_cost += wound_regen_amount * wound_count * 2 // roughly 2 lifeforce per wound severity healed
+
+	if(regen_level >= VAMPIRE_REGEN_THRESHOLD_ORGANS)
+		var/organ_regen_amount = regen_rate * 0.1 * seconds_per_tick // 0.2 - 0.3 healing per second in practice (about 5 minutes to heal 100 at max recovery)
 		for(var/obj/item/organ/internal/organ in user.organs)
 			if(organ.damage <= 0 && !(organ.organ_flags & ORGAN_FAILING))
 				continue
-			if((organ.organ_flags & ORGAN_FAILING) && (!organ.failure_time < 15 SECONDS / regen_rate)) // takes 5 seconds to recover from organ failure at max
+			if((organ.organ_flags & ORGAN_FAILING) && organ.failure_time >= 15 SECONDS / regen_rate) // takes 5 seconds to recover from organ failure at max
+				if(user.stat == DEAD) // dead organs don't normally increment this, it's a bit hacky but it works
+					organ.failure_time += seconds_per_tick
 				continue
 			total_life_cost += min(organ.damage, organ_regen_amount) * 0.05 // 1 lifeforce per 20 organ damage healed
 			organ.apply_organ_damage(-organ_regen_amount)
 
-		var/obj/item/organ/internal/ears/ears = user.get_organ_slot(ORGAN_SLOT_EARS)
-		if(istype(ears))
-			ears.deaf -= regen_rate * seconds_per_tick / 3 // 3x deafness decay at max (counting natural decay)
+		handle_traumas(regen_rate, regen_level, seconds_per_tick)
 
-	if(regen_level >= REGEN_THRESHOLD_PURGE)
+		var/obj/item/organ/internal/ears/ears = user.get_organ_slot(ORGAN_SLOT_EARS)
+		if(istype(ears) && ears.deaf > 0)
+			ears.deaf = max(0, ears.deaf - regen_rate * seconds_per_tick / 3) // 3x deafness decay at max (counting natural decay)
+
+	if(regen_level >= VAMPIRE_REGEN_THRESHOLD_PURGE)
 		var/toxin_purge_amount = regen_rate * 0.2 * seconds_per_tick // 0.43u - 0.6u per second in practice (time is entirely dependent on dosage)
 		for(var/datum/reagent/toxin/toxin in user.reagents.reagent_list) // only purges toxins, purging meth would be laame
 			total_life_cost += min(toxin.volume, toxin_purge_amount) * 0.2 // 1 lifeforce per 5u toxins purged
 			user.reagents.remove_reagent(toxin.type, toxin_purge_amount)
 
-	if(regen_level >= REGEN_THRESHOLD_REGROW_LIMBS)
+	if(regen_level >= VAMPIRE_REGEN_THRESHOLD_REGROW_LIMBS)
 		handle_regrow(regen_rate, regen_level, seconds_per_tick) // costs nothing because it only regrows damaged versions (which themselves cost lifeforce to heal)
 
+	if(regen_level > VAMPIRE_REGEN_THRESHOLD_REVIVE)
+		INVOKE_ASYNC(src, PROC_REF(handle_revive), regen_rate, regen_level, seconds_per_tick)
+
 	vampire.adjust_lifeforce(-total_life_cost)
+
+/// Handles healing brain traumas. There's no prioritization for this.
+/datum/action/cooldown/vampire/recuperation/proc/handle_traumas(regen_rate, regen_level, seconds_per_tick)
+	var/resilience = regen_level < VAMPIRE_REGEN_THRESHOLD_REGROW_ORGANS ? TRAUMA_RESILIENCE_BASIC : TRAUMA_RESILIENCE_SURGERY
+
+	if(!user.has_trauma_type(resilience = resilience))
+		trauma_heal_progress = 0
+		return
+
+	trauma_heal_progress += regen_rate * seconds_per_tick / 90 // 30 seconds per trauma at max
+	if(trauma_heal_progress < 1)
+		return
+	trauma_heal_progress--
+
+	user.cure_trauma_type(resilience = resilience)
+
+/datum/action/cooldown/vampire/recuperation/proc/handle_revive(regen_rate, regen_level, seconds_per_tick)
+	if(!can_revive())
+		revival_progress = 0
+		return
+
+	if(revival_progress == 0)
+		user.notify_ghost_cloning("Your eternal life is not yet over! Your body refuses its fate!", sound = 'monkestation/sound/vampires/revive_alert.ogg')
+
+	revival_progress += regen_rate * seconds_per_tick / 53 // 12 seconds to revive at max, counting death bonus (actually 11.8 to avoid tick bullshit)
+	if(revival_progress < 1)
+		if(SPT_PROB(50, seconds_per_tick))
+			playsound(get_turf(user), SFX_BODYFALL, vol = 30, vary = TRUE, extrarange = SHORT_RANGE_SOUND_EXTRARANGE)
+			user.emote("twitch", status_check = FALSE)
+		return
+	revival_progress--
+
+	vampire.adjust_lifeforce(-10) // if you die, you have to spend a bunch of lifeforce healing enough to revive, that's why this is so low
+
+	user.revive()
+	user.set_resting(FALSE, silent = TRUE, instant = TRUE)
+	user.visible_message(
+		message = span_danger("[user] snaps back to life!"),
+		self_message = span_green("Ah, how good it feels to be alive again!"),
+		blind_message = span_hear("You hear a thud.")
+	)
+
+/datum/action/cooldown/vampire/recuperation/proc/can_revive()
+	return user.stat == DEAD && user.health > user.crit_threshold
 
 /// Handles regrowing both organs and limbs. Limbs take priority because performance and honestly they're more important anyway.
 /datum/action/cooldown/vampire/recuperation/proc/handle_regrow(regen_rate, regen_level, seconds_per_tick)
@@ -117,7 +178,7 @@
 		regrow_accumulation = 0 // nothing to regrow, reset accumulation (these checks arent THAT expensive)
 		return
 
-	regrow_accumulation += regen_rate * seconds_per_tick * rand(2, 3) / 90 // 7-10 seconds per regrow at 60 recovery
+	regrow_accumulation += regen_rate * seconds_per_tick * rand(2, 3) / 150 // average of 20 seconds per regrow at max recovery
 	if(regrow_accumulation < 1)
 		return
 	regrow_accumulation--
@@ -145,7 +206,7 @@
 
 /// Gets a suitable organ type for regrowth, if any.
 /datum/action/cooldown/vampire/recuperation/proc/get_regrow_organ_type(regen_level)
-	if(regen_level < REGEN_THRESHOLD_REGROW_ORGANS)
+	if(regen_level < VAMPIRE_REGEN_THRESHOLD_REGROW_ORGANS)
 		return
 
 	// Unlike limb regrowth, this is in order of priority.
@@ -205,12 +266,3 @@
 
 /datum/action/cooldown/vampire/recuperation/proc/update_recovery_scaling(recovery)
 	vampire.regen_rate_modifier.set_multiplicative(VAMPIRE_STAT_RECOVERY, 1 + recovery / VAMPIRE_SP_MAXIMUM * 2) // 3x regen rate at max recovery
-
-#undef REGEN_THRESHOLD_TOX
-#undef REGEN_THRESHOLD_WOUNDS
-#undef REGEN_THRESHOLD_OXY
-#undef REGEN_THRESHOLD_ORGANS
-#undef REGEN_THRESHOLD_PURGE
-#undef REGEN_THRESHOLD_REGROW_LIMBS
-#undef REGEN_THRESHOLD_REGROW_ORGANS
-#undef REGEN_THRESHOLD_REVIVE

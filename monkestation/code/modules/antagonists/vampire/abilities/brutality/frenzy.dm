@@ -7,4 +7,4 @@
 	Has a cooldown of 2 minutes. \
 	Can't be ended early."
 	granted_action = /datum/action/cooldown/vampire/frenzy
-	stat_reqs = list(VAMPIRE_STAT_BRUTALITY = 30)
+	stat_reqs = list(VAMPIRE_STAT_BRUTALITY = 6)

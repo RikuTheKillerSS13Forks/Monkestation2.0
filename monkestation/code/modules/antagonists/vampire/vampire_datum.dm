@@ -62,12 +62,12 @@
 
 	/// The stats of the vampire. The cornerstone of progression alongside ranks. Don't modify this directly.
 	var/list/stats = list(
-		VAMPIRE_STAT_BRUTALITY = 60, // DEBUG STATS, REMEMBER TO REVERT THESE LATER
-		VAMPIRE_STAT_TENACITY = 60,
-		VAMPIRE_STAT_PURSUIT = 60,
-		VAMPIRE_STAT_RECOVERY = 60,
-		VAMPIRE_STAT_PERCEPTION = 60,
-		VAMPIRE_STAT_DISCRETION = 60
+		VAMPIRE_STAT_BRUTALITY = 12, // DEBUG STATS, REMEMBER TO REVERT THESE LATER
+		VAMPIRE_STAT_TENACITY = 12,
+		VAMPIRE_STAT_PURSUIT = 12,
+		VAMPIRE_STAT_RECOVERY = 12,
+		VAMPIRE_STAT_PERCEPTION = 12,
+		VAMPIRE_STAT_DISCRETION = 12
 	)
 
 	/// Associative list of abilities the vampire has unlocked.

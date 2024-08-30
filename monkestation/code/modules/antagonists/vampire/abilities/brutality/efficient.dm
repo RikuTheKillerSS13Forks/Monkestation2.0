@@ -2,7 +2,7 @@
 	name = "Efficient"
 	desc = "You do things a lot faster. \
 		Scales with Brutality."
-	stat_reqs = list(VAMPIRE_STAT_BRUTALITY = 10)
+	stat_reqs = list(VAMPIRE_STAT_BRUTALITY = 2)
 
 /datum/vampire_ability/efficient/on_grant()
 	RegisterSignal(owner, COMSIG_VAMPIRE_STAT_CHANGED_MOD, PROC_REF(on_stat_changed))

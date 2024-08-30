@@ -1,10 +1,14 @@
 /datum/action/cooldown/vampire/masquerade
 	name = "Masquerade"
-	desc = "Hide your true nature from the prying eyes of the mortals. Drains lifeforce and disables most of your abilities while active."
+	desc = "Hide your true nature from the prying eyes of the mortals. Drains lifeforce and disables most of your abilities while active. Can be toggled off, but not on while unconscious."
 	button_icon_state = "power_human"
 	toggleable = TRUE // constant_life_cost is handled in set_masquerade
 	works_in_masquerade = TRUE
 	has_custom_life_cost = TRUE
+
+/datum/action/cooldown/vampire/masquerade/New(Target)
+	. = ..()
+	check_flags = vampire.masquerade_enabled ? NONE : AB_CHECK_CONSCIOUS // allow toggling it off even while unconscious or dead, but not on
 
 /datum/action/cooldown/vampire/masquerade/Grant(mob/granted_to)
 	. = ..()
@@ -39,3 +43,7 @@
 
 /datum/action/cooldown/vampire/masquerade/is_active()
 	return vampire.masquerade_enabled
+
+/datum/action/cooldown/vampire/masquerade/on_masquerade(datum/source, enabled)
+	check_flags = enabled ? NONE : AB_CHECK_CONSCIOUS // allow toggling it off even while unconscious or dead, but not on
+	return ..()

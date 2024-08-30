@@ -25,7 +25,8 @@
 
 	INVOKE_ASYNC(src, PROC_REF(do_effects))
 
-	QDEL_LIST(user.all_wounds)
+	for(var/wound as anything in user.all_wounds) // don't use QDEL_LIST here, there's signal bullshit going on and it's a lazylist so the Cut() in QDEL_LIST causes a runtime
+		qdel(wound)
 
 /datum/action/cooldown/vampire/mend/proc/do_effects()
 	var/matrix/matrix1 = matrix(owner.transform)

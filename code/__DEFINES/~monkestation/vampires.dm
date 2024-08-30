@@ -71,11 +71,11 @@
  * Stats
  */
 /// The amount of stat points a vampire gets when they rank up.
-#define VAMPIRE_SP_PER_RANK 10
+#define VAMPIRE_SP_PER_RANK 2
 /// The amount of *extra* stat points a Caitiff gets when they rank up.
-#define VAMPIRE_SP_CAITIFF_BONUS 5
+#define VAMPIRE_SP_CAITIFF_BONUS 1
 /// The maximum amount of stat points in any given stat. The total goes above this if you're a Caitiff.
-#define VAMPIRE_SP_MAXIMUM 60
+#define VAMPIRE_SP_MAXIMUM 12
 
 /// Grants offensive passives and abilities.
 #define VAMPIRE_STAT_BRUTALITY "Brutality"
@@ -103,3 +103,16 @@
  */
 /// No special abilities, but gets extra stat points.
 #define VAMPIRE_CLAN_CAITIFF "Caitiff"
+
+/**
+ * Recuperation Stat Thresholds
+ */
+// These thresholds are in recovery stat points.
+#define VAMPIRE_REGEN_THRESHOLD_TOX 3 // heals tox and clone
+#define VAMPIRE_REGEN_THRESHOLD_WOUNDS 4 // heals wounds
+#define VAMPIRE_REGEN_THRESHOLD_OXY 5 // heals oxy
+#define VAMPIRE_REGEN_THRESHOLD_ORGANS 6 // heals organs and mild brain traumas
+#define VAMPIRE_REGEN_THRESHOLD_PURGE 7 // purges toxic reagents
+#define VAMPIRE_REGEN_THRESHOLD_REGROW_LIMBS 8 // regrows limbs
+#define VAMPIRE_REGEN_THRESHOLD_REGROW_ORGANS 9 // regrows organs and heals severe brain traumas
+#define VAMPIRE_REGEN_THRESHOLD_REVIVE 10 // revives from death
