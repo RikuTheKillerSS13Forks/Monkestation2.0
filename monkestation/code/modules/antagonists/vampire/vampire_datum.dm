@@ -123,7 +123,7 @@
 	update_masquerade() // keep this below add_traits or else hulk will break our shitcode (bodypart.variable_color)
 
 	RegisterSignal(target_mob, COMSIG_LIVING_LIFE, PROC_REF(on_life))
-	RegisterSignal(target_mob, COMSIG_CARBON_POST_ATTACH_LIMB, PROC_REF(masq_limb))
+	RegisterSignal(target_mob, COMSIG_CARBON_POST_ATTACH_LIMB, PROC_REF(on_limb_attach))
 
 	if(target_mob.hud_used)
 		on_hud_created()
@@ -151,6 +151,13 @@
 /datum/antagonist/vampire/proc/on_life(datum/source, seconds_per_tick, times_fired)
 	SIGNAL_HANDLER
 	adjust_lifeforce(lifeforce_per_second * seconds_per_tick)
+
+/datum/antagonist/vampire/proc/on_limb_attach(mob/living/carbon/human/user, obj/item/bodypart/limb)
+	SIGNAL_HANDLER
+	if(masquerade_enabled)
+		return
+	limb.variable_color = "#b8b8b8" // stupid fucking hardcoded bullshit (variable body color will be refactored EVENTUALLY anyway)
+	user.update_body_parts()
 
 /datum/antagonist/vampire/ui_static_data(mob/user)
 	var/list/data = list()

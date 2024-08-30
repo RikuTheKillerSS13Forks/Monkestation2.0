@@ -16,6 +16,9 @@
 	works_in_masquerade = TRUE // on_life still prevents it from working, but you can toggle it if you want
 	has_custom_life_cost = TRUE
 
+	/// To avoid situations where a vampire has to wait 2 years to regrow stuff because of RNG, it uses slightly randomized accumulation instead. If this reaches 1, something regrows.
+	var/regrow_accumulation = 0
+
 /datum/action/cooldown/vampire/recuperation/New(Target)
 	. = ..()
 	RegisterSignal(vampire, COMSIG_VAMPIRE_STAT_CHANGED_MOD, PROC_REF(on_stat_changed))
@@ -42,7 +45,6 @@
 		return
 
 	var/regen_rate = vampire.regen_rate_modifier.get_value()
-	var/base_regen_rate = vampire.regen_rate_modifier.get_base_value()
 	var/regen_level = vampire.get_stat(VAMPIRE_STAT_RECOVERY)
 
 	if(owner.stat == DEAD)
@@ -73,22 +75,27 @@
 	var/total_life_cost = 0
 
 	if(total_damage > 0)
+		var/damage_regen_amount = regen_rate * seconds_per_tick
 		var/list/ratios = list()
 		for(var/dmgType as anything in dmg)
 			ratios[dmgType] = dmg[dmgType] / total_damage
 		for(var/dmgType as anything in ratios)
-			user.heal_damage_type(-regen_rate * ratios[dmgType] * seconds_per_tick, dmgType)
-		total_life_cost += min(total_damage, regen_rate * seconds_per_tick) / 6 // 1 lifeforce per 6 damage healed
+			user.heal_damage_type(-damage_regen_amount * ratios[dmgType], dmgType)
+		total_life_cost += min(total_damage, damage_regen_amount) / 6 // 1 lifeforce per 6 damage healed
 
 	if(regen_level >= REGEN_THRESHOLD_ORGANS)
 		var/organ_regen_amount = regen_rate * 0.1 * seconds_per_tick // 0.2 - 0.3 healing per second in practice (about 5 minutes to heal 100 at 60 recovery)
 		for(var/obj/item/organ/internal/organ in user.organs)
 			if(organ.damage <= 0 && !(organ.organ_flags & ORGAN_FAILING))
 				continue
-			if((organ.organ_flags & ORGAN_FAILING) && !SPT_PROB(regen_rate * 2, seconds_per_tick)) // up to 6% chance per second per organ to recover from failure
+			if((organ.organ_flags & ORGAN_FAILING) && (!organ.failure_time < 15 SECONDS / regen_rate)) // takes 5 seconds to recover from organ failure at max
 				continue
 			total_life_cost += min(organ.damage, organ_regen_amount) * 0.05 // 1 lifeforce per 20 organ damage healed
 			organ.apply_organ_damage(-organ_regen_amount)
+
+		var/obj/item/organ/internal/ears/ears = user.get_organ_slot(ORGAN_SLOT_EARS)
+		if(istype(ears))
+			ears.deaf -= regen_rate * seconds_per_tick / 3 // 3x deafness decay at max (counting natural decay)
 
 	if(regen_level >= REGEN_THRESHOLD_PURGE)
 		var/toxin_purge_amount = regen_rate * 0.2 * seconds_per_tick // 0.43u - 0.6u per second in practice (time is entirely dependent on dosage)
@@ -97,37 +104,49 @@
 			user.reagents.remove_reagent(toxin.type, toxin_purge_amount)
 
 	if(regen_level >= REGEN_THRESHOLD_REGROW_LIMBS)
-		total_life_cost += handle_regrow(regen_rate, regen_level, seconds_per_tick)
+		handle_regrow(regen_rate, regen_level, seconds_per_tick) // costs nothing because it only regrows damaged versions (which themselves cost lifeforce to heal)
 
 	vampire.adjust_lifeforce(-total_life_cost)
 
 /// Handles regrowing both organs and limbs. Limbs take priority because performance and honestly they're more important anyway.
-/// Returns the amount of lifeforce the whole thing cost.
 /datum/action/cooldown/vampire/recuperation/proc/handle_regrow(regen_rate, regen_level, seconds_per_tick)
-	if(!SPT_PROB(regen_rate * 2, seconds_per_tick)) // up to 6% chance per second to regrow something (also makes the performance impact negligible)
-		return 0
+	var/regrow_limb_zone = get_regrow_limb_zone()
+	var/regrow_organ_type = get_regrow_organ_type(regen_level)
+
+	if(!regrow_limb_zone && !regrow_organ_type)
+		regrow_accumulation = 0 // nothing to regrow, reset accumulation (these checks arent THAT expensive)
+		return
+
+	regrow_accumulation += regen_rate * seconds_per_tick * rand(2, 3) / 90 // 7-10 seconds per regrow at 60 recovery
+	if(regrow_accumulation < 1)
+		return
+	regrow_accumulation--
+
+	if(regrow_limb_zone)
+		regrow_limb(regrow_limb_zone)
+	else
+		regrow_organ(regrow_organ_type)
+
+/// Gets a suitable limb zone for regrowth, if any.
+/datum/action/cooldown/vampire/recuperation/proc/get_regrow_limb_zone()
+	if(user.health < user.crit_threshold) // saves on having to check missing limbs
+		return
 
 	var/missing_zones = user.get_missing_limbs()
-	if(length(missing_zones))
-		var/regrow_zone = pick(missing_zones)
-		user.regenerate_limb(regrow_zone)
-		var/obj/item/bodypart/new_limb = user.get_bodypart(regrow_zone)
-		if(!new_limb) // i hope for the sake of this codebase that this hopefully pointless check never passes
-			return 0
-		playsound(user, 'sound/magic/demon_consume.ogg', vol = 50, vary = TRUE)
-		user.visible_message(
-			message = span_danger("[user]'s flesh shifts nauseatingly as [user.p_their()] [new_limb.plaintext_zone] regrows!"),
-			self_message = span_green("Your flesh shifts as your [new_limb.plaintext_zone] regrows!"),
-			blind_message = span_hear("You hear a wet crunch!")
-		)
-		return 10 // low? yeah, but you're also at least recovery 40 so come on
+	for(var/zone as anything in missing_zones)
+		var/obj/item/bodypart/limb = user.dna.species.bodypart_overrides[zone]
+		if(user.health - initial(limb.max_damage) < user.crit_threshold) // don't crit/kill the vampire if they regrow a limb
+			missing_zones -= zone
 
+	if(!length(missing_zones))
+		return
+
+	return pick(missing_zones)
+
+/// Gets a suitable organ type for regrowth, if any.
+/datum/action/cooldown/vampire/recuperation/proc/get_regrow_organ_type(regen_level)
 	if(regen_level < REGEN_THRESHOLD_REGROW_ORGANS)
-		return 0
-
-	var/datum/dna/dna = user.has_dna()
-	if(!dna)
-		return 0 // nope fuck that
+		return
 
 	// Unlike limb regrowth, this is in order of priority.
 	var/valid_slots = list(
@@ -143,19 +162,40 @@
 	)
 
 	for(var/slot as anything in valid_slots)
-		var/obj/item/organ/organ = user.get_organ_slot(slot)
-		if(organ)
+		if(user.get_organ_slot(slot))
 			continue
-		var/organ_type = dna.species?.get_mutant_organ_type_for_slot(slot)
+
+		var/organ_type = user.dna.species.get_mutant_organ_type_for_slot(slot)
 		if(!organ_type)
 			continue
-		organ = new organ_type
-		organ.Insert(user, special = TRUE, drop_if_replaced = FALSE)
-		to_chat(user, span_green("You feel an odd sensation as your [organ.name] regrow[organ.p_s()]!"))
-		user.playsound_local(get_turf(user), 'sound/magic/demon_consume.ogg', vol = 20, vary = TRUE)
-		return 5 // getting gutted shouldnt cost 50 lifeforce
 
-	return 0
+		return organ_type
+
+/// Regrows a limb on the given zone.
+/datum/action/cooldown/vampire/recuperation/proc/regrow_limb(zone)
+	user.regenerate_limb(zone)
+
+	var/obj/item/bodypart/new_limb = user.get_bodypart(zone)
+	if(!new_limb) // i hope for the sake of this codebase that this hopefully pointless check never passes
+		CRASH("Vampire Recuperate attempted regrowing a limb using regenerate_limb(zone), yet get_bodypart(zone) returned null. Something is fucked up.")
+
+	new_limb.receive_damage(brute = new_limb.max_damage, forced = TRUE, wound_bonus = CANT_WOUND) // regrown limbs start at 0 health
+
+	playsound(user, 'sound/magic/demon_consume.ogg', vol = 50, vary = TRUE)
+	user.visible_message(
+		message = span_danger("[user]'s flesh shifts nauseatingly as [user.p_their()] [new_limb.plaintext_zone] regrows!"),
+		self_message = span_green("Your flesh shifts as your [new_limb.plaintext_zone] regrows!"),
+		blind_message = span_hear("You hear a wet crunch!")
+	)
+
+/// Regrows an organ of the given type.
+/datum/action/cooldown/vampire/recuperation/proc/regrow_organ(type)
+	var/obj/item/organ/organ = new type
+	organ.set_organ_damage(organ.maxHealth) // regrown organs start at 0 health
+	organ.Insert(user, special = TRUE, drop_if_replaced = FALSE)
+
+	to_chat(user, span_green("You feel an odd sensation as your [organ.name] regrow[organ.p_s()]!")) // i went out of my way to code a pronoun override for organs to avoid "your eyes regrows", what is my life
+	playsound(user, 'sound/effects/wounds/splatter.ogg', vol = 50, vary = TRUE, extrarange = SHORT_RANGE_SOUND_EXTRARANGE)
 
 /datum/action/cooldown/vampire/recuperation/proc/on_stat_changed(datum/source, stat, old_amount, new_amount)
 	SIGNAL_HANDLER
