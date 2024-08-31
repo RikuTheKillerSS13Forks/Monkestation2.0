@@ -1,6 +1,6 @@
 /datum/status_effect/vampire/thirst
 	id = "vampire_thirst"
-	duration = 30 SECONDS // good luck, you're on borrowed time
+	duration = 1 MINUTE // good luck, you're on borrowed time
 	show_duration = TRUE
 	alert_type = /atom/movable/screen/alert/status_effect/vampire/thirst
 	var/cleared = FALSE
