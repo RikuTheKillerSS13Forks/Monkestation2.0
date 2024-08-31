@@ -17,6 +17,9 @@
 
 	ui_name = "AntagInfoVampire"
 
+	/// Basically owner.current but as a human.
+	var/mob/living/carbon/human/user
+
 	/// Current amount of lifeforce.
 	var/lifeforce = LIFEFORCE_PER_HUMAN // 1 human is worth an hour (30 min in masquerade)
 	/// Lifeforce changes per second. Don't modify this directly.
@@ -113,6 +116,8 @@
 	if(!istype(target_mob))
 		return
 
+	user = target_mob
+
 	update_lifeforce_changes()
 
 	handle_clown_mutation(target_mob, "Your thirst for blood has overtaken your clownish nature, allowing you to wield weapons without harming yourself.")
@@ -122,6 +127,7 @@
 
 	update_masquerade() // keep this below add_traits or else hulk will break our shitcode (bodypart.variable_color)
 
+	RegisterSignal(target_mob, COMSIG_MOVABLE_MOVED, PROC_REF(on_moved))
 	RegisterSignal(target_mob, COMSIG_LIVING_LIFE, PROC_REF(on_life))
 	RegisterSignal(target_mob, COMSIG_CARBON_POST_ATTACH_LIMB, PROC_REF(on_limb_attach))
 
@@ -137,6 +143,8 @@
 	if(!istype(target_mob))
 		return
 
+	user = null
+
 	handle_clown_mutation(target_mob, removing = FALSE)
 
 	REMOVE_TRAITS_IN(target_mob, VAMPIRE_TRAIT)
@@ -148,9 +156,66 @@
 
 	clear_abilities()
 
-/datum/antagonist/vampire/proc/on_life(datum/source, seconds_per_tick, times_fired)
+/datum/antagonist/vampire/proc/on_life(mob/living/carbon/human/user, seconds_per_tick, times_fired)
 	SIGNAL_HANDLER
-	adjust_lifeforce(lifeforce_per_second * seconds_per_tick)
+
+	if(user.stat != DEAD) // this is the easiest way to stop masquerade and thirst from draining lifeforce while you're dead (if something needs to use lifeforce while you're dead via lifeforce_changes, refactor this)
+		adjust_lifeforce(lifeforce_per_second * seconds_per_tick)
+
+	if(QDELETED(user)) // the above can dust us, avoid making stupid runtimes
+		return
+
+	if(!handle_starlight(seconds_per_tick))
+		return // you're fine
+
+	adjust_lifeforce(-seconds_per_tick) // you'll eventually dust without intervention
+
+	user.adjust_fire_stacks(2 * seconds_per_tick) // the fire engulfs thee
+	user.adjustFireLoss(10 * seconds_per_tick) // IT BURNS
+	user.ignite_mob(silent = TRUE) // makes absolutely sure you stay lit
+
+/// Handles starlight ignition (not damage over time) and returns whether the vampire is in starlight.
+/datum/antagonist/vampire/proc/handle_starlight(seconds_per_tick)
+	if(!is_in_starlight())
+		REMOVE_TRAIT(user, TRAIT_NO_EXTINGUISH, VAMPIRE_TRAIT)
+		return FALSE
+
+	if(HAS_TRAIT_FROM(user, TRAIT_NO_EXTINGUISH, VAMPIRE_TRAIT))
+		return TRUE
+
+	user.visible_message(
+		message = span_danger("[user]'s skin bursts into flames!"),
+		self_message = span_userdanger("Your neophyte skin bursts into flames as it's bombarded by starlight!"),
+		blind_message = span_hear("You hear searing flesh!")
+	)
+
+	ADD_TRAIT(user, TRAIT_NO_EXTINGUISH, VAMPIRE_TRAIT)
+	set_masquerade(FALSE) // disables masquerade if it's on
+
+	user.adjust_fire_stacks(5) // starts you off with a decent amount of fire stacks
+	user.ignite_mob(silent = TRUE) // there's already a visible message, don't bother sending another
+
+	return TRUE
+
+/// Returns whether the vampire is in starlight.
+/datum/antagonist/vampire/proc/is_in_starlight()
+	if(!isspaceturf(get_turf(user)))
+		return FALSE
+
+	var/chest_covered = FALSE
+	var/head_covered = FALSE
+	for(var/obj/item/clothing/equipped in user.get_equipped_items())
+		chest_covered ||= (equipped.body_parts_covered & CHEST) && (equipped.clothing_flags & STOPSPRESSUREDAMAGE)
+		head_covered ||= (equipped.body_parts_covered & HEAD) && (equipped.clothing_flags & STOPSPRESSUREDAMAGE)
+
+		if(head_covered && chest_covered) // good job, you get to live
+			return FALSE
+
+	return TRUE // good luck lmao
+
+/datum/antagonist/vampire/proc/on_moved(datum/source, atom/old_loc, dir, forced, list/old_locs)
+	SIGNAL_HANDLER
+	handle_starlight()
 
 /datum/antagonist/vampire/proc/on_limb_attach(mob/living/carbon/human/user, obj/item/bodypart/limb)
 	SIGNAL_HANDLER

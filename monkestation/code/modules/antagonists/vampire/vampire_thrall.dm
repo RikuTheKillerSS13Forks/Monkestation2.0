@@ -9,6 +9,7 @@
 	roundend_category = "thralls"
 	starting_rank = 0
 	masquerade_enabled = FALSE
+	lifeforce = LIFEFORCE_THRALL
 
 	/// List of our masters. Use helpers to access this.
 	var/list/masters = list()

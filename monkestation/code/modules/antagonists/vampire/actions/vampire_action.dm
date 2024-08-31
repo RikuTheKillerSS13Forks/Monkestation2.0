@@ -30,6 +30,10 @@
 	/// Whether this ability can be activated or toggled on during masquerade.
 	var/works_in_masquerade = FALSE
 
+	/// Whether this ability should call toggle_on when first granted.
+	/// Set to FALSE after the first grant.
+	var/starts_active = FALSE
+
 	/// The current human mob that owns this action.
 	var/mob/living/carbon/human/user
 
@@ -53,11 +57,15 @@
 /datum/action/cooldown/vampire/Grant(mob/granted_to)
 	. = ..()
 
-	RegisterSignal(granted_to, COMSIG_LIVING_DEATH, PROC_REF(on_death))
-
 	if(!ishuman(granted_to))
 		CRASH("Vampire action granted to non-human mob.")
 	user = granted_to
+
+	RegisterSignal(granted_to, COMSIG_LIVING_DEATH, PROC_REF(on_death))
+
+	if(toggleable && starts_active)
+		starts_active = FALSE
+		toggle_on()
 
 /datum/action/cooldown/vampire/Remove(mob/removed_from)
 	UnregisterSignal(removed_from, COMSIG_LIVING_DEATH)

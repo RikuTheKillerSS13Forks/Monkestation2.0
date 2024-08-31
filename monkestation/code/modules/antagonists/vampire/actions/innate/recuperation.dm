@@ -4,6 +4,7 @@
 	button_icon_state = "power_recup"
 	check_flags = NONE
 	toggleable = TRUE
+	starts_active = TRUE
 	works_in_masquerade = TRUE // on_life still prevents it from working, but you can toggle it if you want
 	has_custom_life_cost = TRUE
 
@@ -24,10 +25,6 @@
 /datum/action/cooldown/vampire/recuperation/Destroy()
 	. = ..()
 	UnregisterSignal(vampire, COMSIG_VAMPIRE_STAT_CHANGED_MOD)
-
-/datum/action/cooldown/vampire/recuperation/Grant(mob/granted_to)
-	. = ..()
-	toggle_on()
 
 /datum/action/cooldown/vampire/recuperation/on_toggle_on()
 	RegisterSignal(owner, COMSIG_LIVING_LIFE, PROC_REF(on_life))
@@ -147,6 +144,14 @@
 
 	if(revival_progress == 0)
 		user.notify_ghost_cloning("Your eternal life is not yet over! Your body refuses its fate!", sound = 'monkestation/sound/vampires/revive_alert.ogg')
+		if(HAS_TRAIT(user, TRAIT_HUSK)) // intentionally works against ling absorb and such (in line with most other revival abilities and legacy bloodsuckers)
+			user.cure_husk()
+			user.visible_message(
+				message = span_danger("[user]'s charred outer flesh falls away, only to reveal a pristine layer underneath!"),
+				self_message = span_green("Your charred outer flesh falls away, making way for a new pristine layer."),
+				blind_message = span_hear("You hear a series of soft, wet thuds.") // the flesh just kind of falls off in pieces to the floor (you're likely laying down so the distance is minimal)
+			)
+			playsound(user, 'sound/effects/wounds/sizzle2.ogg', vol = 30, vary = TRUE, extrarange = SHORT_RANGE_SOUND_EXTRARANGE) // and no we don't have a sound for that, and fuck no im not making it for this
 
 	revival_progress += regen_rate * seconds_per_tick / 53 // 12 seconds to revive at max, counting death bonus (actually 11.8 to avoid tick bullshit)
 	if(revival_progress < 1)

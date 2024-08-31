@@ -1535,15 +1535,15 @@ GLOBAL_LIST_EMPTY(features_by_species)
 	if(istype(humi.loc, /obj/machinery/atmospherics/components/unary/cryo_cell))
 		return
 
-	//Only stabilise core temp when alive and not in statis
-	if(humi.stat < DEAD && !HAS_TRAIT(humi, TRAIT_STASIS))
+	//Only stabilise core temp when alive and not in stasis
+	if(humi.stat < DEAD && !HAS_TRAIT(humi, TRAIT_STASIS) && !HAS_TRAIT(humi, TRAIT_COLDBLOODED)) // MONKESTATION EDIT: TRAIT_COLDBLOODED (what it does is rather obvious)
 		body_temperature_core(humi, seconds_per_tick, times_fired)
 
-	//These do run in statis
+	//These do run in stasis
 	body_temperature_skin(humi, seconds_per_tick, times_fired)
 	body_temperature_alerts(humi, seconds_per_tick, times_fired)
 
-	//Do not cause more damage in statis
+	//Do not cause more damage in stasis
 	if(!HAS_TRAIT(humi, TRAIT_STASIS))
 		body_temperature_damage(humi, seconds_per_tick, times_fired)
 

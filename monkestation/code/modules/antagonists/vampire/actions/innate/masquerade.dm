@@ -1,6 +1,6 @@
 /datum/action/cooldown/vampire/masquerade
 	name = "Masquerade"
-	desc = "Hide your true nature from the prying eyes of the mortals. Drains lifeforce and disables most of your abilities while active. Can be toggled off, but not on while unconscious."
+	desc = "Hide your true nature from the prying eyes of the mortals. Drains lifeforce and disables most of your abilities while active. Can be toggled off while unconscious."
 	button_icon_state = "power_human"
 	toggleable = TRUE // constant_life_cost is handled in set_masquerade
 	works_in_masquerade = TRUE
@@ -12,13 +12,17 @@
 
 /datum/action/cooldown/vampire/masquerade/Grant(mob/granted_to)
 	. = ..()
-	RegisterSignals(granted_to, list(SIGNAL_ADDTRAIT(TRAIT_VAMPIRE_FRENZY), SIGNAL_REMOVETRAIT(TRAIT_VAMPIRE_FRENZY)), PROC_REF(update_button))
+	RegisterSignals(granted_to, list(SIGNAL_ADDTRAIT(TRAIT_VAMPIRE_FRENZY), SIGNAL_REMOVETRAIT(TRAIT_VAMPIRE_FRENZY), SIGNAL_ADDTRAIT(TRAIT_NO_EXTINGUISH), SIGNAL_REMOVETRAIT(TRAIT_NO_EXTINGUISH)), PROC_REF(update_button))
 
 /datum/action/cooldown/vampire/masquerade/Remove(mob/removed_from)
 	. = ..()
-	UnregisterSignal(removed_from, list(SIGNAL_ADDTRAIT(TRAIT_VAMPIRE_FRENZY), SIGNAL_REMOVETRAIT(TRAIT_VAMPIRE_FRENZY)))
+	UnregisterSignal(removed_from, list(SIGNAL_ADDTRAIT(TRAIT_VAMPIRE_FRENZY), SIGNAL_REMOVETRAIT(TRAIT_VAMPIRE_FRENZY), SIGNAL_ADDTRAIT(TRAIT_NO_EXTINGUISH), SIGNAL_REMOVETRAIT(TRAIT_NO_EXTINGUISH)))
 
 /datum/action/cooldown/vampire/masquerade/can_toggle_on(feedback)
+	if(HAS_TRAIT_FROM(owner, TRAIT_NO_EXTINGUISH, VAMPIRE_TRAIT)) // cheaper than is_in_starlight
+		if(feedback)
+			owner.balloon_alert(owner, "in starlight!")
+		return FALSE
 	if(HAS_TRAIT(owner, TRAIT_VAMPIRE_FRENZY))
 		if(feedback)
 			owner.balloon_alert(owner, "too bloodlusted!")

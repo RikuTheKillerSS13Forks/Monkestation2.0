@@ -11,8 +11,10 @@
 
 /datum/vampire_ability/accelerated_metabolism/on_remove_mob()
 	UnregisterSignal(owner, COMSIG_VAMPIRE_STAT_CHANGED_MOD)
+	user.stamina.regen_rate -= regen_increase
+	regen_increase = null
 
-/datum/vampire_ability/accelerated_metabolism/proc/on_stat_changed(stat, old_amount, new_amount)
+/datum/vampire_ability/accelerated_metabolism/proc/on_stat_changed(datum/source, stat, old_amount, new_amount)
 	SIGNAL_HANDLER
 	if(stat != VAMPIRE_STAT_RECOVERY)
 		return

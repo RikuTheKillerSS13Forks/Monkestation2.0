@@ -328,12 +328,17 @@
 		return
 
 	vampire.enthrall(victim)
+	vampire.adjust_lifeforce(-LIFEFORCE_THRALL)
+
 	victim.setOxyLoss(0) // if they don't wake up from this, it's the vampire's problem
 
 	stop_feeding(victim, forced = FALSE)
 
 /datum/action/cooldown/vampire/feed/proc/can_enthrall(mob/living/carbon/victim)
 	if(!victim)
+		return FALSE
+	if(vampire.lifeforce < LIFEFORCE_THRALL)
+		owner.balloon_alert(owner, "needs [LIFEFORCE_THRALL] lifeforce!")
 		return FALSE
 	if(victim.stat == DEAD)
 		owner.balloon_alert(owner, "dead!")

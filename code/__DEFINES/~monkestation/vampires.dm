@@ -40,11 +40,13 @@
  * Lifeforce
  */
 /// The maximum amount of lifeforce a vampire can carry. This is a soft cap.
-#define LIFEFORCE_MAXIMUM 300
+#define LIFEFORCE_MAXIMUM LIFEFORCE_PER_HUMAN * 3
 /// How much lifeforce one human is roughly worth. Can vary wildly sometimes.
 #define LIFEFORCE_PER_HUMAN 100
 /// How much lifeforce is lost per second by default. 1 hr/human
 #define LIFEFORCE_DRAIN_BASE LIFEFORCE_PER_HUMAN / -3600
+/// How much lifeforce it costs to enthrall someone.
+#define LIFEFORCE_THRALL LIFEFORCE_PER_HUMAN / 2
 /// Multiply lifeforce by this to get an equivalent amount of blood.
 #define LIFEFORCE_TO_BLOOD BLOOD_VOLUME_NORMAL / LIFEFORCE_PER_HUMAN
 /// Multiply blood by this to get an equivalent amount of lifeforce.
