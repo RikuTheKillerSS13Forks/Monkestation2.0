@@ -7778,7 +7778,7 @@
 /obj/item/hand_labeler,
 /obj/item/radio/headset/headset_med,
 /obj/machinery/newscaster/directional/south,
-/obj/item/clothing/glasses/science,
+/obj/item/clothing/glasses/pathology,
 /obj/item/extrapolator,
 /turf/open/floor/iron/white,
 /area/station/medical/virology)
@@ -60552,7 +60552,7 @@
 	name = "Pathology Requests Console";
 	receive_ore_updates = 1
 	},
-/obj/item/clothing/glasses/science,
+/obj/item/clothing/glasses/pathology,
 /obj/item/extrapolator,
 /turf/open/floor/iron/white,
 /area/station/medical/virology)
