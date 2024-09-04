@@ -16,7 +16,7 @@
 	var/enabled = TRUE
 
 /obj/item/clothing/glasses/pathology/proc/enable(mob/M)
-	M.virusView()
+	ADD_TRAIT(M, TRAIT_VIRUS_SCANNER, REF(src))
 	enabled = TRUE
 
 	icon_state = "pathology_on"
@@ -28,7 +28,7 @@
 	playsound(get_turf(src), 'sound/machines/click.ogg', vol = 30, vary = TRUE)
 
 /obj/item/clothing/glasses/pathology/proc/disable(mob/M)
-	M.stopvirusView()
+	REMOVE_TRAIT(M, TRAIT_VIRUS_SCANNER, REF(src))
 	enabled = FALSE
 
 	icon_state = "pathology_off"

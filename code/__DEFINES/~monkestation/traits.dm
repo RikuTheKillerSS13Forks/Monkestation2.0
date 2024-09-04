@@ -53,3 +53,6 @@
 
 ///added to structures we want the mobs to be able to target.
 #define TRAIT_MOB_DESTROYABLE "mob_destroyable"
+
+/// The mob can see pathogen clouds and such.
+#define TRAIT_VIRUS_SCANNER "virus_scanner"
