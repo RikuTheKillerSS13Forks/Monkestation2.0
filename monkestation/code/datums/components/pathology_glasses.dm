@@ -10,12 +10,17 @@
 
 	var/glass_color_type_on = /datum/client_colour/glass_colour/lightgreen
 	var/glass_color_type_off = /datum/client_colour/glass_colour/lightpurple
+	var/use_glass_color = FALSE
+
+	var/color_cutoffs_on = null
+	var/color_cutoffs_off = null
+	var/use_color_cutoffs = FALSE
 
 	var/enabled = TRUE
 
 	var/action = /datum/action/item_action/toggle_virus_view
 
-/datum/component/pathology_glasses/Initialize(icon_state_on, icon_state_off, worn_icon_state_on = icon_state_on, worn_icon_state_off = icon_state_off)
+/datum/component/pathology_glasses/Initialize(icon_state_on, icon_state_off, worn_icon_state_on = icon_state_on, worn_icon_state_off = icon_state_off, glass_color_type_on, glass_color_type_off, use_glass_color = FALSE, color_cutoffs_on, color_cutoffs_off, use_color_cutoffs = FALSE)
 	var/obj/item/clothing/glasses/glasses = parent
 
 	if(!istype(glasses))
@@ -25,10 +30,18 @@
 	src.icon_state_off = icon_state_off
 	src.worn_icon_state_on = worn_icon_state_on
 	src.worn_icon_state_off = worn_icon_state_off
+	src.use_glass_color = use_glass_color
+	src.use_color_cutoffs = use_color_cutoffs
 
-	glasses.icon_state = icon_state_on // Makes the glasses type definitions just a tidbit smaller.
-	glasses.worn_icon_state = worn_icon_state_on
-	glasses.glass_colour_type = glass_color_type_on
+	if(use_glass_color)
+		src.glass_color_type_on ||= glass_color_type_on
+		src.glass_color_type_off ||= glass_color_type_off
+		glasses.glass_colour_type = glass_color_type_on
+
+	if(use_color_cutoffs)
+		src.color_cutoffs_on = color_cutoffs_on
+		src.color_cutoffs_off = color_cutoffs_off
+		glasses.color_cutoffs = color_cutoffs_on
 
 	action = glasses.add_item_action(action) // Doing it after setting the icon state vars makes sure the item action has the correct sprite.
 
@@ -93,6 +106,13 @@
 
 	glasses.icon_state = enabled ? icon_state_on : icon_state_off
 	glasses.worn_icon_state = enabled ? worn_icon_state_on : worn_icon_state_off
+
+	if(use_glass_color)
+		glasses.change_glass_color(user, enabled ? glass_color_type_on : glass_color_type_off)
+
+	if(use_color_cutoffs)
+		glasses.color_cutoffs = enabled ? color_cutoffs_on : color_cutoffs_off
+		user.update_sight()
 
 	user.update_worn_glasses()
 	glasses.update_item_action_buttons()

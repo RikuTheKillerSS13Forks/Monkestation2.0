@@ -5815,6 +5815,7 @@
 #include "monkestation\code\datums\components\turf_healing.dm"
 #include "monkestation\code\datums\components\uplink.dm"
 #include "monkestation\code\datums\components\wound_converter.dm"
+#include "monkestation\code\datums\components\crafting\tailoring.dm"
 #include "monkestation\code\datums\diseases\advance\symptoms\clockwork.dm"
 #include "monkestation\code\datums\elements\area_locked.dm"
 #include "monkestation\code\datums\elements\basic_eating.dm"
