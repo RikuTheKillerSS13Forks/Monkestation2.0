@@ -6,8 +6,8 @@
 
 /mob/living/proc/on_virus_scanner_trait_gain(datum/source)
 	SIGNAL_HANDLER
-	virusView()
+	AddElement(/datum/element/virus_viewer)
 
 /mob/living/proc/on_virus_scanner_trait_loss(datum/source)
 	SIGNAL_HANDLER
-	stopvirusView()
+	RemoveElement(/datum/element/virus_viewer)

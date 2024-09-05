@@ -162,21 +162,19 @@
 
 	return 1
 
-/mob/var/disease_view = FALSE
 /client/proc/disease_view()
 	set category = "Admin.Debug"
 	set name = "Disease View"
-	set desc = "See viro Overlay"
+	set desc = "See disease visuals"
 
 	if(!holder)
 		return
 	if(!mob)
 		return
-	if(mob.disease_view)
-		mob.stopvirusView()
+	if(HAS_TRAIT_FROM(mob, TRAIT_VIRUS_SCANNER, ADMIN_TRAIT))
+		REMOVE_TRAIT(mob, TRAIT_VIRUS_SCANNER, ADMIN_TRAIT)
 	else
-		mob.virusView()
-	mob.disease_view = !mob.disease_view
+		ADD_TRAIT(mob, TRAIT_VIRUS_SCANNER, ADMIN_TRAIT)
 
 /client/proc/diseases_panel()
 	set category = "Admin.Logging"
