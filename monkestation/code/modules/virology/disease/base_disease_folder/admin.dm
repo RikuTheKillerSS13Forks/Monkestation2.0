@@ -171,10 +171,16 @@
 		return
 	if(!mob)
 		return
+	if(isobserver(mob))
+		var/mob/dead/observer/observer = mob
+		observer.toggle_disease_view() // The trait doesn't work if you're an observer, so this redirects the call to the observer verb.
+		return
 	if(HAS_TRAIT_FROM(mob, TRAIT_VIRUS_SCANNER, ADMIN_TRAIT))
 		REMOVE_TRAIT(mob, TRAIT_VIRUS_SCANNER, ADMIN_TRAIT)
+		to_chat(mob, span_notice("Admin disease view disabled."))
 	else
 		ADD_TRAIT(mob, TRAIT_VIRUS_SCANNER, ADMIN_TRAIT)
+		to_chat(mob, span_notice("Admin disease view enabled."))
 
 /client/proc/diseases_panel()
 	set category = "Admin.Logging"
