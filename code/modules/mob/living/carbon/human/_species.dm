@@ -1321,7 +1321,7 @@ GLOBAL_LIST_EMPTY(features_by_species)
 				target.force_say()
 			log_combat(user, target, "punched")
 
-		if((target.stat != DEAD) && damage >= attacking_bodypart.unarmed_stun_threshold)
+		if((target.stat != DEAD) && damage >= attacking_bodypart.unarmed_stun_threshold * user.physiology.unarmed_damage_mod) // MONKESTATION EDIT: unarmed_damage_mod doesn't affect stun
 			target.visible_message(span_danger("[user] knocks [target] down!"), \
 							span_userdanger("You're knocked down by [user]!"), span_hear("You hear aggressive shuffling followed by a loud thud!"), COMBAT_MESSAGE_RANGE, user)
 			to_chat(user, span_danger("You knock [target] down!"))

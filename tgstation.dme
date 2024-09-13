@@ -6220,6 +6220,7 @@
 #include "monkestation\code\modules\antagonists\vampire\abilities\recovery\oxygen_synthesis.dm"
 #include "monkestation\code\modules\antagonists\vampire\abilities\recovery\purification.dm"
 #include "monkestation\code\modules\antagonists\vampire\abilities\recovery\reconstitute.dm"
+#include "monkestation\code\modules\antagonists\vampire\abilities\tenacity\resilient.dm"
 #include "monkestation\code\modules\antagonists\vampire\actions\vampire_action.dm"
 #include "monkestation\code\modules\antagonists\vampire\actions\brutality\frenzy.dm"
 #include "monkestation\code\modules\antagonists\vampire\actions\innate\feed.dm"

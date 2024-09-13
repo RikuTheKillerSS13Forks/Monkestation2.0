@@ -6,9 +6,10 @@
 	var/cleared = FALSE
 	var/stasis_start_time
 
-/datum/status_effect/vampire/thirst/New(list/arguments)
+/datum/status_effect/vampire/thirst/on_creation(mob/living/new_owner, datum/antagonist/vampire/new_vampire_datum)
+	if(new_vampire_datum) // has to be done before the parent proc call
+		duration *= 1 + (new_vampire_datum.get_stat_modified(VAMPIRE_STAT_TENACITY) / VAMPIRE_SP_MAXIMUM) * 4 // 5x thirst duration at max so 5 minutes as of writing this
 	. = ..()
-	vampire = arguments[2]
 	RegisterSignal(vampire, COMSIG_VAMPIRE_LIFEFORCE_CHANGED, PROC_REF(on_lifeforce_changed))
 
 /datum/status_effect/vampire/thirst/on_apply()

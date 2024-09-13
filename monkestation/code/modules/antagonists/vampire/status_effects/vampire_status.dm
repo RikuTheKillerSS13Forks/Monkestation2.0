@@ -6,9 +6,9 @@
 	/// Allows subtypes to tell if they're being removed via mind transfer. Used by frenzy.
 	var/is_transfer = FALSE
 
-/datum/status_effect/vampire/New(list/arguments)
+/datum/status_effect/vampire/on_creation(mob/living/new_owner, /datum/antagonist/vampire/new_vampire_datum)
 	. = ..()
-	vampire = arguments[2]
+
 	if(!vampire)
 		CRASH("Vampire status effect created without an associated vampire antag datum passed as an argument, someone messed up.")
 
