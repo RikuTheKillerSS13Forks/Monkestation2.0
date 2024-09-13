@@ -11,4 +11,4 @@
 
 /datum/vampire_ability/nerve_reactivation/proc/on_life(datum/source, seconds_per_tick, times_fired)
 	SIGNAL_HANDLER
-	user.AdjustAllImmobility(-seconds_per_tick * (owner.get_stat_modified(VAMPIRE_STAT_RECOVERY) / VAMPIRE_SP_MAXIMUM)) // 2x stun regen at max
+	user.AdjustAllImmobility(-seconds_per_tick * (owner.get_stat_modified(VAMPIRE_STAT_RECOVERY) / VAMPIRE_SP_MAXIMUM) * 2) // 3x stun regen at max. (Stronger than Resilient's stun resistance numerically, but not as useful against batons.)

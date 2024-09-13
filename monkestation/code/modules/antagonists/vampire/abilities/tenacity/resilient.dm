@@ -28,7 +28,7 @@
 	user.physiology.brute_mod *= damage_mod
 	user.physiology.burn_mod *= damage_mod
 	user.physiology.stun_mod *= damage_mod
-	user.physiology.stamina_mod *= damage_mod / 2
+	user.physiology.stamina_mod *= damage_mod // This means by default you take 4 baton hits to even get downed, on top of getting up faster due to stun resistance. Recovery path still gets up faster.
 
 /datum/vampire_ability/resilient/proc/clear_mod()
 	if(isnull(damage_mod))
@@ -37,5 +37,5 @@
 	user.physiology.brute_mod /= damage_mod
 	user.physiology.burn_mod /= damage_mod
 	user.physiology.stun_mod /= damage_mod
-	user.physiology.stamina_mod /= damage_mod / 2
+	user.physiology.stamina_mod /= damage_mod
 	damage_mod = null

@@ -24,5 +24,5 @@
 	if(!isnull(regen_increase))
 		user.stamina.regen_rate -= regen_increase
 
-	regen_increase = initial(user.stamina.regen_rate) * recovery / VAMPIRE_SP_MAXIMUM // 2x stamina regen at max
+	regen_increase = initial(user.stamina.regen_rate) * (recovery / VAMPIRE_SP_MAXIMUM) * 2 // 3x stamina regen at max. (Stronger than Resilient's stamina damage resistance numerically, but not as useful against batons.)
 	user.stamina.regen_rate += regen_increase
