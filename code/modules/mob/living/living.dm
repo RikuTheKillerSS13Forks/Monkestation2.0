@@ -968,9 +968,7 @@
 /// Checks if we are actually able to ressuscitate this mob.
 /// (We don't want to revive then to have them instantly die again)
 /mob/living/proc/can_be_revived()
-	if(health <= HEALTH_THRESHOLD_DEAD)
-		return FALSE
-	return TRUE
+	return health > HEALTH_THRESHOLD_DEAD || HAS_TRAIT(src, TRAIT_NODEATH) // monkestation edit
 
 /mob/living/proc/update_damage_overlays()
 	return
@@ -2187,7 +2185,10 @@ GLOBAL_LIST_EMPTY(fire_appearances)
 		if(HARD_CRIT)
 			if(. != UNCONSCIOUS)
 				become_blind(UNCONSCIOUS_TRAIT)
-			add_traits(list(TRAIT_CRITICAL_CONDITION, TRAIT_POOR_AIM), STAT_TRAIT)
+			if(!HAS_TRAIT(src, TRAIT_NOHARDCRIT)) // MONKESTATION EDIT START: TRAIT_NOHARDCRIT needs to be a bit more universal.
+				add_traits(list(TRAIT_CRITICAL_CONDITION, TRAIT_POOR_AIM), STAT_TRAIT)
+			else
+				remove_traits(list(TRAIT_CRITICAL_CONDITION, TRAIT_POOR_AIM), STAT_TRAIT) // MONKESTATION EDIT END
 		if(DEAD)
 			remove_traits(list(TRAIT_CRITICAL_CONDITION, TRAIT_POOR_AIM), STAT_TRAIT)
 			remove_from_alive_mob_list()

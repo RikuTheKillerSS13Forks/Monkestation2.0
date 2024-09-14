@@ -197,9 +197,11 @@
 
 	return TRUE
 
-/// Returns whether the vampire is in starlight.
+/// Returns whether the vampire should be affected by starlight right now.
 /datum/antagonist/vampire/proc/is_in_starlight()
 	if(!isspaceturf(get_turf(user)))
+		return FALSE
+	if(HAS_TRAIT(user, TRAIT_VAMPIRE_DEFIANCE)) // Vampires with Defiance are immune to starlight.
 		return FALSE
 
 	var/chest_covered = FALSE

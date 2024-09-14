@@ -19,6 +19,10 @@
 #define TRAIT_PALE_GREY_SKIN "pale_grey_skin"
 /// Trait for the vampire frenzy.
 #define TRAIT_VAMPIRE_FRENZY "vampire_frenzy"
+/// Granted by the "Defiance" ability. Makes you immune to most vampire weaknesses.
+#define TRAIT_VAMPIRE_DEFIANCE "vampire_defiance"
+/// Makes the mob immune to passing out from oxyloss.
+#define TRAIT_NOPASSOUT "nopassout"
 
 /**
  * Sources

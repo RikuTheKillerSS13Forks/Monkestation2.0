@@ -172,7 +172,16 @@
 	)
 
 /datum/action/cooldown/vampire/recuperation/proc/can_revive()
-	return user.stat == DEAD && user.health > user.crit_threshold
+	if(user.stat != DEAD)
+		return FALSE
+
+	if(user.health <= user.crit_threshold && !HAS_TRAIT(user, TRAIT_NOSOFTCRIT))
+		return FALSE
+
+	if(user.health <= user.hardcrit_threshold && !HAS_TRAIT(user, TRAIT_NOHARDCRIT))
+		return FALSE
+
+	return TRUE
 
 /// Handles regrowing both organs and limbs. Limbs take priority because performance and honestly they're more important anyway.
 /datum/action/cooldown/vampire/recuperation/proc/handle_regrow(regen_rate, regen_level, seconds_per_tick)
