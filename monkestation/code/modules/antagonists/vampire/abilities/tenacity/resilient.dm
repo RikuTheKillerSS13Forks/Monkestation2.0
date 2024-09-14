@@ -24,11 +24,11 @@
 /datum/vampire_ability/resilient/proc/update_mod(tenacity = owner.get_stat_modified(VAMPIRE_STAT_TENACITY))
 	clear_mod()
 
-	damage_mod = 1 - (tenacity / VAMPIRE_SP_MAXIMUM) * 0.5 // halved incoming damage at max
+	damage_mod = 1 - (tenacity / VAMPIRE_SP_MAXIMUM) * 0.4 // 0.6x incoming damage at max
 	user.physiology.brute_mod *= damage_mod
 	user.physiology.burn_mod *= damage_mod
 	user.physiology.stun_mod *= damage_mod
-	user.physiology.stamina_mod *= damage_mod // This means by default you take 4 baton hits to even get downed, on top of getting up faster due to stun resistance. Recovery path still gets up faster.
+	user.physiology.stamina_mod *= damage_mod // This means by default you take 3-4 baton hits to even get downed, on top of getting up faster due to stun resistance. Recovery path still gets up faster.
 
 /datum/vampire_ability/resilient/proc/clear_mod()
 	if(isnull(damage_mod))
