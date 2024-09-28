@@ -23,6 +23,6 @@
 		new_stat_points += VAMPIRE_SP_CAITIFF_BONUS * new_rank
 	set_stat_points(new_stat_points)
 
-	check_ability_reqs_of_criteria(VAMPIRE_ABILITIES_RANK)
+	check_new_unlocks_by_rank()
 
 	SEND_SIGNAL(src, COMSIG_VAMPIRE_RANK_CHANGED, old_rank)
