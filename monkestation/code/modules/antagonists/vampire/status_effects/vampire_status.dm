@@ -9,9 +9,9 @@
 /datum/status_effect/vampire/on_creation(mob/living/new_owner, datum/antagonist/vampire/new_vampire_datum)
 	. = ..()
 
-	if(!vampire)
+	if(!new_vampire_datum)
 		CRASH("Vampire status effect created without an associated vampire antag datum passed as an argument, someone messed up.")
-
+	vampire = new_vampire_datum
 	RegisterSignal(vampire, COMSIG_QDELETING, PROC_REF(self_destruct))
 
 /datum/status_effect/vampire/Destroy()
