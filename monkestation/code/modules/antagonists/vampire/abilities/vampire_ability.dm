@@ -31,21 +31,6 @@
 	/// Whether this ability is currently blocked by masquerade.
 	var/blocked = FALSE
 
-/// Returns whether the given vampire meets the requirements to get this ability.
-/datum/vampire_ability/proc/check_reqs(datum/antagonist/vampire/vampire)
-	if(vampire.vampire_rank < min_rank)
-		return FALSE
-
-	if(clan_req && vampire.clan != clan_req)
-		return FALSE
-
-	if(islist(stat_reqs))
-		for(var/stat as anything in stat_reqs)
-			if(vampire.get_stat(stat) < stat_reqs[stat])
-				return FALSE
-
-	return TRUE
-
 /// Actually grants the action to the vampire. Use on_grant for subtypes if possible.
 /datum/vampire_ability/proc/grant(datum/antagonist/vampire/new_owner)
 	SHOULD_NOT_SLEEP(TRUE)

@@ -17,7 +17,7 @@
 
 	var/new_modified_amount = get_stat_modified(stat)
 
-	check_ability_reqs_of_criteria(stat)
+	check_new_unlocks_by_stat(stat)
 
 	SEND_SIGNAL(src, COMSIG_VAMPIRE_STAT_CHANGED, stat, old_amount, new_amount)
 
