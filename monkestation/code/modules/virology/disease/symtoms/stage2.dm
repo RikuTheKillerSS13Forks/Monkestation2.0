@@ -368,8 +368,8 @@
 /datum/symptom/famine/activate(mob/living/mob)
 	if(ishuman(mob))
 		var/mob/living/carbon/human/victim = mob
-		if(ispodperson(victim))
-			victim.adjustCloneLoss(5 * multiplier) //Plantmen take a LOT of damag
+		if(ispodperson(victim)) //Plantmen take a LOT of damage
+			victim.adjustToxLoss(5 * multiplier)
 
 	for(var/obj/item/food/grown/crop in range(2 * multiplier,mob))
 		crop.visible_message(span_warning("\The [crop] rots at an alarming rate!"))
@@ -459,8 +459,8 @@
 	badness = EFFECT_DANGER_HELPFUL
 
 /datum/symptom/antitox/activate(mob/living/mob)
-	to_chat(mob, "<span class = 'notice'>You feel your toxins being purged!</span>")
-	mob.adjustToxLoss(-4)
+	to_chat(mob, span_notice("You feel your toxins being purged!"))
+	mob?.adjustToxLoss(-4)
 
 /datum/symptom/cult_vomit
 	name = "Hemoptysis"

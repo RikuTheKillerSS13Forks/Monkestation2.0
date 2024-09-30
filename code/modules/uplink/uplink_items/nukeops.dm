@@ -108,7 +108,7 @@
 	desc = "A fully-loaded Scarborough Arms bullpup submachine gun. The C-20r fires .45 rounds with a \
 			24-round magazine and is compatible with suppressors."
 	item = /obj/item/gun/ballistic/automatic/c20r
-	cost = 13
+	cost = 10
 	surplus = 40
 	purchasable_from = UPLINK_NUKE_OPS
 
@@ -709,7 +709,7 @@
 /datum/uplink_item/implants/antistun
 	name = "CNS Rebooter Implant"
 	desc = "This implant will help you get back up on your feet faster after being stunned. Comes with an autosurgeon."
-	item = /obj/item/autosurgeon/syndicate/anti_stun
+	item = /obj/item/storage/box/syndie_kit/anti_stun
 	cost = 12
 	surplus = 40 //monkestation edit: from 0 to 40
 	purchasable_from = UPLINK_NUKE_OPS
@@ -735,7 +735,7 @@
 /datum/uplink_item/implants/reviver
 	name = "Reviver Implant"
 	desc = "This implant will attempt to revive and heal you if you lose consciousness. Comes with an autosurgeon."
-	item = /obj/item/autosurgeon/syndicate/reviver
+	item = /obj/item/storage/box/syndie_kit/reviver
 	cost = 8
 	surplus = 30 //monkestation edit: from 0 to 30
 	purchasable_from = UPLINK_NUKE_OPS

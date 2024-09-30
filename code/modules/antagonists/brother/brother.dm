@@ -8,6 +8,7 @@
 	ui_name = "AntagInfoBrother"
 	suicide_cry = "FOR MY BROTHER!!"
 	antag_moodlet = /datum/mood_event/focused
+	antag_flags = parent_type::antag_flags | FLAG_ANTAG_CAP_TEAM // monkestation addition
 	VAR_PRIVATE
 		datum/team/brother_team/team
 
@@ -38,6 +39,7 @@
 
 			if (!is_first_brother)
 				to_chat(carbon_owner, span_boldwarning("The Syndicate have higher expectations from you than others. They have granted you an extra flash to convert one other person."))
+				carbon_owner.balloon_alert(carbon_owner, "extra flash granted!")
 
 	return ..()
 
@@ -49,7 +51,7 @@
 	return ..()
 
 /datum/antagonist/brother/proc/on_mob_successful_flashed_carbon(mob/living/source, mob/living/carbon/flashed, obj/item/assembly/flash/flash)
-	SIGNAL_HANDLER
+	//SIGNAL_HANDLER
 
 	if (flashed.stat == DEAD)
 		return
@@ -63,13 +65,11 @@
 		flashed.balloon_alert(source, "[flashed.p_their()] mind is vacant!")
 		return
 
-	/*
-	// monkestation edit: allow people to opt-out of BB
-	if(!(ROLE_BROTHER in flashed.client?.prefs?.be_special) || is_banned_from(flashed.ckey, list(ROLE_BROTHER, ROLE_SYNDICATE)))
-		flashed.balloon_alert(source, "unwilling to play role!")
+	// monkestation edit: dont try to convert banned people
+	if(is_banned_from(flashed.ckey, list(ROLE_BROTHER, ROLE_SYNDICATE)))
+		flashed.balloon_alert(source, "cannot become brother!")
 		return
 	// monkestation end
-	*/
 
 	for(var/datum/objective/brother_objective as anything in source.mind.get_all_objectives())
 		// If the objective has a target, are we flashing them?
@@ -81,7 +81,7 @@
 		flashed.balloon_alert(source, "[flashed.p_theyre()] loyal to someone else!")
 		return
 
-	if (HAS_TRAIT(flashed, TRAIT_MINDSHIELD) || HAS_MIND_TRAIT(flashed, TRAIT_UNCONVERTABLE) || (flashed.mind.assigned_role?.departments_bitflags & DEPARTMENT_BITFLAG_SECURITY)) // monkestation edit: TRAIT_UNCONVERTABLE
+	if (HAS_TRAIT(flashed, TRAIT_MINDSHIELD) || HAS_MIND_TRAIT(flashed, TRAIT_UNCONVERTABLE)) // monkestation edit: TRAIT_UNCONVERTABLE and remove hardcoded security check
 		flashed.balloon_alert(source, "[flashed.p_they()] resist!")
 		return
 
@@ -210,6 +210,9 @@
 		return
 	. = ..()
 	member.remove_antag_datum(/datum/antagonist/brother)
+	if (!length(members))
+		qdel(src)
+		return
 	if (isnull(member.current))
 		return
 	for (var/datum/mind/brother_mind as anything in members)

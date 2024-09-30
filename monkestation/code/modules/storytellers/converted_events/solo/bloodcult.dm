@@ -8,6 +8,7 @@
 	restricted_roles = list(
 		JOB_AI,
 		JOB_CAPTAIN,
+		JOB_BLUESHIELD,
 		JOB_CHAPLAIN,
 		JOB_CYBORG,
 		JOB_DETECTIVE,
@@ -20,6 +21,7 @@
 	)
 	enemy_roles = list(
 		JOB_CAPTAIN,
+		JOB_BLUESHIELD,
 		JOB_DETECTIVE,
 		JOB_HEAD_OF_SECURITY,
 		JOB_SECURITY_OFFICER,
