@@ -233,7 +233,7 @@
 		ORGAN_SLOT_STOMACH, // your hunger is based on your lifeforce so this is useless too
 		ORGAN_SLOT_TONGUE, // next up, speaking properly
 		ORGAN_SLOT_BUTT, // clearly, farting is more important than pissing
-		ORGAN_SLOT_BLADDER
+		ORGAN_SLOT_BLADDER,
 	)
 
 	for(var/slot as anything in valid_slots)
