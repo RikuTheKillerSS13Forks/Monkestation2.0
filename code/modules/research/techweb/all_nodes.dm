@@ -139,6 +139,7 @@
 		"universal_scanner",
 		"voice_analyzer",
 		"watering_can",
+		"diskplantgene", // monkestation edit: move to roundstart tech
 	)
 
 /datum/techweb_node/mmi
@@ -1507,7 +1508,7 @@
 	description = "Botanical tools"
 	prereq_ids = list("biotech")
 	design_ids = list(
-		"diskplantgene",
+		/* "diskplantgene", */ // monkestation edit: move to roundstart tech
 		"biogenerator",
 		"flora_gun",
 		"gene_shears",
@@ -1808,6 +1809,7 @@
 		"mod_sonar",
 		"mod_projectile_dampener",
 		"mod_criminalcapture",
+		"mod_mirage_grenade",
 	)
 	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = 2500)
 
@@ -2401,6 +2403,7 @@
 	prereq_ids = list("base")
 	design_ids = list(
 		"mod_disposal",
+		"mod_joint_torsion",
 	)
 	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = 2500)
 	hidden = TRUE
