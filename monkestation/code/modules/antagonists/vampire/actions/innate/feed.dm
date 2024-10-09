@@ -169,6 +169,8 @@
 	target_zone = null
 	victim_ref = null
 
+	REMOVE_TRAIT(owner, TRAIT_MUTE, REF(src))
+
 	REMOVE_TRAIT(victim, TRAIT_NODEATH, REF(src))
 
 	UnregisterSignal(victim, list(COMSIG_LIVING_LIFE, COMSIG_QDELETING, COMSIG_CARBON_REMOVE_LIMB))

@@ -4,6 +4,14 @@
 	button_icon_state = "power_recover"
 	cooldown_time = 1 MINUTE
 
+/datum/action/cooldown/vampire/mend/Grant(mob/granted_to)
+	. = ..()
+	RegisterSignals(granted_to, list(COMSIG_CARBON_GAIN_WOUND, COMSIG_CARBON_LOSE_WOUND), PROC_REF(update_button))
+
+/datum/action/cooldown/vampire/mend/Remove(mob/removed_from)
+	. = ..()
+	UnregisterSignal(removed_from, list(COMSIG_CARBON_GAIN_WOUND, COMSIG_CARBON_LOSE_WOUND))
+
 /datum/action/cooldown/vampire/mend/IsAvailable(feedback)
 	if(!user || !length(user.all_wounds)) // throws a billion runtimes if you dont have an user check
 		if (feedback)

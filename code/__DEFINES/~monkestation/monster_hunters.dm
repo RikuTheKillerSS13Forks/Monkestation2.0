@@ -11,12 +11,6 @@
 #define COMSIG_BEASTIFY "beastify"
 
 /**
- * Sources
- */
-/// Trait source for monster hunters.
-#define HUNTER_TRAIT "hunter_trait"
-
-/**
  * Factions
  */
 ///Define for the 'Rabbits' faction.

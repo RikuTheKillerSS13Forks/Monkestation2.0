@@ -19629,7 +19629,6 @@
 /turf/open/floor/iron/dark/textured_large,
 /area/cruiser_dock)
 "cyV" = (
-/obj/structure/bloodsucker/bloodthrone,
 /obj/effect/turf_decal/siding/wood{
 	dir = 1
 	},
@@ -21081,7 +21080,6 @@
 /area/centcom/central_command_areas/adminroom)
 "juk" = (
 /obj/item/flashlight/flare/candle/amber,
-/obj/structure/closet/crate/coffin/meatcoffin,
 /turf/open/floor/carpet/red,
 /area/centcom/central_command_areas/adminroom)
 "juR" = (
@@ -22870,7 +22868,6 @@
 /turf/open/floor/grass,
 /area/centcom/central_command_areas/evacuation)
 "tyk" = (
-/obj/structure/closet/crate/coffin/meatcoffin,
 /turf/open/floor/lowered/iron/pool/cobble/side,
 /area/centcom/central_command_areas/adminroom)
 "tyZ" = (

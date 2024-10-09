@@ -33,6 +33,7 @@
 	UnregisterSignal(owner, COMSIG_LIVING_LIFE)
 	regrow_accumulation = 0
 	revival_progress = 0
+	trauma_heal_progress = 0
 
 /datum/action/cooldown/vampire/recuperation/proc/on_life(datum/source, seconds_per_tick, times_fired)
 	SIGNAL_HANDLER
@@ -156,7 +157,7 @@
 	revival_progress += regen_rate * seconds_per_tick / 53 // 12 seconds to revive at max, counting death bonus (actually 11.8 to avoid tick bullshit)
 	if(revival_progress < 1)
 		if(SPT_PROB(50, seconds_per_tick))
-			playsound(get_turf(user), SFX_BODYFALL, vol = 30, vary = TRUE, extrarange = SHORT_RANGE_SOUND_EXTRARANGE)
+			playsound(get_turf(user), SFX_BODYFALL, vol = 20, vary = TRUE, extrarange = SHORT_RANGE_SOUND_EXTRARANGE)
 			user.emote("twitch", status_check = FALSE)
 		return
 	revival_progress--
