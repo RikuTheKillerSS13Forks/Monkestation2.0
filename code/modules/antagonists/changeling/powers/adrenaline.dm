@@ -1,9 +1,9 @@
 /datum/action/changeling/adrenaline
 	name = "Adrenaline Sacs"
-	desc = "We evolve additional sacs of adrenaline throughout our body. Costs 30 chemicals."
+	desc = "We evolve additional sacs of adrenaline throughout our body. Costs 20 chemicals." // monkestation edit
 	helptext = "Removes all stuns instantly and adds a short-term reduction in further stuns. Can be used while unconscious. Continued use poisons the body."
 	button_icon_state = "adrenaline"
-	chemical_cost = 30
+	chemical_cost = 20 // monkestation edit
 	dna_cost = 2
 	req_human = TRUE
 	req_stat = UNCONSCIOUS
@@ -13,9 +13,10 @@
 /datum/action/changeling/adrenaline/sting_action(mob/living/user)
 	..()
 	to_chat(user, span_notice("Energy rushes through us."))
-	user.exit_stamina_stun() // monkestation addition
+	if(HAS_TRAIT_FROM(user, TRAIT_IMMOBILIZED, STAMINA))
+		user.exit_stamina_stun()
 	user.SetAllImmobility(0) // monkestation edit
-	user.set_resting(FALSE)
+	user.set_resting(FALSE, silent = TRUE, instant = TRUE) // monkestation edit
 	user.reagents.add_reagent(/datum/reagent/medicine/changelingadrenaline, 4) //20 seconds
 	user.reagents.add_reagent(/datum/reagent/medicine/changelinghaste, 3) //6 seconds, for a really quick burst of speed
 	return TRUE
