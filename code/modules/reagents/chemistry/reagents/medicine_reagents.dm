@@ -1276,7 +1276,7 @@
 	metabolizer.AdjustAllImmobility(-20 * REM * seconds_per_tick)
 	metabolizer.stamina.adjust(10 * REM * seconds_per_tick, TRUE)
 	metabolizer.set_jitter_if_lower(20 SECONDS * REM * seconds_per_tick)
-	metabolizer.set_dizzy_if_lower(20 SECONDS * REM * seconds_per_tick)
+	//metabolizer.set_dizzy_if_lower(20 SECONDS * REM * seconds_per_tick) MONKESTATION REMOVAL
 	return TRUE
 
 /datum/reagent/medicine/changelingadrenaline/on_mob_metabolize(mob/living/affected_mob)
