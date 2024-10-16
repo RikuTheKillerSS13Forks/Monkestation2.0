@@ -1272,11 +1272,10 @@
 
 /datum/reagent/medicine/changelingadrenaline/on_mob_life(mob/living/carbon/metabolizer, seconds_per_tick, times_fired)
 	..()
-	if(HAS_TRAIT_FROM(metabolizer, TRAIT_IMMOBILIZED, STAMINA))
-		metabolizer.exit_stamina_stun()
-	metabolizer.AdjustAllImmobility(-20 * REM * seconds_per_tick)
-	metabolizer.stamina.adjust(10 * REM * seconds_per_tick, TRUE)
-	metabolizer.set_jitter_if_lower(20 SECONDS * REM * seconds_per_tick)
+	//metabolizer.exit_stamina_stun() MONKESTATION REMOVAL
+	metabolizer.AdjustAllImmobility(-10 * seconds_per_tick) // monkestation edit
+	metabolizer.stamina.adjust(STAMINA_MAX / 15 * seconds_per_tick, TRUE) // monkestation edit
+	metabolizer.set_jitter_if_lower(10 SECONDS) // monkestation edit
 	//metabolizer.set_dizzy_if_lower(20 SECONDS * REM * seconds_per_tick) MONKESTATION REMOVAL
 	return TRUE
 
