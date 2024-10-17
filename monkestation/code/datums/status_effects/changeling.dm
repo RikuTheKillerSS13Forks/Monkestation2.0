@@ -20,7 +20,6 @@
 	tick_interval = 0
 	alert_type = /atom/movable/screen/alert/status_effect/changeling/adrenaline
 	status_type = STATUS_EFFECT_REFRESH
-	processing_speed = STATUS_EFFECT_NORMAL_PROCESS
 
 	var/static/list/traits = list(TRAIT_SLEEPIMMUNE, TRAIT_BATON_RESISTANCE, TRAIT_CANT_STAMCRIT)
 
@@ -44,7 +43,7 @@
 	remove_movespeed_modifier()
 
 /datum/status_effect/changeling_adrenaline/refresh(effect, ...)
-	. = ..()
+	duration += initial(duration)
 	remove_movespeed_modifier()
 	on_apply()
 
