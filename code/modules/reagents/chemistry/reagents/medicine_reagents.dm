@@ -1261,7 +1261,7 @@
 	..()
 	return TRUE
 
-//used for changeling's adrenaline power
+/* MONKESTATION REMOVAL START (moved to status effect)
 /datum/reagent/medicine/changelingadrenaline
 	name = "Changeling Adrenaline"
 	description = "Reduces the duration of unconciousness, knockdown and stuns. Restores stamina, but deals toxin damage when overdosed."
@@ -1272,12 +1272,13 @@
 
 /datum/reagent/medicine/changelingadrenaline/on_mob_life(mob/living/carbon/metabolizer, seconds_per_tick, times_fired)
 	..()
-	//metabolizer.exit_stamina_stun() MONKESTATION REMOVAL
-	metabolizer.AdjustAllImmobility(-1 SECOND * seconds_per_tick) // monkestation edit
-	metabolizer.stamina.adjust(STAMINA_MAX / 20 * seconds_per_tick) // monkestation edit
-	metabolizer.set_jitter_if_lower(10 SECONDS) // monkestation edit
-	//metabolizer.set_dizzy_if_lower(20 SECONDS * REM * seconds_per_tick) MONKESTATION REMOVAL
+	metabolizer.exit_stamina_stun()
+	metabolizer.AdjustAllImmobility(-20 * REM * seconds_per_tick)
+	metabolizer.stamina.adjust(10 * REM * seconds_per_tick, TRUE)
+	metabolizer.set_jitter_if_lower(20 SECONDS * REM * seconds_per_tick)
+	metabolizer.set_dizzy_if_lower(20 SECONDS * REM * seconds_per_tick)
 	return TRUE
+MONKESTATION REMOVAL END */
 
 /datum/reagent/medicine/changelingadrenaline/on_mob_metabolize(mob/living/affected_mob)
 	. = ..()
@@ -1303,10 +1304,10 @@
 
 /datum/reagent/medicine/changelinghaste/on_mob_metabolize(mob/living/affected_mob)
 	..()
-	affected_mob.add_movespeed_modifier(/datum/movespeed_modifier/reagent/changelinghaste)
+	affected_mob.add_movespeed_modifier(/datum/movespeed_modifier/changeling_adrenaline) // monkestation edit
 
 /datum/reagent/medicine/changelinghaste/on_mob_end_metabolize(mob/living/affected_mob)
-	affected_mob.remove_movespeed_modifier(/datum/movespeed_modifier/reagent/changelinghaste)
+	affected_mob.remove_movespeed_modifier(/datum/movespeed_modifier/changeling_adrenaline) // monkestation edit
 	..()
 
 /datum/reagent/medicine/changelinghaste/on_mob_life(mob/living/carbon/metabolizer, seconds_per_tick, times_fired)

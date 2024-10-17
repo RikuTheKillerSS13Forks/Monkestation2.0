@@ -12,6 +12,8 @@
 //Recover from stuns.
 /datum/action/changeling/adrenaline/sting_action(mob/living/user)
 	..()
+	user.adjust_timed_status_effect(20 SECONDS, /datum/status_effect/changeling_adrenaline) // monkestation addition
+	/* MONKESTATION REMOVAL START
 	to_chat(user, span_notice("Energy rushes through us."))
 	if(HAS_TRAIT_FROM(user, TRAIT_IMMOBILIZED, STAMINA))
 		user.exit_stamina_stun()
@@ -19,4 +21,5 @@
 	user.set_resting(FALSE, silent = TRUE, instant = TRUE) // monkestation edit
 	user.reagents.add_reagent(/datum/reagent/medicine/changelingadrenaline, 4) //20 seconds
 	user.reagents.add_reagent(/datum/reagent/medicine/changelinghaste, 3) //6 seconds, for a really quick burst of speed
+	MONKESTATION REMOVAL END */
 	return TRUE
