@@ -1273,8 +1273,8 @@
 /datum/reagent/medicine/changelingadrenaline/on_mob_life(mob/living/carbon/metabolizer, seconds_per_tick, times_fired)
 	..()
 	//metabolizer.exit_stamina_stun() MONKESTATION REMOVAL
-	metabolizer.AdjustAllImmobility(-10 * seconds_per_tick) // monkestation edit
-	metabolizer.stamina.adjust(STAMINA_MAX / 15 * seconds_per_tick, TRUE) // monkestation edit
+	metabolizer.AdjustAllImmobility(-1 SECOND * seconds_per_tick) // monkestation edit
+	metabolizer.stamina.adjust(STAMINA_MAX / 20 * seconds_per_tick) // monkestation edit
 	metabolizer.set_jitter_if_lower(10 SECONDS) // monkestation edit
 	//metabolizer.set_dizzy_if_lower(20 SECONDS * REM * seconds_per_tick) MONKESTATION REMOVAL
 	return TRUE
@@ -1286,7 +1286,7 @@
 /datum/reagent/medicine/changelingadrenaline/on_mob_end_metabolize(mob/living/affected_mob)
 	. = ..()
 	affected_mob.remove_movespeed_mod_immunities(type, /datum/movespeed_modifier/damage_slowdown)
-	affected_mob.remove_status_effect(/datum/status_effect/dizziness)
+	//affected_mob.remove_status_effect(/datum/status_effect/dizziness) MONKESTATION REMOVAL
 	affected_mob.remove_status_effect(/datum/status_effect/jitter)
 
 /datum/reagent/medicine/changelingadrenaline/overdose_process(mob/living/metabolizer, seconds_per_tick, times_fired)
