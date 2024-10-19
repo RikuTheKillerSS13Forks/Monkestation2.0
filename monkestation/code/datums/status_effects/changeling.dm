@@ -126,6 +126,13 @@
 		return
 	var/mob/living/carbon/user = owner
 
+	if(user.has_embedded_objects(include_harmless = TRUE))
+		user.remove_all_embedded_objects()
+		user.visible_message(
+			message = span_danger("[user] violently rejects everything embedded into [user.p_them()]!"),
+			self_message = span_notice("We reject everything embedded into us.")
+		)
+
 	user.cure_all_traumas(TRAUMA_RESILIENCE_LOBOTOMY)
 
 	if(user.has_dna())
