@@ -105,6 +105,7 @@
 	owner.adjustCloneLoss(-20 * seconds_per_tick)
 	owner.adjustOrganLoss(ORGAN_SLOT_BRAIN, -20 * seconds_per_tick)
 	owner.adjust_drunk_effect(-10 * seconds_per_tick)
+	owner.adjust_disgust(DISGUST_LEVEL_MAXEDOUT * -0.1 * seconds_per_tick)
 
 	if(length(owner.reagents?.reagent_list))
 		owner.reagents.remove_all(10 * length(owner.reagents.reagent_list) * seconds_per_tick)
