@@ -1,7 +1,7 @@
 /datum/action/changeling/panacea
 	name = "Anatomic Panacea"
 	desc = "Expels impurifications from our form; curing diseases, removing parasites, sobering us, purging chemicals and radiation, curing traumas and brain damage, and resetting our genetic code completely. Costs 20 chemicals." // monkestation edit
-	helptext = "Can be used while unconscious. Will purge helpful things as well. Maximum stack duration of 120 seconds." // monkestation edit
+	helptext = "Lasts for a minute. Can be used while unconscious. Will purge helpful things as well. Maximum stack duration of 2 minutes." // monkestation edit
 	button_icon_state = "panacea"
 	chemical_cost = 20
 	dna_cost = 1

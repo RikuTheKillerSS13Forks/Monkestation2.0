@@ -1,7 +1,7 @@
 /datum/action/changeling/adrenaline
 	name = "Adrenaline Sacs"
 	desc = "We evolve additional sacs of adrenaline throughout our body. Costs 20 chemicals." // monkestation edit
-	helptext = "Makes you stun immune for 20 seconds and grants you a burst of speed. Can be used while unconscious. Mildly toxic. Maximum stack duration of 60 seconds." // monkestation edit
+	helptext = "Makes you stun immune for 20 seconds and grants you a burst of speed. Can be used while unconscious. Mildly toxic. Maximum stack duration of a minute." // monkestation edit
 	button_icon_state = "adrenaline"
 	chemical_cost = 20 // monkestation edit
 	dna_cost = 2
