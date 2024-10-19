@@ -137,7 +137,7 @@
 			continue
 
 		organ.Remove(user)
-		organ.forceMove(get_turf(user))
+		organ.forceMove(user.drop_location())
 		removed_something = TRUE
 
 	if(removed_something)
