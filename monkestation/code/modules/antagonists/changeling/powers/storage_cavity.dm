@@ -163,6 +163,7 @@
 
 /datum/storage/storage_cavity/proc/apply_overlay(obj/item/organ/cavity, mob/living/carbon/user)
 	RegisterSignal(cavity, COMSIG_ORGAN_REMOVED, PROC_REF(clear_overlay))
+	RegisterSignal(user, COMSIG_ATOM_EXAMINE, PROC_REF(on_examine))
 	var/obj/item/bodypart/chest = user.get_bodypart(BODY_ZONE_CHEST)
 	overlay = new
 	chest.add_bodypart_overlay(overlay)
@@ -171,10 +172,15 @@
 /datum/storage/storage_cavity/proc/clear_overlay(obj/item/organ/cavity, mob/living/carbon/user)
 	SIGNAL_HANDLER
 	UnregisterSignal(cavity, COMSIG_ORGAN_REMOVED)
+	UnregisterSignal(user, COMSIG_ATOM_EXAMINE)
 	var/obj/item/bodypart/chest = user.get_bodypart(BODY_ZONE_CHEST)
 	chest.remove_bodypart_overlay(overlay)
 	user.update_body()
 	QDEL_NULL(overlay)
+
+/datum/storage/storage_cavity/proc/on_examine(mob/living/carbon/user, mob/examiner, list/examine_text)
+	SIGNAL_HANDLER
+	examine_text += span_bolddanger("[user.p_Their()] chest has a large, open cavity!")
 
 /datum/bodypart_overlay/simple/storage_cavity
 	icon = 'monkestation/icons/mob/species/misc/bodypart_overlay_simple.dmi'
