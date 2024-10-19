@@ -22,10 +22,14 @@
 	/// Whether we've warned the user about their exhaustion.
 	var/warning_given = FALSE
 
+/datum/action/changeling/strained_muscles/can_sting(mob/living/user, mob/living/target)
+	var/has_effect = user.has_status_effect(/datum/status_effect/changeling_muscles)
+	chemical_cost = has_effect ? 0 : 10
+	return ..()
+
 /datum/action/changeling/strained_muscles/sting_action(mob/living/user)
 	..()
 	var/has_effect = user.has_status_effect(/datum/status_effect/changeling_muscles)
-	chemical_cost = has_effect ? 0 : 10
 	if(has_effect)
 		user.remove_status_effect(/datum/status_effect/changeling_muscles)
 	else
