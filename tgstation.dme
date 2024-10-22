@@ -6108,6 +6108,7 @@
 #include "monkestation\code\modules\antagonists\brother\gear\recipes.dm"
 #include "monkestation\code\modules\antagonists\changeling\powers\darkness_adaptation.dm"
 #include "monkestation\code\modules\antagonists\changeling\powers\lesserform.dm"
+#include "monkestation\code\modules\antagonists\changeling\powers\storage_cavity.dm"
 #include "monkestation\code\modules\antagonists\changeling\powers\teratomas.dm"
 #include "monkestation\code\modules\antagonists\changeling\powers\tiny_prick.dm"
 #include "monkestation\code\modules\antagonists\clock_cult\area.dm"
