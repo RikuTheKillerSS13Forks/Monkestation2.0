@@ -80,10 +80,10 @@
 /datum/round_event_control/antagonist/proc/check_required()
 	if(!length(exclusive_roles))
 		return TRUE
-	for (var/mob/M in GLOB.alive_player_list)
-		if (M.stat == DEAD)
+	for (var/mob/player_mob in GLOB.alive_player_list)
+		if (player_mob.stat == DEAD)
 			continue // Dead players cannot count as passing requirements
-		if(M.mind && (M.mind.assigned_role.title in exclusive_roles))
+		if(player_mob.mind && (player_mob.mind.assigned_role.title in exclusive_roles))
 			return TRUE
 
 /datum/round_event_control/antagonist/proc/trim_candidates(list/candidates)
@@ -296,10 +296,11 @@
 
 	setup = TRUE
 	control.generate_image(picked_mobs)
-	if(LAZYLEN(extra_spawned_events))
+	if(length(extra_spawned_events))
 		var/event_type = pick_weight(extra_spawned_events)
 		if(!event_type)
 			return
+
 		var/datum/round_event_control/triggered_event = locate(event_type) in SSgamemode.control
 		//wait a second to avoid any potential omnitraitor bs
 		addtimer(CALLBACK(triggered_event, TYPE_PROC_REF(/datum/round_event_control, run_event), FALSE, null, FALSE, "storyteller"), 1 SECONDS)
@@ -312,7 +313,7 @@
 	antag_mind.add_antag_datum(antag_datum)
 
 /datum/round_event/antagonist/solo/proc/spawn_extra_events()
-	if(!LAZYLEN(extra_spawned_events))
+	if(!length(extra_spawned_events))
 		return
 	var/datum/round_event_control/event = pick_weight(extra_spawned_events)
 	event?.run_event(random = FALSE, event_cause = "storyteller")
