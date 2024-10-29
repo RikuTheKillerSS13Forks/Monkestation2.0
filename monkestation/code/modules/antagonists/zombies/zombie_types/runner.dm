@@ -3,6 +3,4 @@
 	name = "Runner Zombie"
 	armor = 0
 	hand_path = /obj/item/mutant_hand/zombie/low_infection/weak
-	granted_action_types = list(
-		/datum/action/cooldown/zombie/feast,
-	)
+	bodypart_overlay_icon_states = list(BODY_ZONE_CHEST = "runner-chest", BODY_ZONE_HEAD = "runner-head")

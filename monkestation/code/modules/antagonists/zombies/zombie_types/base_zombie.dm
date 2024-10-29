@@ -34,7 +34,7 @@
 		var/datum/bodypart_overlay/simple/overlay = new
 		overlay.icon = bodypart_overlay_icon
 		overlay.icon_state = overlay_state
-		overlay.layers = EXTERNAL_ADJACENT
+		overlay.layers = EXTERNAL_ADJACENT | EXTERNAL_FRONT
 
 		bodypart.add_bodypart_overlay(overlay)
 
@@ -69,32 +69,33 @@
 	desc = "Consume the flesh of the fallen ones."
 	button_icon = 'icons/effects/blood.dmi'
 	button_icon_state = "bloodhand_left"
+	ranged_mousepointer = 'monkestation/icons/effects/mouse_pointers/feast.dmi'
 	click_to_activate = TRUE
 	cooldown_time = 5 SECONDS
 
 /datum/action/cooldown/zombie/feast/Activate(mob/living/target)
 	if(target == owner) // Don't eat yourself, dumbass.
-		return FALSE
+		return TRUE
 
 	if(!istype(target))
-		return FALSE
+		return TRUE
 
 	if(!owner.Adjacent(target))
 		owner.balloon_alert(owner, "get closer!")
-		return FALSE
+		return TRUE
 
 	if(target.stat != DEAD)
 		owner.balloon_alert(owner, "[target.p_they()] [target.p_are()] alive!")
-		return FALSE
+		return TRUE
 
 	if(HAS_TRAIT(target, TRAIT_ZOMBIE_CONSUMED))
 		owner.balloon_alert(owner, "already consumed!")
-		return FALSE
+		return TRUE
 
 	for(var/i in 1 to 4)
 		if(!do_after(owner, 0.5 SECONDS, target, timed_action_flags = IGNORE_HELD_ITEM | IGNORE_SLOWDOWNS))
 			owner.balloon_alert(owner, "interrupted!")
-			return FALSE
+			return TRUE
 		playsound(owner, 'sound/items/eatfood.ogg', vol = 80, vary = TRUE) // Om nom nom, good flesh.
 
 		if(iscarbon(target))
@@ -124,7 +125,9 @@
 	var/datum/species/zombie/infectious/zombie_datum = user.dna.species
 	zombie_datum.consumed_flesh += healing
 
-	return ..()
+	..()
+
+	return TRUE
 
 /// Evolve into a special zombie, needs at least FLESH_REQUIRED_TO_EVOLVE consumed flesh.
 /datum/action/cooldown/zombie/evolve
