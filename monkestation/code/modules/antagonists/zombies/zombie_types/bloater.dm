@@ -54,7 +54,7 @@
 
 	explosion(user, devastation_range = 1, heavy_impact_range = 2, light_impact_range = 4)
 
-/datum/action/cooldown/zombie/melt_wall/corrosion
+/datum/action/cooldown/zombie/melt_wall
 	name = "Stomach Acid"
 	desc = "Drench an object in stomach acid, destroying it over time."
 	button_icon_state = "alien_acid"

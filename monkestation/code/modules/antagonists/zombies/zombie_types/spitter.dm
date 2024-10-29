@@ -14,7 +14,7 @@
 	name = "Spit"
 	desc = "Spits at someone, knocking them down for a short time."
 	background_icon_state = "bg_zombie"
-	button_icon_state = "glob"
+	button_icon_state = "spit_off"
 	cooldown_time = 10
 
 /datum/action/cooldown/zombie/spit/IsAvailable(feedback = FALSE)
@@ -31,7 +31,7 @@
 
 	to_chat(on_who, span_notice("You prepare to spit. <B>Left-click to fire at a target!</B>"))
 
-	button_icon_state = "alien_neurotoxin_1"
+	button_icon_state = "spit_on"
 	build_all_button_icons()
 	on_who.update_icons()
 
@@ -43,7 +43,7 @@
 	if(refund_cooldown)
 		to_chat(on_who, span_notice("You empty your mouth."))
 
-	button_icon_state = "alien_neurotoxin_0"
+	button_icon_state = "spit_off"
 	build_all_button_icons()
 	on_who.update_icons()
 
