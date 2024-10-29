@@ -15,7 +15,7 @@
 	)
 
 /obj/item/bodypart/leg/left/zombie/runner
-	speed_modifier = -0.35
+	speed_modifier = -0.2
 
 /obj/item/bodypart/leg/right/zombie/runner
-	speed_modifier = -0.35
+	speed_modifier = -0.2

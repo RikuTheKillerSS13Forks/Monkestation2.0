@@ -53,6 +53,8 @@
 /datum/action/cooldown/zombie
 	name = "Zombie Action"
 	desc = "You should not be seeing this."
+	background_icon = 'monkestation/icons/mob/actions/actions_zombie.dmi'
+	button_icon = 'monkestation/icons/mob/actions/actions_zombie.dmi'
 	check_flags = AB_CHECK_IMMOBILE|AB_CHECK_CONSCIOUS
 
 /datum/action/cooldown/zombie/IsAvailable(feedback)
@@ -133,6 +135,7 @@
 /datum/action/cooldown/zombie/evolve
 	name = "Evolve"
 	desc = "Mutate into something even more grotesque and powerful. You must consume the flesh of the dead beforehand."
+	button_icon_state = "evolve"
 
 /datum/action/cooldown/zombie/evolve/Grant(mob/granted_to)
 	. = ..()
