@@ -73,9 +73,7 @@
 			SSgamemode.forced_next_events -= EVENT_TRACK_ROLESET
 
 		log_storyteller("Running SSgamemode.current_roundstart_event\[[SSgamemode.current_roundstart_event]\]")
-		SSgamemode.current_roundstart_event = null
-		if(!ignores_roundstart)
-			SSgamemode.ran_roundstart = TRUE
+		SSgamemode.ran_roundstart = TRUE
 
 	add_points(delta_time)
 	handle_tracks()
@@ -160,8 +158,7 @@
 	mode.event_track_points[track] = max(mode.event_track_points[track] - total_cost, 0)
 	message_admins("Storyteller purchased and triggered [bought_event] event, on [track] track, for [total_cost] cost.")
 	if(bought_event.roundstart)
-		if(!ignores_roundstart)
-			SSgamemode.ran_roundstart = TRUE
+		SSgamemode.ran_roundstart = TRUE
 		mode.TriggerEvent(bought_event, forced)
 	else
 		mode.schedule_event(bought_event, 3 MINUTES, total_cost, _forced = forced)

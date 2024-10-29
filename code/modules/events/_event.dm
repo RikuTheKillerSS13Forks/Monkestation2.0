@@ -100,7 +100,8 @@
 // monkestation start: event groups and storyteller stuff
 	if(event_group && !GLOB.event_groups[event_group].can_run())
 		return FALSE
-	if(roundstart && ((SSticker.round_start_time && (world.time - SSticker.round_start_time) >= 2 MINUTES) || (SSgamemode.ran_roundstart && !fake_check)))
+	if(roundstart && ((SSticker.round_start_time && (world.time - SSticker.round_start_time) >= 2 MINUTES) || \
+		(SSgamemode.ran_roundstart && !fake_check && !SSgamemode.storyteller.ignores_roundstart)))
 		return FALSE
 // monkestation end
 	if(occurrences >= max_occurrences)
