@@ -2,6 +2,7 @@
 //explodes on death, blinding(and damaging?) nearby non zombies
 /datum/species/zombie/infectious/bloater
 	name = "Bloater Zombie"
+	bodypart_overlay_icon_states = list(BODY_ZONE_CHEST = "bloater-chest")
 	granted_action_types = list(
 		/datum/action/cooldown/zombie/feast,
 		/datum/action/cooldown/zombie/melt_wall,
