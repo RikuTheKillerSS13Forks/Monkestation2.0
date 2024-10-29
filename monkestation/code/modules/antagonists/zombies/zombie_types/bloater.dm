@@ -4,7 +4,6 @@
 	name = "Bloater Zombie"
 	bodypart_overlay_icon_states = list(BODY_ZONE_CHEST = "bloater-chest")
 	granted_action_types = list(
-		/datum/action/cooldown/zombie/feast,
 		/datum/action/cooldown/zombie/melt_wall,
 		/datum/action/cooldown/zombie/explode,
 	)
@@ -37,8 +36,8 @@
 		var/datum/client_colour/colour = infectee.add_client_colour(/datum/client_colour/bloodlust)
 		QDEL_IN(colour, 1.1 SECONDS)
 
-		if(!prob(20 + 80 / get_dist(user, infectee))) // A minimum of a 40% chance to infect.
-			return
+		if(!prob(20 + 80 / max(1, get_dist(user, infectee)))) // A minimum of a 40% chance to infect.
+			continue
 
 		var/obj/item/organ/internal/zombie_infection/infection
 		infection = infectee.get_organ_slot(ORGAN_SLOT_ZOMBIE)
@@ -48,11 +47,14 @@
 
 		infects++
 
-	to_chat(user, span_alien("In your final moments, you managed to infect [infects] people."))
+	if(infects > 0)
+		to_chat(user, span_alien("In your final moments, you managed to infect [infects] [infects == 1 ? "person" : "people"]."))
+
+	var/explosion_turf = get_turf(user)
 
 	user.gib(no_brain = TRUE, no_organs = TRUE, no_bodyparts = TRUE, safe_gib = FALSE)
 
-	explosion(user, devastation_range = 1, heavy_impact_range = 2, light_impact_range = 4)
+	explosion(explosion_turf, devastation_range = 1, heavy_impact_range = 2, light_impact_range = 4, explosion_cause = user)
 
 /datum/action/cooldown/zombie/melt_wall
 	name = "Stomach Acid"

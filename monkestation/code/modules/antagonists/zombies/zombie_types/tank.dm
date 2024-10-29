@@ -4,7 +4,8 @@
 	maxhealthmod = 1.5
 	heal_rate = 1 // Slightly higher regeneration rate.
 	hand_path = /obj/item/mutant_hand/zombie/low_infection
-	granted_action_types = list(BODY_ZONE_CHEST = "tank-chest", BODY_ZONE_HEAD = "tank_head")
+	granted_action_types = list()
+	bodypart_overlay_icon_states  list(BODY_ZONE_CHEST = "tank-chest", BODY_ZONE_HEAD = "tank_head")
 	bodypart_overrides = list(
 		BODY_ZONE_HEAD = /obj/item/bodypart/head/zombie,
 		BODY_ZONE_CHEST = /obj/item/bodypart/chest/zombie,
@@ -15,7 +16,7 @@
 	)
 
 /obj/item/bodypart/leg/left/zombie/tank
-	speed_modifier = 1.2
+	speed_modifier = 0.1.2
 
 /obj/item/bodypart/leg/right/zombie/tank
-	speed_modifier = 1.2
+	speed_modifier = 0.2
