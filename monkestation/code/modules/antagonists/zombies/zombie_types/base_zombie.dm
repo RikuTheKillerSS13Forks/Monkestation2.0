@@ -55,6 +55,7 @@
 	desc = "You should not be seeing this."
 	background_icon = 'monkestation/icons/mob/actions/actions_zombie.dmi'
 	button_icon = 'monkestation/icons/mob/actions/actions_zombie.dmi'
+	background_icon_state = "bg_zombie"
 	check_flags = AB_CHECK_IMMOBILE|AB_CHECK_CONSCIOUS
 
 /datum/action/cooldown/zombie/IsAvailable(feedback)
@@ -69,8 +70,7 @@
 /datum/action/cooldown/zombie/feast
 	name = "Feast"
 	desc = "Consume the flesh of the fallen ones."
-	button_icon = 'icons/effects/blood.dmi'
-	button_icon_state = "bloodhand_left"
+	button_icon_state = "feast"
 	ranged_mousepointer = 'monkestation/icons/effects/mouse_pointers/feast.dmi'
 	click_to_activate = TRUE
 	cooldown_time = 5 SECONDS

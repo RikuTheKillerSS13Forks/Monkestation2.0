@@ -2,7 +2,7 @@
 //explodes on death, blinding(and damaging?) nearby non zombies
 /datum/species/zombie/infectious/bloater
 	name = "Bloater Zombie"
-	bodypart_overlay_icon_states = list(BODY_ZONE_CHEST = "bloater-chest")
+	bodypart_overlay_icon_states = list(BODY_ZONE_CHEST = "bloater-chest", BODY_ZONE_R_ARM = "generic-right-hand", BODY_ZONE_L_ARM = "generic-left-hand")
 	granted_action_types = list(
 		/datum/action/cooldown/zombie/feast,
 		/datum/action/cooldown/zombie/melt_wall,
@@ -102,6 +102,7 @@
 
 /datum/action/cooldown/zombie/explode
 	name = "Explode"
+	button_icon_state = "explode"
 	desc = "Trigger the explosive cocktail residing in your body, causing a devastating explosion. Triggers automatically on death."
 	check_flags = NONE
 
