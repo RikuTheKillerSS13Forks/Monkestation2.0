@@ -63,6 +63,18 @@
 		CRASH("A non-zombie tried to use a zombie action, it seems the game has taken too much LSD today. (report this shit)")
 	return ..()
 
+/datum/action/cooldown/zombie/PreActivate(atom/target)
+	// Parent calls Activate(), so if parent returns TRUE,
+	// it means the activation happened successfuly by this point
+	. = ..()
+	if(!.)
+		return FALSE
+	// Xeno actions like "evolve" may result in our action (or our alien) being deleted
+	// In that case, we can just exit now as a "success"
+	if(QDELETED(src) || QDELETED(owner))
+		return TRUE
+
+
 /datum/action/cooldown/zombie/proc/update_button()
 	SIGNAL_HANDLER
 	build_all_button_icons(UPDATE_BUTTON_STATUS)

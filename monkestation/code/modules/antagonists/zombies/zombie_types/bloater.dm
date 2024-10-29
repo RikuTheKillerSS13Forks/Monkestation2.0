@@ -59,10 +59,9 @@
 /datum/action/cooldown/zombie/melt_wall
 	name = "Stomach Acid"
 	desc = "Drench an object in stomach acid, destroying it over time."
-	button_icon_state = "alien_acid"
+	button_icon_state = "zombie_vomit"
 	background_icon_state = "bg_zombie"
 	overlay_icon_state = "bg_zombie_border"
-	button_icon = 'icons/mob/actions/actions_xeno.dmi'
 	cooldown_time = 10
 
 /datum/action/cooldown/zombie/melt_wall/set_click_ability(mob/on_who)
