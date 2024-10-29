@@ -53,6 +53,8 @@
 /datum/action/cooldown/zombie
 	name = "Zombie Action"
 	desc = "You should not be seeing this."
+	background_icon = 'monkestation/code/modules/antagonists/zombies/zombie_buttons.dmi'
+	button_icon = 'monkestation/code/modules/antagonists/zombies/zombie_buttons.dmi'
 	check_flags = AB_CHECK_IMMOBILE|AB_CHECK_CONSCIOUS
 
 /datum/action/cooldown/zombie/IsAvailable(feedback)

@@ -13,7 +13,8 @@
 /datum/action/cooldown/zombie/spit
 	name = "Spit"
 	desc = "Spits at someone, knocking them down for a short time."
-	button_icon_state = "alien_neurotoxin_0"
+	background_icon_state = "bg_zombie"
+	button_icon_state = "glob"
 	cooldown_time = 10
 
 /datum/action/cooldown/zombie/spit/IsAvailable(feedback = FALSE)
@@ -74,3 +75,4 @@
 
 /obj/projectile/neurotoxin/zombie
 	name = "spit"
+	icon_state = "glob_projectile"
