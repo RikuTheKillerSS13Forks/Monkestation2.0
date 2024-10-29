@@ -16,7 +16,7 @@
 	)
 
 /obj/item/bodypart/leg/left/zombie/tank
-	speed_modifier = 0.1.2
+	speed_modifier = 1.2
 
 /obj/item/bodypart/leg/right/zombie/tank
-	speed_modifier = 0.2
+	speed_modifier = 1.2
