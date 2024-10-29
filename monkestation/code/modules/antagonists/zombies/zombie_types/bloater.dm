@@ -31,7 +31,7 @@
 
 	var/infects = 0
 
-	for(var/mob/living/carbon/infectee as anything in oview(4, user))
+	for(var/mob/living/carbon/infectee in oview(4, user))
 		to_chat(infectee, span_userdanger("Some of the gibs flew onto you!"))
 
 		var/datum/client_colour/colour = infectee.add_client_colour(/datum/client_colour/bloodlust)
