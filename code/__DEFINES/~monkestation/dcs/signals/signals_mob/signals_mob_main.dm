@@ -44,3 +44,6 @@
 #define COMSIG_LIVING_GIVE_ITEM_CHECK "living_give_item_check"
 
 #define COMSIG_LIVING_ITEM_OFFERED_PRECHECK "living_item_offer_precheck"
+
+/// From base of /datum/species/zombie/infectious/proc/set_consumed_flesh(): (new_amount, old_amount)
+#define COMSIG_ZOMBIE_FLESH_ADJUSTED "zombie_flesh_adjusted"
