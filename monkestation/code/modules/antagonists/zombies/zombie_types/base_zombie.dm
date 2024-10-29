@@ -1,4 +1,4 @@
-#define FLESH_REQUIRED_TO_EVOLVE 200
+#define FLESH_REQUIRED_TO_EVOLVE 0 // DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG DEBUG
 
 // I would like to convert these to their own datum type but I have like 2 hours so this is what we are getting.
 /datum/species/zombie/infectious
