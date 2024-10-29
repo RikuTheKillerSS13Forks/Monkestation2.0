@@ -41,7 +41,7 @@
 		target.adjustBruteLoss(100 / dist)
 		target.adjustFireLoss(50 / dist)
 
-		target.throw_at(get_edge_target_turf(user, get_dir(user, target), range = 4 / dist, speed = 2, spin = FALSE))
+		target.throw_at(get_edge_target_turf(user, get_dir(user, target)), range = 4 / dist, speed = 2, spin = FALSE)
 
 		if(!iscarbon(target) || !prob(20 + 80 / max(1, dist))) // A minimum of a 40% chance to infect.
 			continue
