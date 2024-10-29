@@ -2,7 +2,7 @@
 //explodes on death, blinding(and damaging?) nearby non zombies
 /datum/species/zombie/infectious/bloater
 	name = "Bloater Zombie"
-	bodypart_overlay_icon_states = list(BODY_ZONE_CHEST = "bloater-chest")
+	bodypart_overlay_icon_states = list(BODY_ZONE_CHEST = "bloater-chest", BODY_ZONE_R_ARM = "generic-right-hand", BODY_ZONE_L_ARM = "generic-left-hand")
 	granted_action_types = list(
 		/datum/action/cooldown/zombie/melt_wall,
 		/datum/action/cooldown/zombie/explode,
@@ -64,10 +64,9 @@
 /datum/action/cooldown/zombie/melt_wall
 	name = "Stomach Acid"
 	desc = "Drench an object in stomach acid, destroying it over time."
-	button_icon_state = "alien_acid"
+	button_icon_state = "zombie_vomit"
 	background_icon_state = "bg_zombie"
 	overlay_icon_state = "bg_zombie_border"
-	button_icon = 'icons/mob/actions/actions_xeno.dmi'
 	cooldown_time = 10
 
 /datum/action/cooldown/zombie/melt_wall/set_click_ability(mob/on_who)
@@ -109,6 +108,7 @@
 
 /datum/action/cooldown/zombie/explode
 	name = "Explode"
+	button_icon_state = "explode"
 	desc = "Trigger the explosive cocktail residing in your body, causing a devastating explosion. Triggers automatically on death."
 	check_flags = NONE
 
