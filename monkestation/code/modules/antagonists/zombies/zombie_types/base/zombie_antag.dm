@@ -1,5 +1,6 @@
 #define ZOMBIE_FLESH_MAXIMUM 500
 
+/// This is a very temporary antag datum for infectious zombies and you should never store any state in it.
 /datum/antagonist/zombie
 	name = "\improper Zombie"
 	roundend_category = "zombies"
@@ -10,52 +11,17 @@
 	suicide_cry = "BRRRAAAAINZZ!!"
 	show_to_ghosts = TRUE
 
-	/// Typepath for the species our mob should become.
-	var/species_type = /datum/species/zombie/infectious
-
-	/// Typepath for the species our mob was before they were zombified.
-	var/old_species_type = null
-
-	/// Typepath for the mutant hands to grant our mob.
-	var/mutant_hand_type = /obj/item/mutant_hand/zombie
-
-	/// List of action types to grant during init and instances of those actions during runtime.
-	var/list/granted_actions = list(
-		/datum/action/cooldown/zombie/feast,
-		/datum/action/cooldown/zombie/evolve,
-	)
-
-	/// How much flesh we've consumed. Used for abilities. Don't modify directly.
-	var/consumed_flesh = 0
-
-/datum/antagonist/zombie/on_gain()
-	var/list/granted_action_types = granted_actions.Copy()
-	granted_actions.Cut() // No reason to use list removal if we can clear it instead.
-
-	for(var/action_type as anything in granted_action_types)
-		granted_actions += new action_type(src) // Passing ourselves to the action links it to us, making it self-destruct if the antag datum is lost for any reason.
-
-	return ..() // Call order is important here as apply_innate_effects has to run after the actions are created.
-
-/datum/antagonist/zombie/on_removal()
-	. = ..() // Ditto for remove_innate_effects since it removes the actions.
-	granted_actions = null
-
 /datum/antagonist/zombie/apply_innate_effects(mob/living/mob_override)
 	var/mob/living/carbon/user = mob_override || owner.current
 
 	if(!istype(user)) // Zombies don't change anything about non-carbon mobs.
 		return
 
-	old_species_type = user.dna.species.type
+	if(!isinfectious(user))
+		user.set_species(/datum/species/zombie/infectious)
 
-	if(!is_species(user, species_type))
-		user.set_species(species_type)
-
-	for(var/datum/action/action as anything in granted_actions)
-		action.Grant(user)
-
-	RegisterSignal(user, COMSIG_SPECIES_LOSS, PROC_REF(on_species_loss))
+	RegisterSignal(user, COMSIG_SPECIES_LOSS, PROC_REF(self_destruct))
+	RegisterSignal(owner, COMSIG_MIND_TRANSFERRED, PROC_REF(self_destruct))
 
 /datum/antagonist/zombie/remove_innate_effects(mob/living/mob_override)
 	var/mob/living/carbon/user = mob_override || owner.current
@@ -63,30 +29,13 @@
 	if(!istype(user)) // Zombies don't change anything about non-carbon mobs.
 		return
 
-	if(old_species_type && !QDELETED(user) && is_species(user, species_type))
-		user.set_species(old_species_type)
-
-	for(var/datum/action/action as anything in granted_actions)
-		action.Remove(user)
-
 	UnregisterSignal(user, COMSIG_SPECIES_LOSS)
+	UnregisterSignal(owner, COMSIG_MIND_TRANSFERRED)
 
-/datum/antagonist/zombie/proc/on_species_loss()
+/// The essential proc to call when our owner is no longer controlling a zombie.
+/datum/antagonist/zombie/proc/self_destruct()
 	SIGNAL_HANDLER
-	qdel(src) // Keep in mind, this does not delete the zombie infection organ, so you'll be reinfected shortly.
-
-/datum/antagonist/zombie/proc/set_consumed_flesh(amount)
-	var/old_amount = consumed_flesh
-	consumed_flesh = clamp(amount, 0, ZOMBIE_FLESH_MAXIMUM)
-
-	if(consumed_flesh != old_amount)
-		update_consumed_flesh(old_amount)
-
-/datum/antagonist/zombie/proc/adjust_consumed_flesh(amount)
-	set_consumed_flesh(consumed_flesh + amount)
-
-/datum/antagonist/zombie/proc/update_consumed_flesh(old_amount)
-	SEND_SIGNAL(owner.current, COMSIG_ZOMBIE_FLESH_CHANGED, old_amount, consumed_flesh)
+	qdel(src)
 
 /datum/action/cooldown/zombie
 	name = "Zombie Action"
@@ -94,25 +43,46 @@
 	background_icon = 'monkestation/icons/mob/actions/actions_zombie.dmi'
 	button_icon = 'monkestation/icons/mob/actions/actions_zombie.dmi'
 	background_icon_state = "bg_zombie"
-	check_flags = AB_CHECK_IMMOBILE|AB_CHECK_CONSCIOUS
+	check_flags = AB_CHECK_IMMOBILE | AB_CHECK_CONSCIOUS
 
-/datum/action/cooldown/zombie/IsAvailable(feedback)
-	if(!iszombie(owner))
-		CRASH("A non-zombie tried to use a zombie action, it seems the game has taken too much LSD today. (report this shit)")
+	/// A reference to the zombie species datum. Automatically cleaned up.
+	var/datum/species/zombie/infectious/zombie_datum
+
+	/// The amount of flesh required to use this ability. You can custom code this if you want to due to its simplicity, just remember to register the update signal.
+	/// Does not actually use up the consumed flesh on its own. Do that yourself in Activate() or wherever else you want to.
+	var/flesh_cost = 0
+
+/datum/action/cooldown/zombie/New(Target, original)
+	if(!istype(Target, /datum/species/zombie/infectious))
+		CRASH("A zombie action was not linked to a species datum. This should never happen, please report it.")
+	zombie_datum = Target
 	return ..()
 
-/datum/action/cooldown/zombie/PreActivate(atom/target)
-	// Parent calls Activate(), so if parent returns TRUE,
-	// it means the activation happened successfuly by this point
-	. = ..()
-	if(!.)
+/datum/action/cooldown/zombie/Destroy()
+	zombie_datum = null
+	return ..()
+
+/datum/action/cooldown/zombie/Grant(mob/granted_to)
+	if(flesh_cost > 0)
+		RegisterSignal(zombie_datum, COMSIG_ZOMBIE_FLESH_CHANGED, PROC_REF(update_button))
+	return ..()
+
+/datum/action/cooldown/zombie/Remove(mob/removed_from)
+	UnregisterSignal(zombie_datum, COMSIG_ZOMBIE_FLESH_CHANGED)
+	return ..()
+
+/datum/action/cooldown/zombie/IsAvailable(feedback)
+	if(!..())
 		return FALSE
-	// Xeno actions like "evolve" may result in our action (or our alien) being deleted
-	// In that case, we can just exit now as a "success"
-	if(QDELETED(src) || QDELETED(owner))
-		return TRUE
 
+	if(zombie_datum.consumed_flesh >= flesh_cost)
+		if(feedback)
+			owner.balloon_alert(owner, "needs [zombie_datum.consumed_flesh - flesh_cost] more flesh!")
+		return FALSE
 
+	return TRUE
+
+/// Shortcut for "build_all_button_icons(UPDATE_BUTTON_STATUS)", used by signals.
 /datum/action/cooldown/zombie/proc/update_button()
 	SIGNAL_HANDLER
 	build_all_button_icons(UPDATE_BUTTON_STATUS)
@@ -140,6 +110,9 @@
 		owner.balloon_alert(owner, "[target.p_they()] [target.p_are()] alive!")
 		return TRUE
 
+	if(iszombie(target)) // Zombies can't cannibalize one another as their flesh is worthless.
+		owner.balloon_alert(owner, "[target.p_they()] [target.p_are()] a zombie!")
+
 	if(HAS_TRAIT(target, TRAIT_ZOMBIE_CONSUMED))
 		owner.balloon_alert(owner, "already consumed!")
 		return TRUE
@@ -152,7 +125,7 @@
 
 		if(iscarbon(target))
 			var/mob/living/carbon/carbon_target = target
-			carbon_target.apply_damage(25, BRUTE, pick(carbon_target.bodyparts), forced = TRUE, wound_bonus = 10, sharpness = SHARP_EDGED, attack_direction = get_dir(owner, target))
+			carbon_target.apply_damage(25, BRUTE, pick(carbon_target.bodyparts), forced = TRUE, wound_bonus = CANT_WOUND, sharpness = SHARP_EDGED, attack_direction = get_dir(owner, target))
 		else
 			playsound(target, 'sound/effects/wounds/blood2.ogg', vol = 50, vary = TRUE)
 			target.adjustBruteLoss(25)
@@ -174,7 +147,6 @@
 	user.adjustOrganLoss(ORGAN_SLOT_BRAIN, -healing)
 	user.set_nutrition(min(user.nutrition + healing, NUTRITION_LEVEL_FULL)) // Doesn't use adjust_nutrition since that would make the zombies fat.
 
-	var/datum/species/zombie/infectious/zombie_datum = user.dna.species
 	zombie_datum.consumed_flesh += healing
 
 	..()
@@ -200,7 +172,6 @@
 		return FALSE
 
 	var/mob/living/carbon/user = owner
-	var/datum/species/zombie/infectious/zombie_datum = user.dna.species
 
 	if(zombie_datum.consumed_flesh < 200)
 		if(feedback)

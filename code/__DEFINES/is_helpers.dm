@@ -90,6 +90,7 @@ GLOBAL_LIST_INIT(turfs_openspace, typecacheof(list(
 #define isslimeperson(A) (is_species(A, /datum/species/jelly/slime))
 #define isoozeling(A) (is_species(A, /datum/species/oozeling))
 #define iszombie(A) (is_species(A, /datum/species/zombie))
+#define isinfectious(A) (is_species(A, /datum/species/zombie/infectious)) //Monkestation Addition
 #define isskeleton(A) (is_species(A, /datum/species/skeleton))
 #define ismoth(A) (is_species(A, /datum/species/moth))
 #define isethereal(A) (is_species(A, /datum/species/ethereal))
