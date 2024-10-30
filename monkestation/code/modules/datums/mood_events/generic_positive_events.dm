@@ -9,3 +9,8 @@
 	description = "Glory to the hunt."
 	mood_change = 10
 	hidden = TRUE
+
+/datum/mood_event/zombie
+	description = "BRRRAAAAINZZ!!"
+	mood_change = 10
+	hidden = TRUE

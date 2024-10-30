@@ -49,4 +49,4 @@
 #define COMSIG_NIGHTMARE_SNUFF_CHECK "nightmare_snuff_check"
 
 /// From base of /datum/species/zombie/infectious/proc/set_consumed_flesh(): (new_amount, old_amount)
-#define COMSIG_ZOMBIE_FLESH_ADJUSTED "zombie_flesh_adjusted"
+#define COMSIG_ZOMBIE_FLESH_CHANGED "zombie_flesh_adjusted"
