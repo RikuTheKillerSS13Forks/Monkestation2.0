@@ -1,0 +1,521 @@
+//MAP CONVERTED BY dmm2tgm.py THIS HEADER COMMENT PREVENTS RECONVERSION, DO NOT REMOVE
+"a" = (
+/obj/machinery/door/airlock/external/glass/ruin,
+/turf/open/floor/engine,
+/area/ruin/space/has_grav/powered/droid_factory)
+"b" = (
+/turf/open/floor/iron/dark,
+/area/ruin/space/has_grav/powered/droid_factory)
+"c" = (
+/obj/effect/turf_decal/siding/thinplating_new{
+	dir = 1
+	},
+/turf/open/floor/iron/dark,
+/area/ruin/space/has_grav/powered/droid_factory)
+"d" = (
+/obj/structure/sign/warning/vacuum,
+/obj/effect/spawner/structure/window/reinforced,
+/turf/open/floor/plating,
+/area/ruin/space/has_grav/powered/droid_factory)
+"e" = (
+/obj/machinery/conveyor/auto{
+	dir = 1
+	},
+/turf/open/floor/engine,
+/area/ruin/space/has_grav/powered/droid_factory)
+"g" = (
+/obj/effect/turf_decal/stripes/corner{
+	dir = 4
+	},
+/turf/open/floor/iron/showroomfloor,
+/area/ruin/space/has_grav/powered/droid_factory)
+"h" = (
+/obj/machinery/conveyor/auto{
+	dir = 4
+	},
+/turf/open/floor/engine,
+/area/ruin/space/has_grav/powered/droid_factory)
+"i" = (
+/obj/machinery/door/airlock/external/ruin,
+/turf/open/floor/engine,
+/area/ruin/space/has_grav/powered/droid_factory)
+"j" = (
+/obj/effect/turf_decal/siding/thinplating_new/corner{
+	dir = 1
+	},
+/turf/open/floor/iron/dark,
+/area/ruin/space/has_grav/powered/droid_factory)
+"k" = (
+/obj/structure/chair/office,
+/turf/open/floor/iron/showroomfloor,
+/area/ruin/space/has_grav/powered/droid_factory)
+"m" = (
+/obj/machinery/door/airlock/highsecurity,
+/turf/open/floor/engine,
+/area/ruin/space/has_grav/powered/droid_factory)
+"n" = (
+/obj/machinery/conveyor/auto{
+	dir = 9
+	},
+/turf/open/floor/engine,
+/area/ruin/space/has_grav/powered/droid_factory)
+"o" = (
+/obj/machinery/light/small{
+	dir = 8
+	},
+/turf/open/floor/engine,
+/area/ruin/space/has_grav/powered/droid_factory)
+"q" = (
+/obj/effect/turf_decal/stripes/line{
+	dir = 8
+	},
+/turf/open/floor/iron/showroomfloor,
+/area/ruin/space/has_grav/powered/droid_factory)
+"r" = (
+/obj/machinery/conveyor/auto{
+	dir = 6
+	},
+/turf/open/floor/engine,
+/area/ruin/space/has_grav/powered/droid_factory)
+"s" = (
+/obj/effect/turf_decal/stripes/line{
+	dir = 1
+	},
+/turf/open/floor/iron/showroomfloor,
+/area/ruin/space/has_grav/powered/droid_factory)
+"t" = (
+/obj/effect/spawner/structure/window/reinforced,
+/turf/open/floor/plating,
+/area/ruin/space/has_grav/powered/droid_factory)
+"u" = (
+/obj/effect/turf_decal/siding/thinplating_new{
+	dir = 4
+	},
+/obj/machinery/light{
+	dir = 1
+	},
+/turf/open/floor/iron/dark,
+/area/ruin/space/has_grav/powered/droid_factory)
+"v" = (
+/obj/effect/turf_decal/stripes/line{
+	dir = 4
+	},
+/turf/open/floor/iron/showroomfloor,
+/area/ruin/space/has_grav/powered/droid_factory)
+"w" = (
+/obj/machinery/light{
+	dir = 4
+	},
+/turf/open/floor/iron/dark,
+/area/ruin/space/has_grav/powered/droid_factory)
+"x" = (
+/obj/effect/turf_decal/siding/thinplating_new{
+	dir = 1
+	},
+/obj/machinery/light,
+/turf/open/floor/iron/dark,
+/area/ruin/space/has_grav/powered/droid_factory)
+"y" = (
+/obj/machinery/conveyor/auto{
+	dir = 8
+	},
+/turf/open/floor/engine,
+/area/ruin/space/has_grav/powered/droid_factory)
+"z" = (
+/obj/effect/turf_decal/stripes/corner{
+	dir = 1
+	},
+/turf/open/floor/iron/showroomfloor,
+/area/ruin/space/has_grav/powered/droid_factory)
+"B" = (
+/obj/structure/table/reinforced,
+/turf/open/floor/engine,
+/area/ruin/space/has_grav/powered/droid_factory)
+"C" = (
+/obj/machinery/conveyor/auto/inverted{
+	dir = 10
+	},
+/turf/open/floor/engine,
+/area/ruin/space/has_grav/powered/droid_factory)
+"D" = (
+/turf/closed/archmetal,
+/area/ruin/space/has_grav/powered/droid_factory)
+"E" = (
+/obj/effect/turf_decal/siding/thinplating_new{
+	dir = 8
+	},
+/obj/machinery/light{
+	dir = 1
+	},
+/turf/open/floor/iron/dark,
+/area/ruin/space/has_grav/powered/droid_factory)
+"F" = (
+/obj/structure/sign/warning/electric_shock,
+/turf/closed/archmetal,
+/area/ruin/space/has_grav/powered/droid_factory)
+"G" = (
+/obj/structure/table/reinforced,
+/obj/machinery/fax,
+/turf/open/floor/iron/showroomfloor,
+/area/ruin/space/has_grav/powered/droid_factory)
+"I" = (
+/obj/effect/turf_decal/siding/thinplating_new{
+	dir = 4
+	},
+/turf/open/floor/iron/dark,
+/area/ruin/space/has_grav/powered/droid_factory)
+"J" = (
+/obj/effect/turf_decal/siding/thinplating_new/corner{
+	dir = 4
+	},
+/turf/open/floor/iron/dark,
+/area/ruin/space/has_grav/powered/droid_factory)
+"K" = (
+/obj/structure/table/reinforced,
+/obj/item/paper_bin,
+/obj/item/pen/red,
+/turf/open/floor/iron/showroomfloor,
+/area/ruin/space/has_grav/powered/droid_factory)
+"L" = (
+/turf/open/floor/engine,
+/area/ruin/space/has_grav/powered/droid_factory)
+"M" = (
+/obj/machinery/door/airlock/highsecurity,
+/turf/open/floor/iron/dark,
+/area/ruin/space/has_grav/powered/droid_factory)
+"N" = (
+/obj/machinery/conveyor/auto/inverted{
+	dir = 5
+	},
+/turf/open/floor/engine,
+/area/ruin/space/has_grav/powered/droid_factory)
+"O" = (
+/obj/effect/turf_decal/siding/thinplating_new{
+	dir = 8
+	},
+/turf/open/floor/iron/dark,
+/area/ruin/space/has_grav/powered/droid_factory)
+"P" = (
+/obj/machinery/light{
+	dir = 8
+	},
+/turf/open/floor/iron/dark,
+/area/ruin/space/has_grav/powered/droid_factory)
+"Q" = (
+/turf/open/space/basic,
+/area/space)
+"R" = (
+/obj/machinery/conveyor/auto{
+	dir = 10
+	},
+/turf/open/floor/engine,
+/area/ruin/space/has_grav/powered/droid_factory)
+"S" = (
+/obj/machinery/conveyor/auto,
+/turf/open/floor/engine,
+/area/ruin/space/has_grav/powered/droid_factory)
+"T" = (
+/obj/structure/sign/warning/secure_area,
+/turf/closed/archmetal,
+/area/ruin/space/has_grav/powered/droid_factory)
+"U" = (
+/obj/machinery/light/small{
+	dir = 4
+	},
+/turf/open/floor/engine,
+/area/ruin/space/has_grav/powered/droid_factory)
+"V" = (
+/obj/structure/table/reinforced,
+/turf/open/floor/iron/showroomfloor,
+/area/ruin/space/has_grav/powered/droid_factory)
+"W" = (
+/obj/machinery/conveyor/auto/inverted{
+	dir = 9
+	},
+/turf/open/floor/engine,
+/area/ruin/space/has_grav/powered/droid_factory)
+"X" = (
+/obj/effect/turf_decal/delivery,
+/turf/open/floor/engine,
+/area/ruin/space/has_grav/powered/droid_factory)
+"Y" = (
+/obj/effect/turf_decal/caution/stand_clear,
+/turf/open/floor/engine,
+/area/ruin/space/has_grav/powered/droid_factory)
+"Z" = (
+/obj/machinery/light{
+	dir = 1
+	},
+/turf/open/floor/engine,
+/area/ruin/space/has_grav/powered/droid_factory)
+
+(1,1,1) = {"
+Q
+Q
+Q
+D
+D
+D
+D
+Q
+Q
+Q
+Q
+Q
+Q
+Q
+Q
+Q
+"}
+(2,1,1) = {"
+Q
+Q
+Q
+D
+B
+B
+D
+D
+D
+D
+D
+D
+Q
+Q
+Q
+Q
+"}
+(3,1,1) = {"
+Q
+Q
+Q
+D
+Z
+L
+D
+b
+b
+P
+b
+D
+D
+Q
+Q
+Q
+"}
+(4,1,1) = {"
+Q
+Q
+Q
+D
+L
+L
+m
+b
+b
+b
+b
+b
+D
+Q
+Q
+Q
+"}
+(5,1,1) = {"
+D
+D
+D
+D
+Y
+D
+D
+D
+D
+M
+T
+D
+D
+D
+Q
+Q
+"}
+(6,1,1) = {"
+D
+N
+S
+W
+X
+e
+n
+D
+u
+I
+I
+I
+J
+D
+D
+D
+"}
+(7,1,1) = {"
+D
+y
+D
+r
+S
+S
+R
+F
+v
+g
+G
+V
+c
+a
+o
+i
+"}
+(8,1,1) = {"
+D
+L
+D
+t
+t
+D
+D
+D
+L
+s
+k
+V
+x
+d
+t
+D
+"}
+(9,1,1) = {"
+D
+h
+D
+N
+S
+S
+W
+F
+q
+z
+K
+V
+c
+a
+U
+i
+"}
+(10,1,1) = {"
+D
+r
+S
+R
+X
+e
+C
+D
+E
+O
+O
+O
+j
+D
+D
+D
+"}
+(11,1,1) = {"
+D
+D
+D
+D
+Y
+D
+D
+D
+D
+M
+T
+D
+D
+D
+Q
+Q
+"}
+(12,1,1) = {"
+Q
+Q
+Q
+D
+L
+L
+m
+b
+b
+b
+b
+b
+D
+Q
+Q
+Q
+"}
+(13,1,1) = {"
+Q
+Q
+Q
+D
+Z
+L
+D
+b
+b
+w
+b
+D
+D
+Q
+Q
+Q
+"}
+(14,1,1) = {"
+Q
+Q
+Q
+D
+B
+B
+D
+D
+D
+D
+D
+D
+Q
+Q
+Q
+Q
+"}
+(15,1,1) = {"
+Q
+Q
+Q
+D
+D
+D
+D
+Q
+Q
+Q
+Q
+Q
+Q
+Q
+Q
+Q
+"}

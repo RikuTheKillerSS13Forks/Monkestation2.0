@@ -23,3 +23,6 @@
 
 /area/ruin/space/has_grav/listeningstation/medical
 	name = "Listening Post Infirmary"
+
+/area/ruin/space/has_grav/powered/droid_factory
+	name = "Dormant Droid Factory"
