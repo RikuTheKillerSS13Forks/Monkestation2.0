@@ -1,6 +1,6 @@
 /mob/living/basic/droid/basic
 	name = "basic droid"
-	desc = "A basic droid with no armaments or armor. It can still bash skulls with its fists just fine, though."
+	desc = "A basic droid frame with no armaments or armor. It can still bash skulls with its fists just fine, though."
 
 	icon = 'monkestation/icons/mob/basic/basic_droids.dmi'
 	icon_state = "frame"
@@ -22,12 +22,12 @@
 	armor_type = /datum/armor/basic_melee_droid
 	speed = 1.2
 
-	melee_damage_lower = 30
-	melee_damage_upper = 40
-	armour_penetration = 30
-	obj_damage = 50
+	melee_damage_lower = 20
+	melee_damage_upper = 30
+	armour_penetration = 15
+	obj_damage = 30
 
-	wound_bonus = 20
+	wound_bonus = 10
 	bare_wound_bonus = 10
 	sharpness = SHARP_EDGED
 
