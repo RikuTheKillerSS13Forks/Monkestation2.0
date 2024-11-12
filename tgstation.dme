@@ -6238,6 +6238,7 @@
 #include "monkestation\code\modules\antagonists\droids\base_droid.dm"
 #include "monkestation\code\modules\antagonists\droids\advanced\advanced_droid.dm"
 #include "monkestation\code\modules\antagonists\droids\basic\basic_droid.dm"
+#include "monkestation\code\modules\antagonists\droids\machinery\basic_weapon_fitter.dm"
 #include "monkestation\code\modules\antagonists\ert\moff_inspectors.dm"
 #include "monkestation\code\modules\antagonists\evil_clone\evil_clone.dm"
 #include "monkestation\code\modules\antagonists\evil_clone\evil_clone_objective.dm"

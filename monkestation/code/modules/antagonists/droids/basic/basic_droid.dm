@@ -1,5 +1,5 @@
 /mob/living/basic/droid/basic
-	name = "basic droid"
+	name = "droid frame"
 	desc = "A basic droid frame with no armaments or armor. It can still bash skulls with its fists just fine, though."
 
 	icon = 'monkestation/icons/mob/basic/basic_droids.dmi'
@@ -17,7 +17,7 @@
 	bullet = 30 // Shotguns exist.
 
 /mob/living/basic/droid/basic/melee
-	name = "basic melee droid"
+	name = "melee droid"
 	desc = "A basic melee droid with heavy armor that excels in close quarters combat."
 	armor_type = /datum/armor/basic_melee_droid
 	speed = 1.2
@@ -41,7 +41,7 @@
 	energy = 30
 
 /mob/living/basic/droid/basic/ranged
-	name = "basic ranged droid"
+	name = "ranged droid"
 	desc = "A basic ranged droid with light armor capable of outranging its targets."
 	armor_type = /datum/armor/basic_ranged_droid
 	speed = 0.8
