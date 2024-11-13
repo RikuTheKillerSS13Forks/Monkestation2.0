@@ -8,7 +8,7 @@
 /obj/machinery/basic_weapon_fitter
 	name = "droid weapon fitter"
 	desc = "Essentially a high-power industrial welding machine. A droid frame goes in and a death machine comes out."
-	icon = 'monkestation/icons/obj/structures/droid_factory_machines.dmi'
+	icon = 'monkestation/icons/obj/machines/droid_factory_machines.dmi'
 	icon_state = "basic_weapon_fitter_off"
 	flags_1 = NODECONSTRUCT_1
 	density = TRUE
