@@ -1,23 +1,23 @@
 //assorted plushes
-/datum/loadout_item/toys/pim
+/datum/loadout_item/plushies/pim
 	name = "Pim Plush"
 	item_path = /obj/item/toy/plush/pim
 	donator_only = TRUE
 	requires_purchase = FALSE
 
-/datum/loadout_item/toys/charlie
+/datum/loadout_item/plushies/charlie
 	name = "Charlie Plush"
 	item_path = /obj/item/toy/plush/charlie
 	donator_only = TRUE
 	requires_purchase = FALSE
 
-/datum/loadout_item/toys/glep
+/datum/loadout_item/plushies/glep
 	name = "Glep Plush"
 	item_path = /obj/item/toy/plush/glep
 	donator_only = TRUE
 	requires_purchase = FALSE
 
-/datum/loadout_item/toys/mr_frog
+/datum/loadout_item/plushies/mr_frog
 	name = "Mr. Frog Plush"
 	item_path = /obj/item/toy/plush/mr_frog
 	donator_only = TRUE
@@ -103,7 +103,7 @@
 	donator_only = TRUE
 	requires_purchase = FALSE
 
-/datum/loadout_item/toys/hotdog_plush
+/datum/loadout_item/plushies/hotdog_plush
 	name = "Hotdog Plush"
 	item_path = /obj/item/toy/plush/hotdog
 	donator_only = TRUE
@@ -163,7 +163,7 @@
 	donator_only = TRUE
 	requires_purchase = FALSE
 
-/datum/loadout_item/toys/seam_plush
+/datum/loadout_item/plushies/seam_plush
 	name = "Seam Plush"
 	item_path = /obj/item/toy/plush/seam
 	donator_only = TRUE
@@ -184,7 +184,7 @@
 	requires_purchase = FALSE
 
 //sammi
-/datum/loadout_item/toys/puck_plush
+/datum/loadout_item/plushies/puck_plush
 	name = "Puck Plush"
 	item_path = /obj/item/toy/plush/puck
 	donator_only = TRUE
@@ -201,7 +201,7 @@
 
 
 //Random
-/datum/loadout_item/toys/spider_plush
+/datum/loadout_item/plushies/spider_plush
 	name = "Spider Plush"
 	item_path = /obj/item/toy/plush/spider
 	donator_only = TRUE
@@ -246,7 +246,7 @@
 	donator_only = TRUE
 	requires_purchase = FALSE
 
-/datum/loadout_item/toys/puppycat
+/datum/loadout_item/plushies/puppycat
 	name = "Puppycat Plush"
 	item_path = /obj/item/toy/plush/puppycat
 	donator_only = TRUE
@@ -291,7 +291,7 @@
 	item_path = /obj/item/effect_granter/donator/plant_crab
 	requires_purchase = FALSE
 
-/datum/loadout_item/toys/liefflos
+/datum/loadout_item/plushies/liefflos
 	name = "Lief Flos Plush"
 	item_path = /obj/item/toy/plush/liefflos
 	donator_only = TRUE
@@ -325,7 +325,7 @@
 	donator_only = TRUE
 	requires_purchase = FALSE
 
-/datum/loadout_item/toys/jackfrost
+/datum/loadout_item/plushies/jackfrost
 	name = "Jack Frost Plush"
 	item_path = /obj/item/toy/plush/jackfrost
 	donator_only = TRUE
@@ -363,25 +363,6 @@
 	name = "Discontinued Cross Hat"
 	item_path = /obj/item/clothing/head/costume/fur_cap_quilark
 	donator_only = TRUE
-	requires_purchase = FALSE
-
-/datum/loadout_item/toys/quilark
-	name = "Quilark Plush"
-	item_path = /obj/item/toy/plush/quilark
-	donator_only = TRUE
-	requires_purchase = FALSE
-
-/datum/loadout_item/pocket_items/donator/quilava
-	name = "Pet Delivery Beacon - Quil Maid"
-	item_path = /obj/item/choice_beacon/pet/donator/quilava
-	donator_only = TRUE
-	requires_purchase = FALSE
-	ckeywhitelist = list("quilark")
-
-/datum/loadout_item/effects/quilava
-	ckeywhitelist = list("quilark")
-	name = "Quil Maid Transformation"
-	item_path = /obj/item/effect_granter/donator/quilava
 	requires_purchase = FALSE
 
 /datum/loadout_item/suit/org_thirteen
@@ -463,13 +444,13 @@
 	item_path = /obj/item/effect_granter/donator/gumball_goblin
 	requires_purchase = FALSE
 
-/datum/loadout_item/toys/gumball_goblin
+/datum/loadout_item/plushies/gumball_goblin
 	name = "Gumball Goblin Plush"
 	item_path = /obj/item/toy/plush/gumball_goblin
 	donator_only = TRUE
 	requires_purchase = FALSE
 
-/datum/loadout_item/toys/elliethedarksunplush
+/datum/loadout_item/plushies/elliethedarksunplush
 	name = "Ellie plush"
 	item_path = /obj/item/toy/plush/elliethedarksun
 	donator_only = TRUE
@@ -482,7 +463,7 @@
 	donator_only = TRUE
 	requires_purchase = FALSE
 
-/datum/loadout_item/toys/pooba_bee_plush
+/datum/loadout_item/plushies/pooba_bee_plush
 	name = "Bumbliest Bee Plushie"
 	item_path = /obj/item/toy/plush/pooba_bee_plush
 	donator_only = TRUE
@@ -528,7 +509,7 @@
 	item_path = /obj/item/effect_granter/donator/orangutan
 	requires_purchase = FALSE
 
-/datum/loadout_item/toys/cowlophant
+/datum/loadout_item/plushies/cowlophant
 	name = "Cowlephant Plush"
 	item_path = /obj/item/toy/plush/cowlephant
 	donator_only = TRUE
@@ -547,7 +528,7 @@
 	requires_purchase = FALSE
 
 //av4l0n
-/datum/loadout_item/toys/sheep_plush_av4l0n
+/datum/loadout_item/plushies/sheep_plush_av4l0n
 	name = "Sheep Plush"
 	item_path = /obj/item/clothing/head/sheep_plush_av4l0n
 	donator_only = TRUE
@@ -566,7 +547,7 @@
 	donator_only = TRUE
 	requires_purchase = FALSE
 
-/datum/loadout_item/toys/bluedragon66plush
+/datum/loadout_item/plushies/bluedragon66plush
 	name = "Sees Plushie"
 	item_path = /obj/item/toy/plush/bluedragon66
 	donator_only = TRUE
@@ -626,7 +607,7 @@
 	donator_only = TRUE
 	requires_purchase = FALSE
 
-/datum/loadout_item/toys/toadie_wan_kenfrogi
+/datum/loadout_item/plushies/toadie_wan_kenfrogi
 	name = "Toadie Wan Kenfrogi"
 	item_path = /obj/item/toy/plush/toadie_wan_kenfrogi
 	donator_only = TRUE
@@ -649,5 +630,58 @@
 /datum/loadout_item/suit/mothysmantle
 	name = "Mothy's Mantle"
 	item_path = /obj/item/clothing/suit/hooded/mothysmantle
+	donator_only = TRUE
+	requires_purchase = FALSE
+
+//wisemonster
+/datum/loadout_item/head/purple_gold_tophat_kid
+	name = "Purple And Gold Tophat"
+	item_path = /obj/item/clothing/head/costume/purple_gold_tophat_kid
+	donator_only = TRUE
+	requires_purchase = FALSE
+
+//Shodd
+/datum/loadout_item/mask/dark_skeletal_visage
+	name = "Dark Skeletal Visage"
+	item_path = /obj/item/clothing/mask/dark_skeletal_visage
+	donator_only = TRUE
+	requires_purchase = FALSE
+
+//Eacles13
+/datum/loadout_item/suit/traxs_jacket
+	name = "Trax's Jacket"
+	item_path = /obj/item/clothing/suit/toggle/traxs_jacket
+	donator_only = TRUE
+	requires_purchase = FALSE
+
+/datum/loadout_item/plushies/trax_the_coward
+	name = "Trax The Coward Plush"
+	item_path = /obj/item/toy/plush/trax_the_coward
+	donator_only = TRUE
+	requires_purchase = FALSE
+
+/datum/loadout_item/pocket_items/donator/albino_ghost_ian
+	name = "Pet Delivery Beacon - Ghost Ian"
+	item_path = /obj/item/choice_beacon/pet/donator/albino_ghost_ian
+	donator_only = TRUE
+	requires_purchase = FALSE
+	ckeywhitelist = list("Eacles13")
+
+/datum/loadout_item/effects/albino_ghost_ian
+	ckeywhitelist = list("Eacles13")
+	name = "Ghost Ian Transformation"
+	item_path = /obj/item/effect_granter/donator/albino_ghost_ian
+	requires_purchase = FALSE
+
+/datum/loadout_item/neck/mist_cloak
+	name = "Mist Cloak"
+	item_path = /obj/item/clothing/neck/mist_cloak
+	donator_only = TRUE
+	requires_purchase = FALSE
+
+//jimmytombstone
+/datum/loadout_item/neck/linen_tombstone_shroud
+	name = "linen tombstone shroud"
+	item_path = /obj/item/clothing/neck/linen_tombstone_shroud
 	donator_only = TRUE
 	requires_purchase = FALSE

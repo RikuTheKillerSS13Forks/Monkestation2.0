@@ -86,6 +86,7 @@
 		"Commanding Officer",
 		"Site Manager",
 		"Criminally Underpaid Babysitter",
+		"Princess",
 	)
 
 /datum/job/cargo_technician
@@ -302,6 +303,7 @@
 		"Biomechanical Engineer",
 		"Mechatronic Engineer",
 		"Apprentice Roboticist",
+		"Ripperdoc",
 	)
 
 /datum/job/science_guard //See orderly
@@ -369,4 +371,14 @@
 		"Dispatch Officer",
 		"Brig Governor",
 		"Jailer",
+	)
+
+/datum/job/blueshield
+	alt_titles = list(
+		"Blueshield",
+		"Corporate Henchman",
+		"Bodyguard",
+		"Revolutionary Repellent",
+		"Heavily Armed Butler",
+		"Honor Guard",
 	)

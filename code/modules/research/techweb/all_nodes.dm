@@ -39,6 +39,7 @@
 		"coffee_cartridge",
 		"coffeemaker",
 		"coffeepot",
+		"comb", //monkestation edit
 		"condenser",
 		"conveyor_belt",
 		"conveyor_switch",
@@ -48,6 +49,7 @@
 		"desttagger",
 		"doppler_array",
 		"drinking_glass",
+		"dyespray", //monkestation edit
 		"earmuffs",
 		"electropack",
 		"experi_scanner",
@@ -59,7 +61,9 @@
 		"fluid_ducts",
 		"foam_dart",
 		"fork",
+		"fur_dyer", //monkestation edit
 		"gas_filter",
+		"hairbrush", //monkestation edit
 		"handcuffs_s",
 		"handlabel",
 		"health_sensor",
@@ -101,6 +105,7 @@
 		"rglass",
 		"roll",
 		"rollerbed",
+		"scissors", //monkestation edit
 		"sec_38",
 		"sec_beanbag_slug",
 		"sec_dart",
@@ -426,6 +431,8 @@
 		"defibrillator",
 		"genescanner",
 		"healthanalyzer",
+		"scanning_pad",
+		"vitals_monitor",
 		"antibodyscanner",
 		"med_spray_bottle",
 		"medical_kiosk",
@@ -438,6 +445,9 @@
 		"diseaseanalyzer",
 		"centrifuge",
 		"path_data",
+		"heat_pack",
+		"cold_pack",
+		"medical_crutch",
 	)
 	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = 2500)
 	discount_experiments = list(/datum/experiment/dissection/human = 1000)
@@ -449,6 +459,7 @@
 	prereq_ids = list("biotech")
 	design_ids = list(
 		"crewpinpointer",
+		"vitals_monitor_advanced",
 		"defibrillator_compact",
 		"harvester",
 		"healthanalyzer_advanced",
@@ -522,6 +533,7 @@
 	design_ids = list(
 		"surgery_heal_brute_upgrade",
 		"surgery_heal_burn_upgrade",
+		"surgery_heal_robot_upgrade", // monkestation edit: robot surgeries
 		"surgery_filter_upgrade", // monke edit: improved blood filter surgery
 	)
 	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = 1000)
@@ -535,6 +547,7 @@
 	design_ids = list(
 		"surgery_heal_brute_upgrade_femto",
 		"surgery_heal_burn_upgrade_femto",
+		"surgery_heal_robot_upgrade_femto", // monkestation edit: robot surgeries
 		"surgery_heal_combo",
 		"surgery_lobotomy",
 		"surgery_wing_reconstruction",
@@ -1269,6 +1282,7 @@
 		"s_server",
 		"s_transmitter",
 		"s_treatment",
+		"s_traffic", // MONKESTATION ADDITION -- NTSL -- The board to actually program in NTSL
 	)
 
 /datum/techweb_node/integrated_hud
@@ -1412,6 +1426,7 @@
 		"ci-reviver",
 		"ci-surgery",
 		"ci-toolset",
+		"ci-sprinter", //monkestation edit:
 	)
 	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = 2500)
 
@@ -1466,6 +1481,7 @@
 		"triggermod",
 		"mining_scanner",
 		"mat_analyzer",
+		"pocket_heater", // monkestation edit
 	)//e a r l y    g a  m e)
 	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = 2500)
 
@@ -1517,7 +1533,10 @@
 		"seed_extractor",
 		"adv_watering_can",
 		"plantgenes",
-		"composters", // monkestation edit: build composters
+		// monkestation edit: our hydroponics stuff
+		"composters",
+		"splicer",
+		// monkestation end
 	)
 	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = 4000)
 	discount_experiments = list(/datum/experiment/scanning/random/plants/traits = 2000,

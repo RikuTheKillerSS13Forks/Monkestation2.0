@@ -22,7 +22,7 @@
 /// The mob's nanites are sending a monitoring signal visible on diag HUD.
 #define TRAIT_NANITE_MONITORING "nanite_monitoring"
 /// This mob can vault over climable structures.
-#define TRAIT_VAULTING "vaulting" //simian trait
+#define TRAIT_VAULTING "vaulting"
 /// Ethereals with this trait will not suffer negative effects from overcharge.
 #define TRAIT_ETHEREAL_NO_OVERCHARGE "ethereal_no_overcharge"
 /// Oozelings with this trait will not lose limbs from low blood/nutrition.
@@ -57,6 +57,8 @@
 #define TRAIT_GRAB_BREAKER "grab_breaker"
 /// Allows user to instantly break any cuffs.
 #define TRAIT_CUFF_BREAKER "cuff_breaker"
+/// For when a mob has been consumed by a zombie
+#define TRAIT_ZOMBIE_CONSUMED "zombie_consumed"
 
 // /datum/mind + /mob/living
 /// Prevents the user from casting spells using sign language. Works on both /datum/mind and /mob/living.
@@ -85,10 +87,10 @@
 #define TRAIT_HIDDEN_CLOWN		"clown_disbelief"
 #define TRAIT_HIDDEN_IMAGE		"generic-hidden-image"
 #define TRAIT_JAILBIRD			"jailbird"
-#define TRAIT_KLEPTOMANIAC		"kleptomaniac"
 #define TRAIT_LOUD_ASS			"loud_ass"
 #define TRAIT_MINING_CALLOUTS	"miner_callouts"
 #define TRAIT_PARANOIA			"paranoia"
+#define TRAIT_PRIDE_PIN			"pride_pin"
 #define TRAIT_STABLE_ASS		"stable_ass"
 #define TRAIT_STOWAWAY			"stowaway"
 #define TRAIT_UNSTABLE_ASS		"unstable_ass"
@@ -132,5 +134,19 @@
 #define TRAIT_NO_SLAB_INVOKE		"no_slab_invoke"
 /// Has an item been enchanted by a clock cult Stargazer?
 #define TRAIT_STARGAZED				"stargazed"
+
+#define TRAIT_FEATHERED "feathers"
+#define TRAIT_NON_IMPORTANT_SHOE_BLOCK "shoe_block"
+/// Skip a breath once in every x breaths (where x is ticks between breaths)
+#define TRAIT_LABOURED_BREATHING "laboured_breathing"
+/// Blocks losebreath from accumulating from things such as heart attacks or choking
+#define TRAIT_ASSISTED_BREATHING "assisted_breathing"
+/// Stops organs from decaying while dead
+#define TRAIT_NO_ORGAN_DECAY "no_organ_decay"
+/// Mob does not homeostasize body temperature
+#define TRAIT_COLD_BLOODED "cold_blooded"
+
+/// Mob can't strip other mobs, overrides TRAIT_CAN_STRIP. Importantly, they cannot *open* strip menus, so this is used for mayhem in a bottle.
+#define TRAIT_CANT_STRIP "cant_strip"
 
 // END TRAIT DEFINES

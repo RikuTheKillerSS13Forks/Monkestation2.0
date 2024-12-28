@@ -39,6 +39,7 @@
 			"name" = "Accessories",
 			"icon" = "glasses",
 			"products" = list(
+				/obj/item/clothing/accessory/pride = 15,
 				/obj/item/clothing/accessory/waistcoat = 4,
 				/obj/item/clothing/suit/toggle/suspenders = 4,
 				/obj/item/clothing/neck/tie/horrible = 3,
@@ -140,6 +141,7 @@
 				/obj/item/clothing/suit/hooded/ethereal_raincoat = 3,
 				/obj/item/clothing/under/ethereal_tunic = 3,
 
+				/obj/item/clothing/mask/kitsune = 3,
 				/obj/item/clothing/suit/costume/ianshirt = 1,
 				/obj/item/clothing/suit/hooded/dinojammies = 3,
 				/obj/item/clothing/suit/costume/irs = 20,

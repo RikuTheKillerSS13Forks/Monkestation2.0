@@ -22,3 +22,5 @@
 #define HUNTER_TRAIT "monsterhunter_trait"
 /// Source trait for slashers.
 #define TRAIT_SLASHER "slasher_trait"
+/// Source trait for zombies
+#define ZOMBIE_TRAIT "zombie_trait"
