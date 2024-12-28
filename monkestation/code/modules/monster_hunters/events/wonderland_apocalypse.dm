@@ -142,7 +142,7 @@
 		/datum/action/innate/cult = TRUE,
 		/datum/action/innate/cult/comm = FALSE,
 		/datum/action/innate/clockcult/quick_bind = TRUE,
-		/datum/action/cooldown/bloodsucker = TRUE,
+		/datum/action/cooldown/vampire = TRUE,
 		/datum/action/changeling = TRUE,
 	))
 
@@ -192,14 +192,7 @@
 
 /datum/status_effect/wonderland_district/proc/on_action_triggered(datum/source, datum/action/action)
 	SIGNAL_HANDLER
-	if(!trigger_recoil_typecache)
-		trigger_recoil_typecache = typecacheof(list(
-			/datum/action/innate/cult/blood_spell,
-			/datum/action/innate/cult/blood_magic,
-			/datum/action/innate/cult/master,
-			/datum/action/innate/clockcult/quick_bind
-		))
-	if(!is_type_in_typecache(action, trigger_recoil_typecache))
+	if(!is_type_in_typecache(action, register_action_typecache))
 		return
 	recoil(span_warning("[owner] doubles over in pain, violently coughing up blood!"), span_userdanger("An overwhelming pressure fills your body as you use [action.name || "your ability"], filling you with excruciating pain down to the very core of your being!"))
 

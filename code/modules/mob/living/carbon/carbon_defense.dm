@@ -709,8 +709,6 @@
 /mob/living/carbon/proc/check_passout(oxyloss)
 	if(!isnum(oxyloss))
 		return
-	if(HAS_TRAIT(src, TRAIT_NOPASSOUT))
-		return
 	if(oxyloss <= 50)
 		if(getOxyLoss() > 50)
 			ADD_TRAIT(src, TRAIT_KNOCKEDOUT, OXYLOSS_TRAIT)

@@ -43,7 +43,9 @@
 #define TRAIT_INSTANT_RELOAD "instant_reload"
 /// If an oozeling is currently protecting themselves from water.
 #define TRAIT_SLIME_HYDROPHOBIA "slime_hydrophobia"
-/// Disables temperature regulation.
+/// Falsifies Health analyzer blood levels
+#define TRAIT_MASQUERADE "masquerade"
+/// Your body is literal room temperature. Does not make you immune to the temp
 #define TRAIT_COLDBLOODED "coldblooded"
 /// Prevents the user from entering stamina crit.
 #define TRAIT_CANT_STAMCRIT "cant_stamcrit"
@@ -63,7 +65,7 @@
 // /datum/mind + /mob/living
 /// Prevents the user from casting spells using sign language. Works on both /datum/mind and /mob/living.
 #define TRAIT_CANT_SIGN_SPELLS	"cant_sign_spells"
-/// You have special interactions with vampires and the occult.
+/// You have special interactions with bloodsuckers and the occult.
 #define TRAIT_OCCULTIST			"occultist"
 
 // /datum/mind
@@ -83,6 +85,7 @@
 // Traits given by quirks
 #define TRAIT_ANIME				"anime"
 #define TRAIT_CAT				"cat"
+#define TRAIT_FEEBLE			"feeble"
 #define TRAIT_GOURMAND			"gourmand"
 #define TRAIT_HIDDEN_CLOWN		"clown_disbelief"
 #define TRAIT_HIDDEN_IMAGE		"generic-hidden-image"

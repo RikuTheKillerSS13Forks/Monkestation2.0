@@ -65,7 +65,7 @@
 			owner.balloon_alert(owner, "mouth covered!")
 		return FALSE
 
-	if(victim.blood_volume <= 0 || victim.get_blood_id() != /datum/reagent/blood) // this makes mobs with exotic blood or no blood immune to feeding
+	if(victim.blood_volume <= 0 || victim.get_blood_type(FALSE) != /datum/reagent/blood) // this makes mobs with exotic blood or no blood immune to feeding
 		if(feedback)
 			owner.balloon_alert(owner, "no blood!")
 		return FALSE
@@ -210,7 +210,7 @@
 	if(!check_grab()) // handles its own balloon alert and stop_feeding
 		return
 
-	if(victim.get_blood_id() != /datum/reagent/blood)
+	if(victim.get_blood_type(FALSE) != /datum/reagent/blood)
 		owner.balloon_alert(owner, "incompatible blood!")
 		stop_feeding(victim, forced = FALSE)
 		return
