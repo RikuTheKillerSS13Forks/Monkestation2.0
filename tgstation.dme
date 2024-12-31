@@ -447,7 +447,6 @@
 #include "code\__DEFINES\~monkestation\microfusion.dm"
 #include "code\__DEFINES\~monkestation\misc.dm"
 #include "code\__DEFINES\~monkestation\mobs.dm"
-#include "code\__DEFINES\~monkestation\monster_hunters.dm"
 #include "code\__DEFINES\~monkestation\NTSL.dm"
 #include "code\__DEFINES\~monkestation\oozeling.dm"
 #include "code\__DEFINES\~monkestation\optfor.dm"
