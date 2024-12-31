@@ -229,7 +229,7 @@ const AbilitySection = (props: any) => {
               )
             }
           />
-          {/*selectedAbility && selectedAbility.ability_icon && (
+          {/* selectedAbility && selectedAbility.ability_icon && (
             <Box
               position="absolute"
               height="12rem"
