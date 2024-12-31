@@ -49,10 +49,10 @@
 	RegisterSignal(vampire, COMSIG_VAMPIRE_MASQUERADE, PROC_REF(on_masquerade))
 
 /datum/action/cooldown/vampire/Destroy() // assumes that the action target is always the vampire antag datum, so this should be called if vampire is qdel'd
-	. = ..()
 	UnregisterSignal(vampire, list(COMSIG_VAMPIRE_LIFEFORCE_CHANGED, COMSIG_VAMPIRE_MASQUERADE))
 	vampire = null
 	user = null
+	return ..()
 
 /datum/action/cooldown/vampire/Grant(mob/granted_to)
 	. = ..()

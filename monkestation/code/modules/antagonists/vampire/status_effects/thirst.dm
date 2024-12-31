@@ -32,7 +32,7 @@
 		self_message = span_userdanger("Your body turns to dust as the last shreds of your strength fade away!"),
 		blind_message = span_hear("You hear a scream of pure terror!")
 	)
-	owner.emote("scream")
+	owner.emote(/datum/emote/living/scream::key)
 	owner.investigate_log("has been dusted by a lack of lifeforce. (vampire)", INVESTIGATE_DEATHS)
 	owner.dust(drop_items = TRUE)
 
@@ -41,7 +41,7 @@
 /datum/status_effect/vampire/thirst/tick(seconds_per_tick, times_fired)
 	. = ..()
 	if(SPT_PROB(5, seconds_per_tick))
-		owner.emote("shiver")
+		owner.emote(/datum/emote/living/shiver::key)
 
 /datum/status_effect/vampire/thirst/proc/on_lifeforce_changed(datum/source, old_amount, new_amount)
 	SIGNAL_HANDLER

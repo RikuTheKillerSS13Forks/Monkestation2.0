@@ -111,6 +111,6 @@
 	blocked = enabled
 
 /datum/vampire_ability/Destroy(force)
-	. = ..()
 	if(owner || user)
 		remove()
+	return ..()

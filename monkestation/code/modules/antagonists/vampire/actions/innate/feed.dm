@@ -132,7 +132,7 @@
 		playsound(victim, 'sound/effects/wounds/blood1.ogg', vol = 20, vary = TRUE, extrarange = SILENCED_SOUND_EXTRARANGE) // the sound from having your fangs ripped out is also on the victim as it's a wound, so this is consistent
 
 		if(!HAS_TRAIT(victim, TRAIT_ANALGESIA))
-			victim.emote("flinch")
+			victim.emote(/datum/emote/living/flinch::key)
 	else
 		owner.visible_message(
 			message = span_bolddanger("[owner] bites into [victim]'s neck!"),
@@ -144,7 +144,7 @@
 		playsound(victim, 'sound/effects/wounds/blood2.ogg', vol = 30, vary = TRUE, extrarange = SHORT_RANGE_SOUND_EXTRARANGE)
 
 		if(!HAS_TRAIT(victim, TRAIT_ANALGESIA))
-			victim.emote("scream")
+			victim.emote(/datum/emote/living/scream::key)
 
 	build_all_button_icons()
 
@@ -187,7 +187,7 @@
 		to_chat(victim, span_danger("[owner]'s fangs are ripped out of your [feed_type]!"))
 
 		if(!HAS_TRAIT(victim, TRAIT_ANALGESIA))
-			INVOKE_ASYNC(victim, TYPE_PROC_REF(/mob, emote), "scream")
+			INVOKE_ASYNC(victim, TYPE_PROC_REF(/mob, emote), /datum/emote/living/scream::key)
 
 		if(target_limb)
 			target_limb.force_wound_upwards(/datum/wound/pierce/bleed/moderate, wound_source = "vampire fangs") // the wound makes a fitting sound, no need to play one manually
@@ -320,7 +320,7 @@
 		stop_feeding(victim, forced = FALSE)
 		return
 
-	UnregisterSignal(victim, list(COMSIG_LIVING_LIFE))
+	UnregisterSignal(victim, COMSIG_LIVING_LIFE)
 	owner.balloon_alert(owner, "enthralling...")
 
 	to_chat(victim, span_hypnophrase("You feel a foreign presence seep into your mind..."))

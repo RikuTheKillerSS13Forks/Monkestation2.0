@@ -23,8 +23,8 @@
 	update_recovery_scaling(vampire.get_stat_modified(VAMPIRE_STAT_RECOVERY))
 
 /datum/action/cooldown/vampire/recuperation/Destroy()
-	. = ..()
 	UnregisterSignal(vampire, COMSIG_VAMPIRE_STAT_CHANGED_MOD)
+	return ..()
 
 /datum/action/cooldown/vampire/recuperation/on_toggle_on()
 	RegisterSignal(owner, COMSIG_LIVING_LIFE, PROC_REF(on_life))
@@ -158,7 +158,7 @@
 	if(revival_progress < 1)
 		if(SPT_PROB(50, seconds_per_tick))
 			playsound(get_turf(user), SFX_BODYFALL, vol = 20, vary = TRUE, extrarange = SHORT_RANGE_SOUND_EXTRARANGE)
-			user.emote("twitch", status_check = FALSE)
+			user.emote(/datum/emote/living/twitch::key, status_check = FALSE)
 		return
 	revival_progress--
 

@@ -25,11 +25,15 @@
 
 	var/obj/effect/abstract/fortitude/grey_flash_overlay
 
+/datum/action/cooldown/vampire/fortitude/Destroy()
+	QDEL_NULL(grey_flash_overlay)
+	return ..()
+
 /datum/action/cooldown/vampire/fortitude/on_toggle_on()
 	durability = initial(durability) * (vampire.get_stat_modified(VAMPIRE_STAT_TENACITY) / VAMPIRE_SP_MAXIMUM * 2) // Fortitude is granted at half points to max, meaning the scaling starts at 1, then reaches 2 at max.
 
-	user.physiology.brute_mod *= DMG_MOD
-	user.physiology.burn_mod *= DMG_MOD
+	user.physiology?.brute_mod *= DMG_MOD
+	user.physiology?.burn_mod *= DMG_MOD
 
 	user.add_movespeed_modifier(/datum/movespeed_modifier/vampire_fortitude)
 
@@ -41,13 +45,13 @@
 	to_chat(user, span_notice("You enhance your body past it's limits. No mortal may harm you now."))
 
 /datum/action/cooldown/vampire/fortitude/on_toggle_off()
-	user.physiology.brute_mod /= DMG_MOD
-	user.physiology.burn_mod /= DMG_MOD
+	user.physiology?.brute_mod /= DMG_MOD
+	user.physiology?.burn_mod /= DMG_MOD
 
 	user.remove_movespeed_modifier(/datum/movespeed_modifier/vampire_fortitude)
 
-	qdel(grey_flash_overlay)
 	user.vis_contents -= grey_flash_overlay
+	QDEL_NULL(grey_flash_overlay)
 
 	UnregisterSignal(user, COMSIG_MOB_APPLY_DAMAGE)
 
@@ -87,7 +91,7 @@
 
 	user.stamina.adjust(-STAMINA_MAX * 0.25) // Puts you above the stun threshold, but below the exhaustion threshold, thus inflicting the latter.
 
-	INVOKE_ASYNC(user, TYPE_PROC_REF(/mob, emote), "groan") // This is called by a signal.
+	INVOKE_ASYNC(user, TYPE_PROC_REF(/mob, emote), /datum/emote/living/groan::key) // This is called by a signal.
 
 	playsound(user, 'sound/effects/glassbr2.ogg', vol = 50, vary = TRUE)
 

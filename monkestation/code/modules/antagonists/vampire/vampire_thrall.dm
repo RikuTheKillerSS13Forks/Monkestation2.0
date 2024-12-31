@@ -43,8 +43,7 @@
 
 /// Returns a master index for the given vampire datum if they're one of your masters and 0 otherwise. Higher indexes have more authority over you.
 /datum/antagonist/vampire/thrall/proc/get_master_index(datum/antagonist/vampire/other_vampire)
-	var/index = masters[other_vampire]
-	return !isnull(index) ? index : 0
+	return masters[other_vampire] || 0
 
 /datum/antagonist/vampire/thrall/proc/de_thrall()
 	SIGNAL_HANDLER

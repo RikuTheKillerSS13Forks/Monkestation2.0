@@ -199,8 +199,8 @@
 		chest_covered ||= (equipped.body_parts_covered & CHEST) && (equipped.clothing_flags & STOPSPRESSUREDAMAGE)
 		head_covered ||= (equipped.body_parts_covered & HEAD) && (equipped.clothing_flags & STOPSPRESSUREDAMAGE)
 
-		if(head_covered && chest_covered) // good job, you get to live
-			return FALSE
+	if(head_covered && chest_covered) // good job, you get to live
+		return FALSE
 
 	return TRUE // good luck lmao
 
@@ -229,13 +229,11 @@
 	data["clan"] = clan_data
 
 	for(var/datum/vampire_ability/ability as anything in current_abilities)
-		var/list/ability_data = list()
-
-		ability_data["ability_name"] = ability.name
-		ability_data["ability_desc"] = ability.desc
-		ability_data["ability_icon"] = ability.granted_action?.button_icon_state
-
-		data["ability"] += list(ability_data)
+		data["ability"] += list(list(
+			"ability_name" = ability.name,
+			"ability_desc" = ability.desc,
+			"ability_icon" = ability.granted_action?.button_icon_state,
+		))
 
 	return data + ..()
 
@@ -253,4 +251,3 @@
 				return
 			assign_clan()
 			ui.send_full_update(force = TRUE)
-			return

@@ -47,9 +47,8 @@
 		return FALSE
 
 	var/list/stat_reqs = GLOB.vampire_abilities_reqs[ability_type]
-	if(islist(stat_reqs))
-		for(var/stat as anything in stat_reqs)
-			if(get_stat(stat) < stat_reqs[stat])
-				return FALSE
+	for(var/stat as anything in stat_reqs)
+		if(get_stat(stat) < stat_reqs[stat])
+			return FALSE
 
 	return TRUE

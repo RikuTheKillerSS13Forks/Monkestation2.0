@@ -11,8 +11,8 @@
 	update_cost()
 
 /datum/action/cooldown/vampire/mature/Destroy()
-	. = ..()
 	UnregisterSignal(vampire, COMSIG_VAMPIRE_RANK_CHANGED)
+	return ..()
 
 /datum/action/cooldown/vampire/mature/IsAvailable(feedback)
 	if(!..())
