@@ -13,7 +13,7 @@
 	UnregisterSignal(removed_from, list(COMSIG_CARBON_GAIN_WOUND, COMSIG_CARBON_LOSE_WOUND))
 
 /datum/action/cooldown/vampire/mend/IsAvailable(feedback)
-	if(!user || !length(user.all_wounds)) // throws a billion runtimes if you dont have an user check
+	if(!length(user?.all_wounds)) // throws a billion runtimes if you dont have an user check
 		if (feedback)
 			owner.balloon_alert(owner, "no wounds!")
 		return FALSE
