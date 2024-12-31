@@ -1,38 +1,6 @@
 /**
- * Roles
- */
-#define ROLE_VAMPIRE "Vampire"
-#define ROLE_VAMPIRICACCIDENT "Vampiric Accident"
-
-/**
- * Traits
- */
-/// Hides TRAIT_NOBLOOD if it's only from the same sources as TRAIT_FAKEBLOOD.
-#define TRAIT_FAKEBLOOD "fakeblood"
-/// Hides TRAIT_GENELESS if it's only from the same sources as TRAIT_FAKEGENES.
-#define TRAIT_FAKEGENES "fakegenes"
-/// Makes your skin pale grey.
-#define TRAIT_PALE_GREY_SKIN "pale_grey_skin"
-/// Trait for the vampire frenzy.
-#define TRAIT_VAMPIRE_FRENZY "vampire_frenzy"
-/// Granted by the "Defiance" ability. Makes you immune to most vampire weaknesses.
-#define TRAIT_VAMPIRE_DEFIANCE "vampire_defiance"
-/// Makes the mob immune to passing out from oxyloss.
-#define TRAIT_NOPASSOUT "nopassout"
-
-/**
- * Sources
- */
-/// Trait source for the vampire antag datum, these are cleared when the datum is removed so be careful.
-#define VAMPIRE_TRAIT "vampire_trait"
-
-/**
  * Macros
  */
-/// Returns whether a mob is a vampire.
-#define IS_VAMPIRE(mob) (mob?.mind?.has_antag_datum(/datum/antagonist/vampire))
-/// Returns whether a mob is a vampire thrall.
-#define IS_THRALL(mob) (mob?.mind?.has_antag_datum(/datum/antagonist/vampire/thrall))
 /// Returns a lifeforce change source for the given action.
 #define VAMPIRE_CONSTANT_LIFEFORCE_COST(action) (action?.name + " constant lifeforce cost")
 
@@ -40,17 +8,17 @@
  * Lifeforce
  */
 /// The maximum amount of lifeforce a vampire can carry. This is a soft cap.
-#define LIFEFORCE_MAXIMUM LIFEFORCE_PER_HUMAN * 3
+#define LIFEFORCE_MAXIMUM (LIFEFORCE_PER_HUMAN * 3)
 /// How much lifeforce one human is roughly worth. Can vary wildly sometimes.
 #define LIFEFORCE_PER_HUMAN 100
 /// How much lifeforce is lost per second by default. 1 hr/human
-#define LIFEFORCE_DRAIN_BASE LIFEFORCE_PER_HUMAN / -3600
+#define LIFEFORCE_DRAIN_BASE (LIFEFORCE_PER_HUMAN / -3600)
 /// How much lifeforce it costs to enthrall someone.
-#define LIFEFORCE_THRALL LIFEFORCE_PER_HUMAN / 2
+#define LIFEFORCE_THRALL (LIFEFORCE_PER_HUMAN / 2)
 /// Multiply lifeforce by this to get an equivalent amount of blood.
-#define LIFEFORCE_TO_BLOOD BLOOD_VOLUME_NORMAL / LIFEFORCE_PER_HUMAN
+#define LIFEFORCE_TO_BLOOD (BLOOD_VOLUME_NORMAL / LIFEFORCE_PER_HUMAN)
 /// Multiply blood by this to get an equivalent amount of lifeforce.
-#define BLOOD_TO_LIFEFORCE LIFEFORCE_PER_HUMAN / BLOOD_VOLUME_NORMAL
+#define BLOOD_TO_LIFEFORCE (LIFEFORCE_PER_HUMAN / BLOOD_VOLUME_NORMAL)
 
 /**
  * Lifeforce Change Sources
@@ -67,7 +35,7 @@
 /// The amount of lifeforce ranking up costs initially.
 #define VAMPIRE_RANKUP_COST LIFEFORCE_PER_HUMAN
 /// The amount of extra lifeforce per rank that ranking up costs.
-#define VAMPIRE_RANKUP_SCALING LIFEFORCE_PER_HUMAN * 0.25
+#define VAMPIRE_RANKUP_SCALING (LIFEFORCE_PER_HUMAN * 0.25)
 
 /**
  * Stats

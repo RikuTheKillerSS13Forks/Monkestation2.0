@@ -34,7 +34,7 @@
 
 /datum/round_event_control/antagonist/solo/vampire/midround
 	typepath = /datum/round_event/antagonist/solo/vampire
-	antag_flag = ROLE_VAMPIRICACCIDENT
+	antag_flag = ROLE_VAMPIRIC_ACCIDENT
 	name = "Vampiric Accident"
 	prompted_picking = TRUE
 	max_occurrences = 1

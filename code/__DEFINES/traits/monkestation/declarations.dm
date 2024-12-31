@@ -61,6 +61,18 @@
 #define TRAIT_CUFF_BREAKER "cuff_breaker"
 /// For when a mob has been consumed by a zombie
 #define TRAIT_ZOMBIE_CONSUMED "zombie_consumed"
+/// Hides TRAIT_NOBLOOD if it's only from the same sources as TRAIT_FAKEBLOOD.
+#define TRAIT_FAKEBLOOD "fakeblood"
+/// Hides TRAIT_GENELESS if it's only from the same sources as TRAIT_FAKEGENES.
+#define TRAIT_FAKEGENES "fakegenes"
+/// Makes your skin pale grey.
+#define TRAIT_PALE_GREY_SKIN "pale_grey_skin"
+/// Trait for the vampire frenzy.
+#define TRAIT_VAMPIRE_FRENZY "vampire_frenzy"
+/// Granted by the "Defiance" ability. Makes you immune to most vampire weaknesses.
+#define TRAIT_VAMPIRE_DEFIANCE "vampire_defiance"
+/// Makes the mob immune to passing out from oxyloss.
+#define TRAIT_NOPASSOUT "nopassout"
 
 // /datum/mind + /mob/living
 /// Prevents the user from casting spells using sign language. Works on both /datum/mind and /mob/living.
