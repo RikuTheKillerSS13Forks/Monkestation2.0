@@ -74,8 +74,8 @@ const VampireIntro = () => {
         <Section fill>
           <Stack vertical>
             <Stack.Item textColor="red" fontSize="20px">
-              You are a vampire, an undead blood-seeking monster living
-              aboard the station.
+              You are a vampire, an undead blood-seeking monster living aboard
+              the station.
             </Stack.Item>
             <Stack.Item>
               <ObjectivePrintout
@@ -91,23 +91,26 @@ const VampireIntro = () => {
           <Stack vertical>
             <Stack.Item>
               <span>
-                You slowly recover from injuries and depend on the lifeforce
-                of living sapients to sustain yourself. Don&apos;t abstain from
+                You slowly recover from injuries and depend on the lifeforce of
+                living sapients to sustain yourself. Don&apos;t abstain from
                 indulging in blood for too long, or else you&apos;ll
               </span>
               <span className={'color-red'}> turn to dust!</span>
-              <br /><br />
+              <br />
+              <br />
               <span>
-                Your appearance and lack of blood or genes are your defining traits.
-                Masquerade can be used to disguise yourself as a mortal, at a cost.
+                Your appearance and lack of blood or genes are your defining
+                traits. Masquerade can be used to disguise yourself as a mortal,
+                at a cost.
               </span>
-              <br /><br />
+              <br />
+              <br />
               <span>
-                Avoid being detected by the masses, or else the crew
-                may obtain countermeasures such as garlic or silver.
-                You can strategically convert others to your cause
-                to sew disarray into the upper ranks. Just make sure
-                to keep your thralls in check until they mature.
+                Avoid being detected by the masses, or else the crew may obtain
+                countermeasures such as garlic or silver. You can strategically
+                convert others to your cause to sew disarray into the upper
+                ranks. Just make sure to keep your thralls in check until they
+                mature.
               </span>
             </Stack.Item>
           </Stack>
@@ -117,9 +120,11 @@ const VampireIntro = () => {
         <Section fill title="Items">
           <Stack vertical>
             <Stack.Item>
-              You can rest in a <b>coffin</b> to recover from more gruesome injuries.
+              You can rest in a <b>coffin</b> to recover from more gruesome
+              injuries.
               <br />
-              If you lack adequate protection, <b>starlight</b> will burn you to death.
+              If you lack adequate protection, <b>starlight</b> will burn you to
+              death.
             </Stack.Item>
             <Stack.Item>
               <Section textAlign="center" textColor="red" fontSize="20px">
@@ -177,9 +182,7 @@ const VampireClan = (props: any) => {
           <Stack.Item fontSize="20px" textAlign="center">
             You are part of the {clan.clan_name}
           </Stack.Item>
-          <Stack.Item fontSize="16px">
-            {clan.clan_desc}
-          </Stack.Item>
+          <Stack.Item fontSize="16px">{clan.clan_desc}</Stack.Item>
         </Section>
         <AbilitySection />
       </Stack.Item>
@@ -194,7 +197,10 @@ const AbilitySection = (props: any) => {
     return <Section minHeight="220px" />;
   }
 
-  const [selectedAbility, setSelectedAbility] = useLocalState('ability', ability[0]);
+  const [selectedAbility, setSelectedAbility] = useLocalState(
+    'ability',
+    ability[0],
+  );
 
   return (
     <Section
@@ -218,7 +224,8 @@ const AbilitySection = (props: any) => {
             options={ability.map((abilities) => abilities.ability_name)}
             onSelected={(abilityName: string) =>
               setSelectedAbility(
-                ability.find((p) => p.ability_name === abilityName) || ability[0],
+                ability.find((p) => p.ability_name === abilityName) ||
+                  ability[0],
               )
             }
           />
