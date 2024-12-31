@@ -176,6 +176,7 @@ const VampireClan = (props: any) => {
             src={resolveAsset(`vampire.${clan.clan_icon}.png`)}
             style={{
               '-ms-interpolation-mode': 'nearest-neighbor',
+              'image-rendering': 'pixelated',
               position: 'absolute',
             }}
           />
