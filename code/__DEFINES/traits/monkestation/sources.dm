@@ -16,8 +16,6 @@
 #define STARGAZER_TRAIT "stargazer"
 /// Trait source for the vanguard scripture
 #define VANGUARD_TRAIT "vanguard"
-/// Source trait for bloodsucker mesmerization.
-#define MESMERIZED_TRAIT "mesmerized_trait"
 /// Trait source for monster hunters.
 #define HUNTER_TRAIT "monsterhunter_trait"
 /// Source trait for slashers.

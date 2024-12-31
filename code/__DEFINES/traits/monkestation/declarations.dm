@@ -77,7 +77,7 @@
 // /datum/mind + /mob/living
 /// Prevents the user from casting spells using sign language. Works on both /datum/mind and /mob/living.
 #define TRAIT_CANT_SIGN_SPELLS	"cant_sign_spells"
-/// You have special interactions with bloodsuckers and the occult.
+/// You have special interactions with the occult.
 #define TRAIT_OCCULTIST			"occultist"
 
 // /datum/mind
