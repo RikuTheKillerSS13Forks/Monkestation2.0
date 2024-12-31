@@ -1,4 +1,5 @@
 /datum/status_effect/vampire
+	id = STATUS_EFFECT_ID_ABSTRACT
 	status_type = STATUS_EFFECT_MULTIPLE // helps with body swaps, accidentally dusting the wrong mob via thirst would be disasterous
 	show_duration = TRUE // this is the whole point of these
 	/// The vampire antag datum of the user afflicted by this status effect.
