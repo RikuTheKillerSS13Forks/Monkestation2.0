@@ -15,6 +15,10 @@
 		TRAIT_NOBREATH,
 		TRAIT_STABLEHEART,
 		TRAIT_GENELESS,
+		TRAIT_ANALGESIA
+		TRAIT_ABATES_SHOCK,
+		TRAIT_NO_PAIN_EFFECTS,
+		TRAIT_NO_SHOCK_BUILDUP,
 	)
 
 	/// Traits that vampires only have while out of masquerade.

@@ -46,13 +46,13 @@
 	SHOULD_CALL_PARENT(TRUE)
 
 	is_active = TRUE
-	build_all_button_icons(UPDATE_BUTTON_STATUS)
+	build_all_button_icons(UPDATE_BUTTON_BACKGROUND)
 
 /datum/action/cooldown/vampire/proc/toggle_off()
 	SHOULD_CALL_PARENT(TRUE)
 
 	is_active = FALSE
-	build_all_button_icons(UPDATE_BUTTON_STATUS)
+	build_all_button_icons(UPDATE_BUTTON_BACKGROUND)
 
 /datum/action/cooldown/vampire/is_action_active(atom/movable/screen/movable/action_button/current_button)
-	return ..() && is_active
+	return ..() || is_active

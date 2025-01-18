@@ -1,6 +1,7 @@
 /datum/action/cooldown/vampire/regeneration
 	name = "Regeneration"
 	desc = "Greatly increase your rate of recovery."
+	button_icon_state = "power_recup"
 	is_toggleable = TRUE
 	is_active = TRUE
 
