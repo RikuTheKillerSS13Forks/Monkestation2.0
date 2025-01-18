@@ -48,6 +48,10 @@
 
 	START_PROCESSING(SSprocessing, src)
 
+	// ACTION TESTING CODE, REPLACE LATER
+	var/datum/action/cooldown/vampire/regeneration/regeneration_action = new(src)
+	regeneration_action.Grant(user)
+
 /datum/antagonist/vampire/remove_innate_effects(mob/living/mob_override)
 	. = ..()
 

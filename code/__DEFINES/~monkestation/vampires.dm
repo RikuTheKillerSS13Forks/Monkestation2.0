@@ -1,3 +1,6 @@
+#define IS_VAMPIRE(mob) (mob?.mind?.has_antag_datum(/datum/antagonist/vampire))
+#define IS_THRALL(mob) (mob?.mind?.has_antag_datum(/datum/antagonist/vampire/thrall))
+
 /// The maximum amount of lifeforce a vampire can have.
 #define LIFEFORCE_MAXIMUM 200
 
