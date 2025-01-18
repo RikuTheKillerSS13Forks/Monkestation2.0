@@ -6503,7 +6503,7 @@
 #include "monkestation\code\modules\antagonists\vampires\vampire_lifeforce.dm"
 #include "monkestation\code\modules\antagonists\vampires\vampire_masquerade.dm"
 #include "monkestation\code\modules\antagonists\vampires\vampire_process.dm"
-#include "monkestation\code\modules\antagonists\vampires\abilities\vampire_ability.dm"
+#include "monkestation\code\modules\antagonists\vampires\abilities\vampire_action.dm"
 #include "monkestation\code\modules\antagonists\vampires\abilities\innate\regeneration.dm"
 #include "monkestation\code\modules\antagonists\wizard\wizard.dm"
 #include "monkestation\code\modules\antagonists\wizard\equipment\artefact.dm"
