@@ -19,6 +19,7 @@
 #define ROLE_CLOCK_CULTIST "Clock Cultist" //monkestation edit
 #define ROLE_OPFOR_CANDIDATE "OPFOR Candidate"
 #define ROLE_ASSAULT_OPERATIVE "Assault Operative"
+#define ROLE_VAMPIRE "Vampire" // monkestation edit
 
 // Midround roles
 #define ROLE_ABDUCTOR "Abductor"
@@ -48,6 +49,7 @@
 #define ROLE_FLORIDA_MAN "Florida Man"
 #define ROLE_SLASHER "Slasher"
 #define ROLE_MONSTERHUNTER "Monster Hunter"
+#define ROLE_VAMPIRE_MIDROUND "Vampire (Midround)"
 
 // Latejoin roles
 #define ROLE_HERETIC_SMUGGLER "Heretic Smuggler"

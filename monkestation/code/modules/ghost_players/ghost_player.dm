@@ -21,7 +21,7 @@ GLOBAL_VAR_INIT(disable_ghost_spawning, FALSE)
 	///are we dueling?
 	var/dueling = FALSE
 
-/mob/living/carbon/human/ghost/death(gibbed)
+/mob/living/carbon/human/ghost/death(gibbed, cause_of_death)
 	. = ..()
 	life_or_death()
 

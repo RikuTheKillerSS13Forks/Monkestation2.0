@@ -108,6 +108,7 @@
 #define ORGAN_SLOT_STORAGE_CAVITY "storage_cavity" // monkestation edit
 #define ORGAN_SLOT_THRUSTERS "thrusters"
 #define ORGAN_SLOT_TONGUE "tongue"
+#define ORGAN_SLOT_VAMPIRE_FLESH_BUD "vampire_flesh_bud" // monkestation edit
 #define ORGAN_SLOT_VOICE "vocal_cords"
 #define ORGAN_SLOT_ZOMBIE "zombie_infection"
 #define ORGAN_SLOT_BUTT "butt"

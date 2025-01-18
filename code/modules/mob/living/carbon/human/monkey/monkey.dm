@@ -94,7 +94,7 @@ GLOBAL_DATUM(the_one_and_only_punpun, /mob/living/carbon/human/species/monkey/pu
 
 	return ..()
 
-/mob/living/carbon/human/species/monkey/punpun/death(gibbed)
+/mob/living/carbon/human/species/monkey/punpun/death(gibbed, cause_of_death) // monkestation edit
 	if(!memory_saved)
 		Write_Memory(TRUE, gibbed)
 
