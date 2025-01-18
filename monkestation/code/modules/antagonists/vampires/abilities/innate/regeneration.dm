@@ -6,13 +6,15 @@
 
 /datum/action/cooldown/vampire/regeneration/toggle_on()
 	. = ..()
-	START_PROCESSING(SSprocessing, src)
+	RegisterSignal(user, COMSIG_LIVING_LIFE, PROC_REF(on_life))
 
 /datum/action/cooldown/vampire/regeneration/toggle_off()
 	. = ..()
-	STOP_PROCESSING(SSprocessing, src)
+	UnregisterSignal(user, COMSIG_LIVING_LIFE)
 
-/datum/action/cooldown/vampire/regeneration/process(seconds_per_tick)
+/datum/action/cooldown/vampire/regeneration/proc/on_life(datum/source, seconds_per_tick, times_fired)
+	SIGNAL_HANDLER
+
 	if (antag_datum.masquerade_enabled)
 		return
 
