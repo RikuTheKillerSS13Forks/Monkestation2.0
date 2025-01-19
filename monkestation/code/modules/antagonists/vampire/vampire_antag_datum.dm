@@ -31,9 +31,12 @@
 		// add fake blood and fake genes here later
 	)
 
+/datum/antagonist/vampire/greet()
+	. = ..()
+	owner.current?.playsound_local(get_turf(owner.current), 'monkestation/sound/vampires/vampire_alert.ogg', vol = 100, vary = FALSE)
+
 /datum/antagonist/vampire/apply_innate_effects(mob/living/mob_override)
 	. = ..()
-
 	var/mob/living/target = mob_override || owner.current
 
 	if (!ishuman(target))
@@ -57,7 +60,6 @@
 
 /datum/antagonist/vampire/remove_innate_effects(mob/living/mob_override)
 	. = ..()
-
 	var/mob/living/target = mob_override || owner.current
 
 	if (!ishuman(target))
