@@ -1,18 +1,17 @@
 /datum/antagonist/vampire
 	var/masquerade_enabled = TRUE
 
-/datum/antagonist/vampire/proc/enable_masquerade(forced = FALSE)
-	if (masquerade_enabled && !forced)
+/datum/antagonist/vampire/proc/set_masquerade(state, forced = FALSE)
+	if (masquerade_enabled == state && !forced)
 		return
 
-	masquerade_enabled = TRUE
-	user.add_traits(masquerade_traits, REF(src))
-	user.remove_traits(visible_traits, REF(src))
+	masquerade_enabled = state
 
-/datum/antagonist/vampire/proc/disable_masquerade(forced = FALSE)
-	if (!masquerade_enabled && !forced)
-		return
+	if (masquerade_enabled)
+		user.add_traits(masquerade_traits, REF(src))
+		user.remove_traits(visible_traits, REF(src))
+	else
+		user.add_traits(visible_traits, REF(src))
+		user.remove_traits(masquerade_traits, REF(src))
 
-	masquerade_enabled = FALSE
-	user.add_traits(visible_traits, REF(src))
-	user.remove_traits(masquerade_traits, REF(src))
+	SEND_SIGNAL(src, COMSIG_VAMPIRE_MASQUERADE)

@@ -15,7 +15,7 @@
 		TRAIT_NOBREATH,
 		TRAIT_STABLEHEART,
 		TRAIT_GENELESS,
-		TRAIT_ANALGESIA
+		TRAIT_ANALGESIA,
 		TRAIT_ABATES_SHOCK,
 		TRAIT_NO_PAIN_EFFECTS,
 		TRAIT_NO_SHOCK_BUILDUP,
@@ -45,16 +45,15 @@
 
 	user.add_traits(innate_traits, REF(src))
 
-	if (masquerade_enabled)
-		enable_masquerade(forced = TRUE)
-	else
-		disable_masquerade(forced = TRUE)
+	set_masquerade(masquerade_enabled, forced = TRUE)
 
 	START_PROCESSING(SSprocessing, src)
 
 	// ACTION TESTING CODE, REPLACE LATER
 	var/datum/action/cooldown/vampire/regeneration/regeneration_action = new(src)
 	regeneration_action.Grant(user)
+	var/datum/action/cooldown/vampire/masquerade/masquerade_action = new(src)
+	masquerade_action.Grant(user)
 
 /datum/antagonist/vampire/remove_innate_effects(mob/living/mob_override)
 	. = ..()

@@ -18,9 +18,16 @@
 	var/is_toggleable = FALSE
 	var/is_active = FALSE
 
+	/// These are defined in 'code/_DEFINES/monkestation~/vampires.dm'
+	var/vampire_check_flags = VAMPIRE_AC_LIFEFORCE | VAMPIRE_AC_FRENZY | VAMPIRE_AC_MASQUERADE
+
+	/// The amount of lifeforce this costs to activate.
+	var/lifeforce_cost = 0
+
 /datum/action/cooldown/vampire/New(Target, original)
 	. = ..()
 	antag_datum = Target
+	RegisterSignal(antag_datum, COMSIG_VAMPIRE_MASQUERADE, PROC_REF(on_masquerade))
 
 /datum/action/cooldown/vampire/Grant(mob/granted_to)
 	. = ..()
@@ -34,6 +41,23 @@
 	. = ..()
 	user = null
 
+/datum/action/cooldown/vampire/IsAvailable(feedback)
+	. = ..()
+	if (is_toggleable && is_active)
+		return
+	if ((vampire_check_flags & VAMPIRE_AC_LIFEFORCE) && lifeforce_cost > antag_datum.current_lifeforce)
+		if (feedback)
+			user.balloon_alert(user, "not enough lifeforce!")
+		return FALSE
+	if ((vampire_check_flags & VAMPIRE_AC_MASQUERADE) && antag_datum.masquerade_enabled)
+		if (feedback)
+			user.balloon_alert(user, "not while in masquerade!")
+		return FALSE
+	if ((vampire_check_flags & VAMPIRE_AC_FRENZY) && antag_datum.current_lifeforce <= 0)
+		if (feedback)
+			user.balloon_alert(user, "not while in a frenzy!")
+		return FALSE
+
 /datum/action/cooldown/vampire/Activate(atom/target)
 	. = ..()
 	if (is_toggleable)
@@ -43,16 +67,22 @@
 			toggle_on()
 
 /datum/action/cooldown/vampire/proc/toggle_on()
-	SHOULD_CALL_PARENT(TRUE)
-
 	is_active = TRUE
 	build_all_button_icons(UPDATE_BUTTON_BACKGROUND)
 
 /datum/action/cooldown/vampire/proc/toggle_off()
-	SHOULD_CALL_PARENT(TRUE)
-
 	is_active = FALSE
 	build_all_button_icons(UPDATE_BUTTON_BACKGROUND)
 
 /datum/action/cooldown/vampire/is_action_active(atom/movable/screen/movable/action_button/current_button)
 	return ..() || is_active
+
+/datum/action/cooldown/vampire/proc/on_masquerade()
+	SIGNAL_HANDLER
+	if ((vampire_check_flags & VAMPIRE_AC_MASQUERADE) && is_toggleable && is_active)
+		toggle_off()
+
+/datum/action/cooldown/vampire/proc/on_lifeforce_changed(datum/source, new_amount, old_amount)
+	SIGNAL_HANDLER
+	if ((vampire_check_flags & VAMPIRE_AC_FRENZY) && is_toggleable && is_active)
+		toggle_off()

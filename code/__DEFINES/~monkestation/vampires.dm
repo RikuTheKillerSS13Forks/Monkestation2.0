@@ -15,3 +15,10 @@
 
 /// The amount of lifeforce that a vampire loses per second by default.
 #define LIFEFORCE_THIRST (LIFEFORCE_PER_HUMAN / 3600)
+
+/// The ability checks whether the vampire has enough lifeforce to use it.
+#define VAMPIRE_AC_LIFEFORCE (1 << 0)
+/// The ability can't be used while using masquerade.
+#define VAMPIRE_AC_MASQUERADE (1 << 1)
+/// The ability can't be used while in a frenzy.
+#define VAMPIRE_AC_FRENZY (1 << 2)

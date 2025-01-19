@@ -2,8 +2,12 @@
 	name = "Regeneration"
 	desc = "Greatly increase your rate of recovery."
 	button_icon_state = "power_recup"
+
 	is_toggleable = TRUE
 	is_active = TRUE
+
+	check_flags = NONE
+	vampire_check_flags = NONE
 
 /datum/action/cooldown/vampire/regeneration/toggle_on()
 	. = ..()
@@ -16,7 +20,7 @@
 /datum/action/cooldown/vampire/regeneration/proc/on_life(datum/source, seconds_per_tick, times_fired)
 	SIGNAL_HANDLER
 
-	if (antag_datum.masquerade_enabled)
+	if (antag_datum.masquerade_enabled || antag_datum.current_lifeforce <= 0)
 		return
 
 	var/regen_rate = seconds_per_tick
