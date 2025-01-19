@@ -43,4 +43,4 @@
 	var/total_healing = brute_healing + burn_healing + toxin_healing
 	if (total_healing)
 		user.updatehealth()
-		antag_datum.adjust_lifeforce(total_healing * -0.5)
+		antag_datum.adjust_lifeforce(total_healing * -0.3)
