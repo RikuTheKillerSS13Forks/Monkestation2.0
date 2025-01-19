@@ -1,6 +1,7 @@
 /datum/action/cooldown/vampire/masquerade
 	name = "Masquerade"
 	desc = "Hide your undead presence from the mortals."
+	button_icon_state = "power_human"
 	cooldown_time = 5 SECONDS
 	is_toggleable = TRUE
 	vampire_check_flags = VAMPIRE_AC_FRENZY
