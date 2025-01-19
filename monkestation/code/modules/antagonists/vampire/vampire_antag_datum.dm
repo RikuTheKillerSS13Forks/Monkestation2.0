@@ -81,6 +81,8 @@
 
 	STOP_PROCESSING(SSprocessing, src)
 
+	delete_hud()
+
 /// Turns the given target into a thrall subservient to us.
 /datum/antagonist/vampire/proc/enthrall(mob/living/carbon/human/target)
 	if (!istype(target) || !target.mind)
