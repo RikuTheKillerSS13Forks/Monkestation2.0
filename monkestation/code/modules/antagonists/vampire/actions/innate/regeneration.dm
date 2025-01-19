@@ -28,12 +28,19 @@
 	if (IS_THRALL(user))
 		regen_rate *= 0.5
 
-	var/damage_change = 0
+	var/brute_healing = min(user.getBruteLoss(), regen_rate * 0.5)
+	if (brute_healing)
+		user.adjustBruteLoss(brute_healing * -0.5, updating_health = FALSE)
 
-	damage_change += user.adjustBruteLoss(regen_rate * -0.5, updating_health = FALSE)
-	damage_change += user.adjustFireLoss(regen_rate * -0.5, updating_health = FALSE)
-	damage_change += user.adjustToxLoss(regen_rate * -0.2, updating_health = FALSE, forced = TRUE)
+	var/burn_healing = min(user.getFireLoss(), regen_rate * 0.5)
+	if (burn_healing)
+		user.adjustFireLoss(burn_healing * -0.5, updating_health = FALSE)
 
-	if (damage_change)
+	var/toxin_healing = min(user.getToxLoss(), regen_rate * 0.2)
+	if (toxin_healing)
+		user.adjustToxLoss(toxin_healing * -0.5, updating_health = FALSE)
+
+	var/total_healing = brute_healing + burn_healing + toxin_healing
+	if (total_healing)
 		user.updatehealth()
-		antag_datum.adjust_lifeforce(damage_change * 0.5) // Damage change is negative, so we just halve it to get the lifeforce cost.
+		antag_datum.adjust_lifeforce(total_healing * -0.5)
