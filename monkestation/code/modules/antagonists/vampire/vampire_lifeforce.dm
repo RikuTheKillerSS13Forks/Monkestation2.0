@@ -9,6 +9,7 @@
 
 	if (current_lifeforce != old_lifeforce)
 		SEND_SIGNAL(src, COMSIG_VAMPIRE_LIFEFORCE_CHANGED, current_lifeforce, old_lifeforce)
+		update_hud()
 
 /datum/antagonist/vampire/proc/adjust_lifeforce(amount)
 	set_lifeforce(current_lifeforce + amount)

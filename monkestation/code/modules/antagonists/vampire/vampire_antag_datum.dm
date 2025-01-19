@@ -55,6 +55,11 @@
 
 	START_PROCESSING(SSprocessing, src)
 
+	if (user.hud_used)
+		create_hud()
+	else
+		RegisterSignal(user, COMSIG_MOB_HUD_CREATED, PROC_REF(create_hud))
+
 	// ACTION TESTING CODE, REPLACE LATER
 	var/datum/action/cooldown/vampire/regeneration/regeneration_action = new(src)
 	regeneration_action.Grant(user)

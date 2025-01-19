@@ -30,15 +30,15 @@
 
 	var/brute_healing = min(user.getBruteLoss(), regen_rate * 0.5)
 	if (brute_healing)
-		user.adjustBruteLoss(brute_healing * -0.5, updating_health = FALSE)
+		user.adjustBruteLoss(-brute_healing, updating_health = FALSE)
 
 	var/burn_healing = min(user.getFireLoss(), regen_rate * 0.5)
 	if (burn_healing)
-		user.adjustFireLoss(burn_healing * -0.5, updating_health = FALSE)
+		user.adjustFireLoss(-burn_healing, updating_health = FALSE)
 
 	var/toxin_healing = min(user.getToxLoss(), regen_rate * 0.2)
 	if (toxin_healing)
-		user.adjustToxLoss(toxin_healing * -0.5, updating_health = FALSE)
+		user.adjustToxLoss(-toxin_healing, updating_health = FALSE)
 
 	var/total_healing = brute_healing + burn_healing + toxin_healing
 	if (total_healing)

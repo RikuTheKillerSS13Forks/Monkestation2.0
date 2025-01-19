@@ -6502,6 +6502,7 @@
 #include "monkestation\code\modules\antagonists\vampire\thrall_antag_datum.dm"
 #include "monkestation\code\modules\antagonists\vampire\vampire_antag_datum.dm"
 #include "monkestation\code\modules\antagonists\vampire\vampire_flesh_bud.dm"
+#include "monkestation\code\modules\antagonists\vampire\vampire_hud.dm"
 #include "monkestation\code\modules\antagonists\vampire\vampire_lifeforce.dm"
 #include "monkestation\code\modules\antagonists\vampire\vampire_masquerade.dm"
 #include "monkestation\code\modules\antagonists\vampire\vampire_process.dm"

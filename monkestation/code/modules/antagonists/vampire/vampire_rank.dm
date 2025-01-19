@@ -10,3 +10,5 @@
 		ultimate_ability_points++
 	else
 		normal_ability_points++
+
+	update_hud()

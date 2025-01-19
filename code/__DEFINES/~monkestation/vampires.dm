@@ -3,16 +3,12 @@
 
 /// The maximum amount of lifeforce a vampire can have.
 #define LIFEFORCE_MAXIMUM 200
-
 /// The amount of lifeforce a vampire gets from one human.
 #define LIFEFORCE_PER_HUMAN 100
-
 /// Multiply lifeforce by this to get blood.
 #define LIFEFORCE_TO_BLOOD (BLOOD_VOLUME_NORMAL / LIFEFORCE_PER_HUMAN)
-
 /// Multiply blood by this to get lifeforce.
 #define BLOOD_TO_LIFEFORCE (LIFEFORCE_PER_HUMAN / BLOOD_VOLUME_NORMAL)
-
 /// The amount of lifeforce that a vampire loses per second by default.
 #define LIFEFORCE_THIRST (LIFEFORCE_PER_HUMAN / 3600)
 
