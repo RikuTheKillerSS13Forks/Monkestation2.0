@@ -20,6 +20,8 @@
 		TRAIT_NO_PAIN_EFFECTS,
 		TRAIT_NO_SHOCK_BUILDUP,
 		TRAIT_NOCRITDAMAGE,
+		TRAIT_RESISTCOLD,
+		TRAIT_NO_ORGAN_DECAY,
 	)
 
 	/// Traits that vampires only have while out of masquerade.
