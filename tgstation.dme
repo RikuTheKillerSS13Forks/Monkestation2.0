@@ -5983,6 +5983,7 @@
 #include "monkestation\code\datums\elements\loomable.dm"
 #include "monkestation\code\datums\elements\trash_if_empty.dm"
 #include "monkestation\code\datums\elements\uncompressed_storage.dm"
+#include "monkestation\code\datums\elements\vampire_skin.dm"
 #include "monkestation\code\datums\ert\moff_inspectors.dm"
 #include "monkestation\code\datums\id_trim\jobs.dm"
 #include "monkestation\code\datums\id_trim\outfits.dm"
