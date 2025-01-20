@@ -28,6 +28,11 @@
 	. = ..()
 	antag_datum = Target
 	RegisterSignal(antag_datum, COMSIG_VAMPIRE_MASQUERADE, PROC_REF(on_masquerade))
+	RegisterSignal(antag_datum, COMSIG_VAMPIRE_LIFEFORCE_CHANGED, PROC_REF(on_lifeforce_changed))
+
+/datum/action/cooldown/vampire/Destroy()
+	UnregisterSignal(antag_datum, list(COMSIG_VAMPIRE_MASQUERADE, COMSIG_VAMPIRE_LIFEFORCE_CHANGED))
+	return ..()
 
 /datum/action/cooldown/vampire/Grant(mob/granted_to)
 	. = ..()
@@ -85,8 +90,12 @@
 	SIGNAL_HANDLER
 	if ((vampire_check_flags & VAMPIRE_AC_MASQUERADE) && is_toggleable && is_active)
 		toggle_off()
+	if ((vampire_check_flags & VAMPIRE_AC_MASQUERADE))
+		build_all_button_icons(UPDATE_BUTTON_STATUS)
 
 /datum/action/cooldown/vampire/proc/on_lifeforce_changed(datum/source, new_amount, old_amount)
 	SIGNAL_HANDLER
 	if ((vampire_check_flags & VAMPIRE_AC_FRENZY) && is_toggleable && is_active)
 		toggle_off()
+	if ((vampire_check_flags & (VAMPIRE_AC_LIFEFORCE | VAMPIRE_AC_FRENZY)))
+		build_all_button_icons(UPDATE_BUTTON_STATUS)

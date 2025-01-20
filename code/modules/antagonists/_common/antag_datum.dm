@@ -151,7 +151,13 @@ GLOBAL_LIST_EMPTY(antagonists)
 
 /datum/action/antag_info/New(Target)
 	. = ..()
+	name = update_antag_name() // monkestation edit
+
+// MONKESTATION ADDITION START
+/datum/action/antag_info/proc/update_antag_name()
 	name = "Open [target] Information:"
+	build_all_button_icons(UPDATE_BUTTON_NAME)
+// MONKESTATION ADDITION END
 
 /datum/action/antag_info/Trigger(trigger_flags)
 	. = ..()
