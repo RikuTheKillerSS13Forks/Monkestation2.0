@@ -22,7 +22,9 @@
 
 /datum/antagonist/vampire/proc/create_hud()
 	SIGNAL_HANDLER
-	var/datum/hud/hud = user.hud_used
+	var/datum/hud/hud = user?.hud_used
+	if (!hud)
+		return
 
 	lifeforce_display = new
 	lifeforce_display.hud = hud
@@ -38,11 +40,12 @@
 	UnregisterSignal(user, COMSIG_MOB_HUD_CREATED)
 
 /datum/antagonist/vampire/proc/delete_hud()
-	if (!user.hud_used)
+	var/datum/hud/hud = user?.hud_used
+	if (!hud)
 		return
 
-	user.hud_used.infodisplay -= lifeforce_display
-	user.hud_used.infodisplay -= rank_display
+	hud.infodisplay -= lifeforce_display
+	hud.infodisplay -= rank_display
 
 	QDEL_NULL(lifeforce_display)
 	QDEL_NULL(rank_display)

@@ -65,30 +65,28 @@
 	else
 		RegisterSignal(user, COMSIG_MOB_HUD_CREATED, PROC_REF(create_hud))
 
-	for (var/datum/action/cooldown/vampire/action in current_abilities)
-		action = current_abilities[action] // It's an associative list of action types to action instances, remember that.
-		action.Grant(target)
+	for (var/action_type in current_abilities)
+		var/datum/action/cooldown/vampire/action = current_abilities[action_type]
+		action.Grant(user)
 
 /datum/antagonist/vampire/remove_innate_effects(mob/living/mob_override)
 	. = ..()
-	var/mob/living/target = mob_override || owner.current
-
-	if (!ishuman(target))
+	if (!user)
 		return
 
-	if (user && user == target)
-		user = null
+	for (var/datum/action/cooldown/vampire/action in user.actions)
+		action.Remove(user)
 
-	REMOVE_TRAITS_IN(target, REF(src))
+	set_masquerade(TRUE) // This removes the elements added by not being in masquerade, leaving only traits.
+	REMOVE_TRAITS_IN(user, REF(src)) // And this then clears the traits. This should also be after removing actions.
 
-	target.blood_volume = current_lifeforce * LIFEFORCE_TO_BLOOD // This has to be after we've removed TRAIT_NOBLOOD from our mob.
+	user.blood_volume = current_lifeforce * LIFEFORCE_TO_BLOOD // This has to be after we've removed TRAIT_NOBLOOD from our mob.
 
 	STOP_PROCESSING(SSprocessing, src)
 
 	delete_hud()
 
-	for (var/datum/action/cooldown/vampire/action in target.actions)
-		action.Remove(target)
+	user = null
 
 /// Turns the given target into a thrall subservient to us.
 /datum/antagonist/vampire/proc/enthrall(mob/living/carbon/human/target)

@@ -7,6 +7,8 @@
 
 /datum/action/cooldown/vampire/mature/IsAvailable(feedback)
 	. = ..()
+	if (!.)
+		return
 	if (antag_datum.current_rank > 0 && !antag_datum.clan)
 		if (feedback)
 			user.balloon_alert("form a clan vow!")

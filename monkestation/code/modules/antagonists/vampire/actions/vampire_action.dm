@@ -43,8 +43,10 @@
 
 /datum/action/cooldown/vampire/IsAvailable(feedback)
 	. = ..()
-	if (is_toggleable && is_active)
+	if (!.)
 		return
+	if (is_toggleable && is_active)
+		return TRUE
 	if ((vampire_check_flags & VAMPIRE_AC_LIFEFORCE) && lifeforce_cost > antag_datum.current_lifeforce)
 		if (feedback)
 			user.balloon_alert(user, "not enough lifeforce!")
