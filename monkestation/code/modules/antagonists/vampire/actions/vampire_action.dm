@@ -60,6 +60,8 @@
 
 /datum/action/cooldown/vampire/Activate(atom/target)
 	. = ..()
+	if (lifeforce_cost && !(is_toggleable && is_active)) // Toggling off abilities doesn't cost any lifeforce.
+		antag_datum.adjust_lifeforce(-lifeforce_cost)
 	if (is_toggleable)
 		if (is_active)
 			toggle_off()

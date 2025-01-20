@@ -38,6 +38,11 @@
 	. = ..()
 	owner.current?.playsound_local(get_turf(owner.current), 'monkestation/sound/vampires/vampire_alert.ogg', vol = 100, vary = FALSE)
 
+/datum/antagonist/vampire/on_gain()
+	for (var/action_type in current_abilities)
+		grant_ability(action_type) // This will initialize the actions.
+	return ..()
+
 /datum/antagonist/vampire/apply_innate_effects(mob/living/mob_override)
 	. = ..()
 	var/mob/living/target = mob_override || owner.current
@@ -60,11 +65,9 @@
 	else
 		RegisterSignal(user, COMSIG_MOB_HUD_CREATED, PROC_REF(create_hud))
 
-	// ACTION TESTING CODE, REPLACE LATER
-	var/datum/action/cooldown/vampire/regeneration/regeneration_action = new(src)
-	regeneration_action.Grant(user)
-	var/datum/action/cooldown/vampire/masquerade/masquerade_action = new(src)
-	masquerade_action.Grant(user)
+	for (var/datum/action/cooldown/vampire/action in current_abilities)
+		action = current_abilities[action] // It's an associative list of action types to action instances, remember that.
+		action.Grant(target)
 
 /datum/antagonist/vampire/remove_innate_effects(mob/living/mob_override)
 	. = ..()
@@ -73,7 +76,8 @@
 	if (!ishuman(target))
 		return
 
-	user = null
+	if (user && user == target)
+		user = null
 
 	REMOVE_TRAITS_IN(target, REF(src))
 
@@ -82,6 +86,9 @@
 	STOP_PROCESSING(SSprocessing, src)
 
 	delete_hud()
+
+	for (var/datum/action/cooldown/vampire/action in target.actions)
+		action.Remove(target)
 
 /// Turns the given target into a thrall subservient to us.
 /datum/antagonist/vampire/proc/enthrall(mob/living/carbon/human/target)

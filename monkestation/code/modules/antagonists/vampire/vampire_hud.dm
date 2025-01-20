@@ -61,7 +61,7 @@
 
 	lifeforce_display?.maptext = FORMAT_VAMPIRE_HUD_TEXT(current_lifeforce, color)
 
-	color = BlendRGB("#ffffff", "#c941ff", current_rank / 8) // Fix this to use the clan-specific max rank once clans are in.
+	color = BlendRGB("#ffffff", "#c941ff", current_rank / maximum_rank)
 
 	rank_display?.maptext = FORMAT_VAMPIRE_HUD_TEXT(current_rank, color)
 
