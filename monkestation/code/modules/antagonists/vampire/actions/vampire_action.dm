@@ -40,6 +40,8 @@
 	if (is_active)
 		toggle_on()
 
+	RegisterSignal(user, COMSIG_MOB_STATCHANGE, PROC_REF(on_stat_changed), override = TRUE) // This overrides the default stat change check.
+
 /datum/action/cooldown/vampire/Remove(mob/removed_from)
 	if (is_active)
 		toggle_off()
@@ -90,12 +92,16 @@
 	SIGNAL_HANDLER
 	if ((vampire_check_flags & VAMPIRE_AC_MASQUERADE) && is_toggleable && is_active)
 		toggle_off()
-	if ((vampire_check_flags & VAMPIRE_AC_MASQUERADE))
-		build_all_button_icons(UPDATE_BUTTON_STATUS)
+	build_all_button_icons(UPDATE_BUTTON_STATUS)
 
 /datum/action/cooldown/vampire/proc/on_lifeforce_changed(datum/source, new_amount, old_amount)
 	SIGNAL_HANDLER
 	if ((vampire_check_flags & VAMPIRE_AC_FRENZY) && is_toggleable && is_active)
 		toggle_off()
-	if ((vampire_check_flags & (VAMPIRE_AC_LIFEFORCE | VAMPIRE_AC_FRENZY)))
-		build_all_button_icons(UPDATE_BUTTON_STATUS)
+	build_all_button_icons(UPDATE_BUTTON_STATUS)
+
+/datum/action/cooldown/vampire/proc/on_stat_changed(datum/source, new_stat, old_stat)
+	SIGNAL_HANDLER
+	if ((check_flags & AB_CHECK_CONSCIOUS) && is_toggleable && is_active)
+		toggle_off()
+	build_all_button_icons(UPDATE_BUTTON_STATUS)

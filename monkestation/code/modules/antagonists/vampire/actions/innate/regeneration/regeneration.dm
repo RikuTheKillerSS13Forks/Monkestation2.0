@@ -28,19 +28,25 @@
 	if (IS_THRALL(user))
 		regen_rate *= 0.5
 
-	var/brute_healing = min(user.getBruteLoss(), regen_rate * 0.5)
+	var/brute_healing = min(user.getBruteLoss(), regen_rate * 2)
 	if (brute_healing)
 		user.adjustBruteLoss(-brute_healing, updating_health = FALSE)
 
-	var/burn_healing = min(user.getFireLoss(), regen_rate * 0.5)
+	var/burn_healing = min(user.getFireLoss(), regen_rate * 2)
 	if (burn_healing)
 		user.adjustFireLoss(-burn_healing, updating_health = FALSE)
 
-	var/toxin_healing = min(user.getToxLoss(), regen_rate * 0.2)
+	var/toxin_healing = min(user.getToxLoss(), regen_rate)
 	if (toxin_healing)
 		user.adjustToxLoss(-toxin_healing, updating_health = FALSE)
 
-	var/total_healing = brute_healing + burn_healing + toxin_healing
-	if (total_healing)
+	var/total_cost = (brute_healing + burn_healing + toxin_healing) * 0.02
+
+	if (total_cost)
 		user.updatehealth()
-		antag_datum.adjust_lifeforce(total_healing * 0.25)
+
+	total_cost += handle_limb_regrowth()
+	total_cost += handle_organ_regrowth()
+
+	if (total_cost)
+		antag_datum.adjust_lifeforce(-total_cost)
