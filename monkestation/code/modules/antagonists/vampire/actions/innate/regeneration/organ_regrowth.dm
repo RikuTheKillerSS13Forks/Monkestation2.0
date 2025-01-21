@@ -32,7 +32,7 @@
 
 	var/obj/item/organ/target_organ = new target_organ_type
 	target_organ.Insert(user, special = TRUE, drop_if_replaced = FALSE)
-	target_organ_type.set_organ_damage(0)
+	target_organ.set_organ_damage(0)
 
 	if (istype(target_organ, /obj/item/organ/internal/ears))
 		var/obj/item/organ/internal/ears/ears = target_organ
