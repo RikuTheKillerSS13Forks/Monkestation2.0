@@ -1,5 +1,5 @@
 /datum/antagonist/vampire/process(seconds_per_tick)
-	if(!user || user.stat == DEAD)
+	if(QDELETED(user) || user.stat == DEAD)
 		return
 
 	if (current_lifeforce <= 0 && !HAS_TRAIT(user, TRAIT_NODEATH))
