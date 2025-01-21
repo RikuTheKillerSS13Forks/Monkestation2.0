@@ -89,9 +89,9 @@
 
 /datum/action/cooldown/vampire/proc/on_masquerade()
 	SIGNAL_HANDLER
-	if ((vampire_check_flags & VAMPIRE_AC_MASQUERADE) && is_toggleable && is_active)
-		toggle_off()
-	if ((vampire_check_flags & VAMPIRE_AC_MASQUERADE))
+	if(vampire_check_flags & VAMPIRE_AC_MASQUERADE)
+		if(is_toggleable && is_active)
+			toggle_off()
 		build_all_button_icons(UPDATE_BUTTON_STATUS)
 
 /datum/action/cooldown/vampire/proc/on_lifeforce_changed(datum/source, new_amount, old_amount)
