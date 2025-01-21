@@ -32,6 +32,7 @@
 
 /datum/action/cooldown/vampire/Destroy()
 	UnregisterSignal(antag_datum, list(COMSIG_VAMPIRE_MASQUERADE, COMSIG_VAMPIRE_LIFEFORCE_CHANGED))
+	antag_datum = null
 	return ..()
 
 /datum/action/cooldown/vampire/Grant(mob/granted_to)
