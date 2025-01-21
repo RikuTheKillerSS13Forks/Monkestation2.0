@@ -23,7 +23,7 @@
 	if (antag_datum.masquerade_enabled || antag_datum.current_lifeforce <= 0)
 		return
 
-	var/regen_rate = seconds_per_tick
+	var/regen_rate = DELTA_WORLD_TIME(SSmobs) * 0.5 // SSmobs.wait = 2 SECONDS, so let's halve that to get a true seconds_per_tick delta
 
 	if (IS_THRALL(user))
 		regen_rate *= 0.5
@@ -38,7 +38,7 @@
 
 	var/toxin_healing = min(user.getToxLoss(), regen_rate)
 	if (toxin_healing)
-		user.adjustToxLoss(-toxin_healing, updating_health = FALSE)
+		user.adjustToxLoss(-toxin_healing, updating_health = FALSE, forced = TRUE)
 
 	var/total_cost = (brute_healing + burn_healing + toxin_healing) * 0.02
 
