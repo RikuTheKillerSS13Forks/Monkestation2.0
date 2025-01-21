@@ -38,7 +38,7 @@
 
 	var/toxin_healing = min(user.getToxLoss(), regen_rate * 0.2)
 	if (toxin_healing)
-		user.adjustToxLoss(-toxin_healing, updating_health = FALSE)
+		user.adjustToxLoss(-toxin_healing, updating_health = FALSE, forced = TRUE)
 
 	var/total_healing = brute_healing + burn_healing + toxin_healing
 	if (total_healing)
