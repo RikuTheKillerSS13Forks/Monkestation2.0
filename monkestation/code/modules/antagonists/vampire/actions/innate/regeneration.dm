@@ -23,7 +23,7 @@
 	if (antag_datum.masquerade_enabled || antag_datum.current_lifeforce <= 0)
 		return
 
-	var/regen_rate = seconds_per_tick
+	var/regen_rate = DELTA_WORLD_TIME(SSmobs) * 0.5 // SSmobs.wait = 2 SECONDS, so let's halve that to get a true seconds_per_tick delta
 
 	if (IS_THRALL(user))
 		regen_rate *= 0.5
