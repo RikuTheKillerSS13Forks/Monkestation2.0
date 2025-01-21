@@ -91,18 +91,18 @@
 
 /datum/action/cooldown/vampire/proc/on_masquerade()
 	SIGNAL_HANDLER
-	if ((vampire_check_flags & VAMPIRE_AC_MASQUERADE) && is_toggleable && is_active)
+	if ((vampire_check_flags & VAMPIRE_AC_MASQUERADE) && antag_datum.masquerade_enabled && is_toggleable && is_active)
 		toggle_off()
 	build_all_button_icons(UPDATE_BUTTON_STATUS)
 
 /datum/action/cooldown/vampire/proc/on_lifeforce_changed(datum/source, new_amount, old_amount)
 	SIGNAL_HANDLER
-	if ((vampire_check_flags & VAMPIRE_AC_FRENZY) && is_toggleable && is_active)
+	if ((vampire_check_flags & VAMPIRE_AC_FRENZY) && new_amount <= 0 && is_toggleable && is_active)
 		toggle_off()
 	build_all_button_icons(UPDATE_BUTTON_STATUS)
 
 /datum/action/cooldown/vampire/proc/on_stat_changed(datum/source, new_stat, old_stat)
 	SIGNAL_HANDLER
-	if ((check_flags & AB_CHECK_CONSCIOUS) && is_toggleable && is_active)
+	if ((check_flags & AB_CHECK_CONSCIOUS) && new_stat != CONSCIOUS && is_toggleable && is_active)
 		toggle_off()
 	build_all_button_icons(UPDATE_BUTTON_STATUS)
