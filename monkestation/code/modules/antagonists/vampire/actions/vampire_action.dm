@@ -83,6 +83,7 @@
 	build_all_button_icons(UPDATE_BUTTON_BACKGROUND)
 
 /datum/action/cooldown/vampire/proc/toggle_off()
+	SIGNAL_HANDLER
 	is_active = FALSE
 	build_all_button_icons(UPDATE_BUTTON_BACKGROUND)
 
