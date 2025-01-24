@@ -6518,6 +6518,7 @@
 #include "monkestation\code\modules\antagonists\vampire\vampire_process.dm"
 #include "monkestation\code\modules\antagonists\vampire\vampire_rank.dm"
 #include "monkestation\code\modules\antagonists\vampire\actions\vampire_action.dm"
+#include "monkestation\code\modules\antagonists\vampire\actions\innate\feed.dm"
 #include "monkestation\code\modules\antagonists\vampire\actions\innate\mature.dm"
 #include "monkestation\code\modules\antagonists\vampire\actions\innate\masquerade.dm"
 #include "monkestation\code\modules\antagonists\vampire\actions\innate\regeneration\limb_regrowth.dm"

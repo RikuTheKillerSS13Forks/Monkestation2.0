@@ -11,7 +11,7 @@
 		return
 	if (antag_datum.current_rank > 0 && !antag_datum.clan)
 		if (feedback)
-			user.balloon_alert("form a clan vow!")
+			user.balloon_alert(user, "form a clan vow!")
 			to_chat(user, span_cult("Your power remains at a standstill. You must first make a choice."))
 		return FALSE
 
