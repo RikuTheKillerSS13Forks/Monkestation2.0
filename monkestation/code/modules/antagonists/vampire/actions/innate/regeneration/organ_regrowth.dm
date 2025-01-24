@@ -49,7 +49,7 @@
 			continue
 
 		var/organ_type = user.dna.species.get_mutant_organ_type_for_slot(slot)
-		if (!target_organ_type)
+		if (!organ_type)
 			continue
 
 		var/obj/item/organ/organ = new organ_type // I would use the wardrobe here if it wasn't for the fact this happens once every 2 seconds on repeat.

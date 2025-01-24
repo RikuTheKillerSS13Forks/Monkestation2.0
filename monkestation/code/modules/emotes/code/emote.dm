@@ -96,6 +96,12 @@
 	emote_type = EMOTE_VISIBLE | EMOTE_AUDIBLE
 	vary = FALSE
 
+/datum/emote/living/flinch
+	key = "flinch"
+	key_third_person = "flinches"
+	message = "flinches!"
+	emote_type = EMOTE_VISIBLE
+
 /datum/emote/living/clap1
 	key = "clap1"
 	key_third_person = "claps once"
