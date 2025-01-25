@@ -30,7 +30,6 @@
 
 	organ_regrowth_accumulation %= 1
 
-	var/obj/item/organ/target_organ = new target_organ_type
 	target_organ.Insert(user, special = TRUE, drop_if_replaced = FALSE)
 	target_organ.set_organ_damage(0)
 
