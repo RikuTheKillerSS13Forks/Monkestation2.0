@@ -186,6 +186,9 @@
 	if (is_neck_feed)
 		victim.adjustOxyLoss(10 * delta_time)
 
+	owner.playsound_local(soundin = 'sound/effects/singlebeat.ogg', vol = 40, vary = TRUE)
+	victim.playsound_local(soundin = 'sound/effects/singlebeat.ogg', vol = 40, vary = TRUE)
+
 	check_active_feed(victim_antag_datum) // We do this after draining so that passive blood regen doesn't keep feeding in limbo.
 
 /datum/action/cooldown/vampire/feed/proc/on_update_grab_state()
