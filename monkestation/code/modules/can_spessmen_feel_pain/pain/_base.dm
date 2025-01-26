@@ -499,6 +499,9 @@
 		testing("PAIN DEBUG: [parent] is recieving a wound of level [applied_wound.severity] to the [parse_zone(wounded_limb.body_zone)].")
 #endif
 
+	if (!applied_wound.causes_pain)
+		return
+
 	adjust_bodypart_min_pain(wounded_limb.body_zone, applied_wound.severity * 5)
 	adjust_bodypart_pain(wounded_limb.body_zone, applied_wound.severity * 7.5)
 
@@ -511,6 +514,9 @@
  */
 /datum/pain/proc/remove_wound_pain(mob/living/carbon/source, datum/wound/removed_wound, obj/item/bodypart/wounded_limb)
 	SIGNAL_HANDLER
+
+	if (!removed_wound.causes_pain)
+		return
 
 	adjust_bodypart_min_pain(wounded_limb.body_zone, -removed_wound.severity * 5)
 	adjust_bodypart_pain(wounded_limb.body_zone, -removed_wound.severity * 5)

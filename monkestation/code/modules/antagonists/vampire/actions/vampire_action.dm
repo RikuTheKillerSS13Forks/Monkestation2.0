@@ -36,8 +36,9 @@
 	return ..()
 
 /datum/action/cooldown/vampire/Grant(mob/granted_to)
+	user = granted_to // Has to be done before calling parent, else 'build_all_action_icons()' can cause runtimes via 'IsAvailable()' trying to reference the user.
 	. = ..()
-	user = granted_to
+
 	if (is_active)
 		toggle_on()
 
@@ -46,6 +47,7 @@
 /datum/action/cooldown/vampire/Remove(mob/removed_from)
 	if (is_active)
 		toggle_off()
+
 	. = ..()
 	user = null
 

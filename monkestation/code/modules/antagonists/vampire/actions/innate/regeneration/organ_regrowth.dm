@@ -17,7 +17,7 @@
 	)
 
 /datum/action/cooldown/vampire/regeneration/proc/handle_organ_regrowth(regen_rate)
-	var/target_organ = get_organ_to_regrow()
+	var/obj/item/organ/target_organ = get_organ_to_regrow()
 
 	if (!target_organ)
 		organ_regrowth_accumulation = 0

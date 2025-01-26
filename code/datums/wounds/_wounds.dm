@@ -121,6 +121,9 @@
 	/// Our current counter for gel + surgical tape regeneration
 	var/regen_ticks_current
 
+	/// Whether this wound causes pain when added. Used by [/datum/pain] signal procs.
+	var/causes_pain = TRUE // monkestation addition
+
 /datum/wound/New()
 	. = ..()
 

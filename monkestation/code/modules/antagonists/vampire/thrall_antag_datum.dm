@@ -8,6 +8,7 @@
 
 	current_abilities = list(
 		/datum/action/cooldown/vampire/mature,
+		/datum/action/cooldown/vampire/feed,
 		/datum/action/cooldown/vampire/regeneration,
 	)
 
