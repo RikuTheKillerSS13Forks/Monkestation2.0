@@ -21,35 +21,22 @@
 	SIGNAL_HANDLER
 
 	if (antag_datum.masquerade_enabled || antag_datum.current_lifeforce <= 0)
+		limb_regrowth_accumulation = 0
+		organ_regrowth_accumulation = 0
 		return
 
 	var/regen_rate = DELTA_WORLD_TIME(SSmobs)
 
+	if (!regen_rate) // How would this happen? Coderkind will never know.
+		return
+
 	if (IS_THRALL(user))
 		regen_rate *= 0.5
 
-	var/brute = user.getBruteLoss()
-	var/burn = user.getFireLoss()
-	var/total = brute + burn
-
-	var/brute_healing = min(brute, regen_rate * 2 * (brute / total))
-	if (brute_healing)
-		user.adjustBruteLoss(-brute_healing, updating_health = FALSE)
-
-	var/burn_healing = min(burn, regen_rate * 2 * (burn / total))
-	if (burn_healing)
-		user.adjustFireLoss(-burn_healing, updating_health = FALSE)
-
-	var/toxin_healing = min(user.getToxLoss(), regen_rate)
-	if (toxin_healing)
-		user.adjustToxLoss(-toxin_healing, updating_health = FALSE, forced = TRUE)
-
-	var/total_cost = (brute_healing + burn_healing + toxin_healing) * 0.02
-
-	if (total_cost)
-		user.updatehealth()
-
+	var/total_cost = 0
+	total_cost += handle_limb_regen(regen_rate)
 	total_cost += handle_limb_regrowth(regen_rate)
+	total_cost += handle_organ_regen(regen_rate)
 	total_cost += handle_organ_regrowth(regen_rate)
 
 	if (total_cost)
@@ -58,3 +45,7 @@
 	// Vampirism is caused by a flesh bud in the brain, so you get brain trauma immunity.
 	// It's also an excuse cause I don't want to bother factoring it into the calcs.
 	user.cure_trauma_type(/datum/brain_trauma, TRAUMA_RESILIENCE_LOBOTOMY)
+
+	// Beating their immortality with a fucking lighter is not very good lmao.
+	// If you want to make a vampire campfire, use phlogiston or lava instead.
+	user.adjust_fire_stacks(-1)

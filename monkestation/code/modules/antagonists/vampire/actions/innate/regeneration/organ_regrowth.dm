@@ -45,7 +45,7 @@
 
 	for (var/slot in organ_regrowth_order)
 		var/obj/item/organ/existing_organ = user.get_organ_slot(slot)
-		if (existing_organ && (existing_organ.status & ORGAN_ORGANIC))
+		if (existing_organ && (existing_organ.status & ORGAN_ORGANIC)) // This should throw it out for funny.
 			continue
 
 		var/organ_type = user.dna.species.get_mutant_organ_type_for_slot(slot)
