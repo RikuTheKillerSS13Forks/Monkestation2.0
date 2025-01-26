@@ -181,7 +181,7 @@
 	else
 		var/blood_to_take = min(victim.blood_volume, BLOOD_VOLUME_NORMAL * feed_rate)
 		antag_datum.adjust_lifeforce(blood_to_take * BLOOD_TO_LIFEFORCE)
-		victim.blood_volume -= blood_to_take // This will only take 8 seconds to become lethal, so the TTK on a vampire with feed is a 2-4 second grab + 2 second delay + 6 second drain. (10-12 seconds)
+		victim.blood_volume -= blood_to_take // This will only take 8 seconds to become lethal, so the TTK on a vampire with feed is a 2-4 second grab + 2 second delay + 8 second drain. (12-14 seconds)
 
 	if (is_neck_feed)
 		victim.adjustOxyLoss(10 * delta_time)
