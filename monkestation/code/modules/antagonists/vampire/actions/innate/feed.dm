@@ -172,7 +172,7 @@
 	var/datum/antagonist/vampire/victim_antag_datum = victim.mind?.has_antag_datum(/datum/antagonist/vampire)
 
 	var/delta_time = DELTA_WORLD_TIME(SSmobs)
-	var/feed_rate = delta_time / (is_neck_feed ? 20 : 60) // Amount to take per second as a 0-1 percentage.
+	var/feed_rate = delta_time / (is_neck_feed ? 30 : 60) // Amount to take per second as a 0-1 percentage.
 
 	if (victim_antag_datum)
 		var/lifeforce_to_take = min(victim_antag_datum.current_lifeforce, LIFEFORCE_PER_HUMAN * feed_rate)
@@ -181,7 +181,7 @@
 	else
 		var/blood_to_take = min(victim.blood_volume, BLOOD_VOLUME_NORMAL * feed_rate)
 		antag_datum.adjust_lifeforce(blood_to_take * BLOOD_TO_LIFEFORCE)
-		victim.blood_volume -= blood_to_take // This will only take 6 seconds to become lethal, so the TTK on a vampire with feed is a 2-4 second grab + 2 second delay + 6 second drain. (10-12 seconds)
+		victim.blood_volume -= blood_to_take // This will only take 8 seconds to become lethal, so the TTK on a vampire with feed is a 2-4 second grab + 2 second delay + 6 second drain. (10-12 seconds)
 
 	if (is_neck_feed)
 		victim.adjustOxyLoss(10 * delta_time)
