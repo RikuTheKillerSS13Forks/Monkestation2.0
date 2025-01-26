@@ -54,3 +54,7 @@
 
 	if (total_cost)
 		antag_datum.adjust_lifeforce(-total_cost)
+
+	// Vampirism is caused by a flesh bud in the brain, so you get brain trauma immunity.
+	// It's also an excuse cause I don't want to bother factoring it into the calcs.
+	user.cure_trauma_type(/datum/brain_trauma, TRAUMA_RESILIENCE_LOBOTOMY)
