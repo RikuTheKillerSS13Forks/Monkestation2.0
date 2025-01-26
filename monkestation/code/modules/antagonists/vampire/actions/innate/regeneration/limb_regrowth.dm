@@ -13,9 +13,9 @@
 /datum/action/cooldown/vampire/regeneration/proc/handle_limb_regrowth(regen_rate)
 	if (length(user.bodyparts) >= 6)
 		limb_regrowth_accumulation = 0
-		return 0
+		return
 
-	limb_regrowth_accumulation += (1/60) * regen_rate
+	limb_regrowth_accumulation += regen_rate / 60
 	if (limb_regrowth_accumulation < 1)
 		return
 

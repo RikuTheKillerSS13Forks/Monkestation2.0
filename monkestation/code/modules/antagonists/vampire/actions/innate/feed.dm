@@ -121,7 +121,8 @@
 		for (var/zone in eligible_zones)
 			if (!victim.get_bodypart(zone))
 				eligible_zones -= zone
-		feed_zone = pick(eligible_zones)
+		if (length(eligible_zones))
+			feed_zone = pick(eligible_zones)
 
 	if (forced)
 		user.visible_message(

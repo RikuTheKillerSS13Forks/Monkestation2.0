@@ -21,9 +21,9 @@
 
 	if (!target_organ)
 		organ_regrowth_accumulation = 0
-		return 0
+		return
 
-	organ_regrowth_accumulation += (1/10) * regen_rate
+	organ_regrowth_accumulation += regen_rate / 10
 	if (organ_regrowth_accumulation < 1)
 		qdel(target_organ)
 		return

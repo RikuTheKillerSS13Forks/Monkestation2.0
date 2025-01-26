@@ -13,6 +13,7 @@
 	var/static/list/innate_traits = list(
 		TRAIT_NOBLOOD,
 		TRAIT_NOBREATH,
+		TRAIT_NOHUNGER,
 		TRAIT_STABLEHEART,
 		TRAIT_GENELESS,
 		TRAIT_ANALGESIA,
@@ -26,7 +27,9 @@
 
 	/// Traits that vampires only have while out of masquerade.
 	var/static/list/visible_traits = list(
-		TRAIT_NO_MIRROR_REFLECTION, // add cold blooded here later
+		TRAIT_NO_ORGAN_DECAY, // I don't want doctors just immediately going like "Huh, this guy has no organ decay... and no formaldehyde, oh it's a vamp!" even OOCly.
+		TRAIT_NO_MIRROR_REFLECTION,
+		TRAIT_COLD_BLOODED,
 	)
 
 	/// Traits that vampires only have while in masquerade.
