@@ -59,7 +59,7 @@
 
 	user.add_traits(innate_traits, REF(src))
 
-	set_masquerade(masquerade_enabled, forced = TRUE)
+	set_masquerade(masquerade_enabled, forced = TRUE, silent = masquerade_enabled)
 
 	START_PROCESSING(SSprocessing, src)
 
