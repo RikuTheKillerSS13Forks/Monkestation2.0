@@ -11,6 +11,7 @@
 
 /datum/action/cooldown/vampire/regeneration/toggle_on()
 	. = ..()
+	reset_accumulation()
 	RegisterSignal(user, COMSIG_LIVING_LIFE, PROC_REF(on_life))
 
 /datum/action/cooldown/vampire/regeneration/toggle_off()
@@ -21,8 +22,7 @@
 	SIGNAL_HANDLER
 
 	if (antag_datum.masquerade_enabled || antag_datum.current_lifeforce <= 0)
-		limb_regrowth_accumulation = 0
-		organ_regrowth_accumulation = 0
+		reset_accumulation()
 		return
 
 	var/regen_rate = DELTA_WORLD_TIME(SSmobs)
@@ -49,3 +49,15 @@
 	// Beating their immortality with a fucking lighter is not very good lmao.
 	// If you want to make a vampire campfire, use phlogiston or lava instead.
 	user.adjust_fire_stacks(-1)
+
+/datum/action/cooldown/vampire/regeneration/on_masquerade(datum/source, new_state, old_state)
+	if (new_state)
+		reset_accumulation()
+
+/datum/action/cooldown/vampire/regeneration/on_lifeforce_changed(datum/source, new_amount, old_amount)
+	if (new_amount <= 0)
+		reset_accumulation()
+
+/datum/action/cooldown/vampire/regeneration/proc/reset_accumulation()
+	limb_regrowth_accumulation = 0
+	organ_regrowth_accumulation = 0

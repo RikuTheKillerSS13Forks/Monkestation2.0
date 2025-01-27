@@ -92,7 +92,7 @@
 /datum/action/cooldown/vampire/is_action_active(atom/movable/screen/movable/action_button/current_button)
 	return ..() || is_active
 
-/datum/action/cooldown/vampire/proc/on_masquerade()
+/datum/action/cooldown/vampire/proc/on_masquerade(datum/source, new_state, old_state)
 	SIGNAL_HANDLER
 	if ((vampire_check_flags & VAMPIRE_AC_MASQUERADE) && antag_datum.masquerade_enabled && is_toggleable && is_active)
 		toggle_off()

@@ -5,6 +5,7 @@
 	if (masquerade_enabled == state && !forced)
 		return
 
+	var/old_state = masquerade_enabled
 	masquerade_enabled = state
 
 	if (masquerade_enabled)
@@ -32,4 +33,4 @@
 			)
 			playsound(user, 'monkestation/sound/vampires/masquerade_disable.ogg', vol = 80, vary = FALSE)
 
-	SEND_SIGNAL(src, COMSIG_VAMPIRE_MASQUERADE)
+	SEND_SIGNAL(src, COMSIG_VAMPIRE_MASQUERADE, masquerade_enabled, old_state)

@@ -59,8 +59,8 @@
 
 		return organ
 
-	for (var/organ_path in user.dna.species.mutant_organs)
-		if (user.get_organ_by_type(organ_path))
+	for (var/organ_type in user.dna.species.mutant_organs)
+		if (user.get_organ_by_type(organ_type))
 			continue
 
-		return new organ_path
+		return new organ_type

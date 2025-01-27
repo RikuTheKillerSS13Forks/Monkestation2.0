@@ -20,7 +20,7 @@
 /datum/action/cooldown/vampire/masquerade/toggle_off()
 	antag_datum.set_masquerade(FALSE)
 
-/datum/action/cooldown/vampire/masquerade/on_masquerade()
+/datum/action/cooldown/vampire/masquerade/on_masquerade(datum/source, new_state, old_state)
 	update_active_state()
 
 /datum/action/cooldown/vampire/masquerade/proc/update_active_state()
