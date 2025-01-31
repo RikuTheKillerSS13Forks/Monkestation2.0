@@ -11,7 +11,7 @@
 
 /datum/action/cooldown/vampire/regeneration/toggle_on()
 	. = ..()
-	reset_accumulation()
+	reset()
 	RegisterSignal(user, COMSIG_LIVING_LIFE, PROC_REF(on_life))
 
 /datum/action/cooldown/vampire/regeneration/toggle_off()
@@ -22,7 +22,7 @@
 	SIGNAL_HANDLER
 
 	if (antag_datum.masquerade_enabled || antag_datum.current_lifeforce <= 0)
-		reset_accumulation()
+		reset()
 		return
 
 	var/regen_rate = DELTA_WORLD_TIME(SSmobs)
@@ -51,15 +51,18 @@
 	// If you want to make a vampire campfire, use phlogiston or lava instead.
 	user.adjust_fire_stacks(-1)
 
+	handle_revival()
+
 /datum/action/cooldown/vampire/regeneration/on_masquerade(datum/source, new_state, old_state)
 	if (new_state)
-		reset_accumulation()
+		reset()
 
 /datum/action/cooldown/vampire/regeneration/on_lifeforce_changed(datum/source, new_amount, old_amount)
 	if (new_amount <= 0)
-		reset_accumulation()
+		reset()
 
-/datum/action/cooldown/vampire/regeneration/proc/reset_accumulation()
+/datum/action/cooldown/vampire/regeneration/proc/reset()
 	limb_regrowth_accumulation = 0
 	organ_regrowth_accumulation = 0
 	wound_regen_accumulation = 0
+	is_reviving = FALSE

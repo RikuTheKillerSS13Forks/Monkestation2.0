@@ -21,7 +21,8 @@
 		TRAIT_NO_PAIN_EFFECTS,
 		TRAIT_NO_SHOCK_BUILDUP,
 		TRAIT_NOCRITDAMAGE,
-		TRAIT_RESISTCOLD,
+		TRAIT_RESISTCOLD, // Otherwise you can chuck vamps into space to permanently kill them, and they also get massive debuffs in space to compensate for this.
+		TRAIT_RESISTLOWPRESSURE, // Ditto.
 		TRAIT_NO_ORGAN_DECAY,
 	)
 
