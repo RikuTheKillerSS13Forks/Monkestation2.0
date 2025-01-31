@@ -6527,7 +6527,7 @@
 #include "monkestation\code\modules\antagonists\vampire\actions\innate\regeneration\limb_regrowth.dm"
 #include "monkestation\code\modules\antagonists\vampire\actions\innate\regeneration\organ_regen.dm"
 #include "monkestation\code\modules\antagonists\vampire\actions\innate\regeneration\organ_regrowth.dm"
-#include "monkestation\code\modules\antagonists\vampire\actions\innate\regeneration\regeneration.dm"
+#include "monkestation\code\modules\antagonists\vampire\actions\innate\regeneration\regeneration_action.dm"
 #include "monkestation\code\modules\antagonists\vampire\actions\innate\regeneration\wound_regen.dm"
 #include "monkestation\code\modules\antagonists\vampire\clans\caitiff.dm"
 #include "monkestation\code\modules\antagonists\vampire\clans\vampire_clan.dm"
