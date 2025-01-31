@@ -44,7 +44,7 @@
 		CRASH("Vampire regeneration attempted to create a limb in zone \"[target_zone]\" for [user], but failed.")
 
 	user.visible_message(
-		message = span_danger("With a sickening crunch, the stump on [user]'s [new_limb.plaintext_zone] sprouts into a new limb!"),
+		message = span_danger("With a sickening crunch, the stump in place of [user]'s [new_limb.plaintext_zone] sprouts into a new limb!"),
 		self_message = span_green("Your [new_limb.plaintext_zone] regrows!"),
 		blind_message = span_hear("You hear a sickening crunch."),
 	)

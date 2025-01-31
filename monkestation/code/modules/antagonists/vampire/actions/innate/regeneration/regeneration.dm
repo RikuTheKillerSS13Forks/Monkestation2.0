@@ -38,6 +38,7 @@
 	total_cost += handle_limb_regrowth(regen_rate)
 	total_cost += handle_organ_regen(regen_rate)
 	total_cost += handle_organ_regrowth(regen_rate)
+	total_cost += handle_wound_regen(regen_rate)
 
 	if (total_cost)
 		antag_datum.adjust_lifeforce(-total_cost)
@@ -61,3 +62,4 @@
 /datum/action/cooldown/vampire/regeneration/proc/reset_accumulation()
 	limb_regrowth_accumulation = 0
 	organ_regrowth_accumulation = 0
+	wound_regen_accumulation = 0

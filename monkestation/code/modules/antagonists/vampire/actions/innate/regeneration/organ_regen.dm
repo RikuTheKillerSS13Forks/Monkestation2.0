@@ -2,7 +2,7 @@
 	var/total_organ_damage = 0
 	var/list/organs_to_heal = list()
 	for (var/obj/item/organ/organ as anything in user.organs)
-		if (organ.damage > 0 && (organ.status & ORGAN_ORGANIC))
+		if (organ.damage > 0)
 			total_organ_damage += organ.damage
 			organs_to_heal += organ
 
