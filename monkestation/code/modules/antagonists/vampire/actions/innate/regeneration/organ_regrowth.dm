@@ -31,11 +31,9 @@
 	organ_regrowth_accumulation %= 1
 
 	target_organ.Insert(user, special = TRUE, drop_if_replaced = FALSE)
-	target_organ.set_organ_damage(0)
 
-	if (istype(target_organ, /obj/item/organ/internal/ears))
-		var/obj/item/organ/internal/ears/ears = target_organ
-		ears.adjustEarDamage(0, -INFINITY) // Clears temporary deafness.
+	to_chat(user, span_green("You can feel your [target_organ.name] again."))
+	playsound(user, 'sound/effects/wounds/splatter.ogg', vol = 20, vary = TRUE)
 
 	return 0.2
 

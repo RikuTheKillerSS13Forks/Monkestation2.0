@@ -39,6 +39,18 @@
 	user.regenerate_limb(target_zone)
 	regrow_limb_organs(target_zone)
 
+	var/obj/item/bodypart/new_limb = user.get_bodypart(target_zone)
+	if (!new_limb)
+		CRASH("Vampire regeneration attempted to create a limb in zone \"[target_zone]\" for [user], but failed.")
+
+	user.visible_message(
+		message = span_danger("With a sickening crunch, the stump on [user]'s [new_limb.plaintext_zone] sprouts into a new limb!"),
+		self_message = span_green("Your [new_limb.plaintext_zone] regrows!"),
+		blind_message = span_hear("You hear a sickening crunch."),
+	)
+
+	playsound(user, 'sound/magic/demon_consume.ogg', vol = 40, vary = TRUE)
+
 	return VAMPIRE_LIMB_REGROWTH_COST
 
 /datum/action/cooldown/vampire/regeneration/proc/regrow_limb_organs(target_zone)
