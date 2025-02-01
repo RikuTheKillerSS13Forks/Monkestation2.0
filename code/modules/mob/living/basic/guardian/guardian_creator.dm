@@ -12,7 +12,7 @@ GLOBAL_LIST_INIT(guardian_radial_images, setup_guardian_radial())
 	/*MONKESTATION EDIT START
 	// Hack to change Timestop Guardian's radial icon, since it's in a different DMI
 	var/datum/radial_menu_choice/timestop_opt = .[/mob/living/basic/guardian/standard/timestop]
-	timestop_opt.image = image(icon = 'monkestation/icons/bloodsuckers/timestop_guardian.dmi', icon_state = "timestop")
+	timestop_opt.image = image(icon = 'monkestation/icons/vampires/timestop_guardian.dmi', icon_state = "timestop")
 	MONKESTATION EDIT END*/
 
 /// An item which grants you your very own soul buddy
