@@ -40,12 +40,8 @@
 	UnregisterSignal(user, COMSIG_MOB_HUD_CREATED)
 
 /datum/antagonist/vampire/proc/delete_hud()
-	var/datum/hud/hud = user?.hud_used
-	if (!hud)
-		return
-
-	hud.infodisplay -= lifeforce_display
-	hud.infodisplay -= rank_display
+	user?.hud_used?.infodisplay -= lifeforce_display
+	user?.hud_used?.infodisplay -= rank_display
 
 	QDEL_NULL(lifeforce_display)
 	QDEL_NULL(rank_display)
