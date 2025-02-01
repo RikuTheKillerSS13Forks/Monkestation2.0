@@ -6538,6 +6538,8 @@
 #include "monkestation\code\modules\antagonists\vampire\status_effects\_vampire_status_effect.dm"
 #include "monkestation\code\modules\antagonists\vampire\status_effects\torpor.dm"
 #include "monkestation\code\modules\antagonists\vampire\wounds\vampire_bite_mark.dm"
+#include "monkestation\code\modules\antagonists\vampire\vampire_recipes.dm"
+#include "monkestation\code\modules\antagonists\vampire\objects\vampire_coffin.dm"
 #include "monkestation\code\modules\antagonists\wizard\wizard.dm"
 #include "monkestation\code\modules\antagonists\wizard\equipment\artefact.dm"
 #include "monkestation\code\modules\antagonists\wizard\equipment\mirror_shield.dm"

@@ -681,8 +681,7 @@ GLOBAL_LIST_EMPTY_TYPED(closets, /obj/structure/closet)
 		var/atom/movable/AM = loc
 		AM.relay_container_resist_act(user, src)
 		return
-	if(!welded && !locked)
-		open()
+	if(open(user)) // monkestation edit: replaced weld and lock checks with open proc call
 		return
 
 	//okay, so the closet is either welded or locked... resist!!!
@@ -692,7 +691,7 @@ GLOBAL_LIST_EMPTY_TYPED(closets, /obj/structure/closet)
 		span_notice("You lean on the back of [src] and start pushing the door open... (this will take about [DisplayTimeText(breakout_time)].)"), \
 		span_hear("You hear banging from [src]."))
 	if(do_after(user,(breakout_time), target = src))
-		if(!user || user.stat != CONSCIOUS || user.loc != src || opened || (!locked && !welded) )
+		if(!user || user.stat != CONSCIOUS || user.loc != src || opened || open(user)) // monkestation edit: replaced weld and lock checks with open proc call
 			return
 		//we check after a while whether there is a point of resisting anymore and whether the user is capable of resisting
 		user.visible_message(span_danger("[user] successfully broke out of [src]!"),
