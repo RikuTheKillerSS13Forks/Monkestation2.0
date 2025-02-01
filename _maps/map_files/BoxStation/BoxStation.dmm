@@ -2955,10 +2955,6 @@
 /obj/effect/spawner/random/bureaucracy/stamp,
 /turf/open/floor/plating,
 /area/station/maintenance/port/fore)
-"aYq" = (
-/obj/structure/cable,
-/turf/open/floor/iron,
-/area/station/engineering/shipbreaker_hut)
 "aYu" = (
 /obj/effect/decal/cleanable/dirt,
 /obj/structure/cable,
@@ -47550,7 +47546,6 @@
 /area/station/medical/psychology)
 "pvQ" = (
 /obj/machinery/door/airlock/engineering,
-/obj/structure/cable,
 /obj/structure/fans/tiny,
 /turf/open/floor/plating,
 /area/station/engineering/shipbreaker_hut)
@@ -52847,10 +52842,7 @@
 /obj/effect/turf_decal/trimline/yellow/filled/warning{
 	dir = 1
 	},
-/obj/structure/disposalpipe/sorting/mail/flip{
-	dir = 1
-	},
-/obj/effect/mapping_helpers/mail_sorting/engineering/general,
+/obj/structure/disposalpipe/junction,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
 /obj/structure/cable,
@@ -60860,11 +60852,14 @@
 /area/station/engineering/break_room)
 "tQC" = (
 /obj/effect/turf_decal/trimline/yellow/filled/warning,
-/obj/structure/disposalpipe/junction,
+/obj/structure/disposalpipe/sorting/mail/flip{
+	dir = 1
+	},
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
 /obj/structure/cable,
 /obj/machinery/duct,
+/obj/effect/mapping_helpers/mail_sorting/engineering/general,
 /turf/open/floor/iron/dark/side,
 /area/station/engineering/break_room)
 "tQD" = (
@@ -94369,7 +94364,7 @@ vCp
 ksa
 pRf
 iRr
-aYq
+eKX
 eVx
 pRf
 ksa
@@ -94879,7 +94874,7 @@ sxb
 ksa
 uoo
 ksa
-aVH
+vCp
 ksa
 gwf
 txb
@@ -95136,7 +95131,7 @@ sxb
 uoo
 uoo
 uoo
-aVH
+vCp
 uoo
 gwf
 gwf
@@ -95391,9 +95386,9 @@ uoo
 ksa
 uoo
 ksa
-ksa
-ksa
-aVH
+jra
+vCp
+vCp
 ksa
 ksa
 ksa
@@ -95648,9 +95643,9 @@ fdt
 fdt
 fdt
 ksa
+uoo
 ksa
-ksa
-aVH
+vCp
 uoo
 uoo
 uoo
@@ -95905,9 +95900,9 @@ ksa
 ksa
 ksa
 ksa
+uoo
 ksa
-ksa
-aVH
+vCp
 ksa
 ksa
 ksa
@@ -96162,9 +96157,9 @@ ksa
 ksa
 ksa
 ksa
-ksa
-ksa
-aVH
+jra
+vCp
+vCp
 ksa
 ksa
 ksa
@@ -96419,7 +96414,7 @@ ksa
 ksa
 ksa
 ksa
-ksa
+uoo
 ksa
 aVH
 ksa
@@ -117347,7 +117342,7 @@ hNt
 xoG
 ogZ
 fck
-qbm
+dQL
 hNt
 xoG
 ogZ
@@ -119403,7 +119398,7 @@ hNt
 xoG
 ogZ
 fck
-dQL
+qbm
 hNt
 xoG
 ogZ

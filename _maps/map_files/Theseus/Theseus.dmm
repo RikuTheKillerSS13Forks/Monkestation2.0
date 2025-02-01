@@ -459,7 +459,6 @@
 /obj/item/radio/radio_mic{
 	pixel_y = 7
 	},
-/obj/machinery/light/floor/has_bulb/warm,
 /obj/structure/cable,
 /turf/open/floor/carpet/green,
 /area/station/service/library/upper)
@@ -1652,6 +1651,7 @@
 /obj/structure/chair{
 	dir = 1
 	},
+/obj/structure/cable,
 /turf/open/floor/iron,
 /area/station/maintenance/solars/port/aft)
 "aAS" = (
@@ -2324,6 +2324,7 @@
 	},
 /obj/structure/sink/directional/south,
 /obj/effect/turf_decal/bot,
+/obj/machinery/light/floor/has_bulb,
 /turf/open/floor/iron/white/textured_edge{
 	dir = 1
 	},
@@ -4252,7 +4253,6 @@
 /obj/effect/mapping_helpers/airlock/cyclelink_helper,
 /obj/effect/mapping_helpers/airlock/access/all/service/theatre,
 /obj/structure/cable,
-/obj/machinery/light/floor/has_bulb,
 /obj/machinery/door/firedoor,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
@@ -4427,7 +4427,6 @@
 "bqt" = (
 /obj/structure/table/reinforced,
 /obj/effect/turf_decal/tile/gray/fourcorners,
-/obj/machinery/light/floor/red,
 /obj/item/storage/pill_bottle/lsdpsych{
 	pixel_y = 12;
 	name = "Emesis Diazepam"
@@ -8300,6 +8299,7 @@
 "cxX" = (
 /obj/effect/landmark/event_spawn,
 /obj/structure/disposalpipe/segment,
+/obj/machinery/light/floor/has_bulb,
 /turf/open/floor/iron/grimy,
 /area/station/service/library)
 "cya" = (
@@ -8590,7 +8590,6 @@
 /area/station/engineering/break_room)
 "cBi" = (
 /obj/structure/bookcase/random/reference,
-/obj/machinery/light/floor/has_bulb,
 /turf/open/floor/wood,
 /area/station/service/library)
 "cBm" = (
@@ -12364,6 +12363,7 @@
 /area/station/hallway/primary/starboard)
 "dIf" = (
 /obj/structure/cable,
+/obj/machinery/light/floor/has_bulb,
 /turf/open/floor/carpet,
 /area/station/service/cafeteria)
 "dIl" = (
@@ -13002,7 +13002,6 @@
 /obj/item/reagent_containers/condiment/saltshaker{
 	pixel_x = -3
 	},
-/obj/machinery/light/floor/has_bulb,
 /obj/machinery/door/firedoor,
 /turf/open/floor/carpet,
 /area/station/service/bar)
@@ -19912,7 +19911,6 @@
 	dir = 1
 	},
 /obj/effect/mapping_helpers/airlock/access/all/security/brig,
-/obj/machinery/light/floor/has_bulb,
 /turf/open/floor/plating,
 /area/station/security/processing)
 "fXf" = (
@@ -20225,6 +20223,11 @@
 	},
 /turf/open/floor/engine,
 /area/station/science/xenobiology)
+"gbR" = (
+/obj/structure/cable,
+/obj/machinery/light/floor/has_bulb/warm,
+/turf/open/floor/carpet/green,
+/area/station/service/library/upper)
 "gbV" = (
 /obj/effect/turf_decal/tile/yellow/half{
 	dir = 1
@@ -22329,11 +22332,6 @@
 /obj/effect/decal/cleanable/dirt,
 /turf/open/floor/iron,
 /area/station/hallway/primary/central/fore)
-"gJm" = (
-/obj/structure/bookcase/random/nonfiction,
-/obj/machinery/light/floor/has_bulb,
-/turf/open/floor/iron/grimy,
-/area/station/service/library)
 "gJn" = (
 /obj/structure/lattice/catwalk,
 /obj/item/bodypart/arm/right,
@@ -25222,6 +25220,7 @@
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
 /obj/structure/disposalpipe/segment,
+/obj/machinery/light/floor/has_bulb,
 /turf/open/floor/carpet,
 /area/station/service/cafeteria)
 "hAQ" = (
@@ -26308,7 +26307,6 @@
 /obj/effect/mapping_helpers/airlock/access/all/service/theatre,
 /obj/structure/cable,
 /obj/effect/landmark/navigate_destination/common/theatrebackstage,
-/obj/machinery/light/floor/has_bulb,
 /obj/machinery/door/firedoor,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
@@ -29540,6 +29538,7 @@
 /obj/machinery/atmospherics/components/unary/vent_pump/on/layer4{
 	dir = 4
 	},
+/obj/machinery/power/apc/auto_name/directional/east,
 /turf/open/floor/iron,
 /area/station/maintenance/solars/port/aft)
 "iOf" = (
@@ -32979,7 +32978,6 @@
 /obj/item/surgical_drapes,
 /obj/effect/decal/cleanable/blood,
 /obj/effect/landmark/start/hangover,
-/obj/machinery/light/floor/has_bulb,
 /obj/structure/drain/big,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
@@ -34005,7 +34003,6 @@
 /obj/structure/table/optable,
 /obj/item/surgical_drapes,
 /obj/effect/landmark/start/hangover,
-/obj/machinery/light/floor/has_bulb,
 /obj/structure/drain/big,
 /turf/open/floor/iron/dark,
 /area/station/medical/treatment_center)
@@ -34395,8 +34392,6 @@
 "klk" = (
 /obj/effect/spawner/random/maintenance/three,
 /obj/effect/decal/cleanable/dirt/dust,
-/obj/machinery/power/apc/auto_name/directional/north,
-/obj/structure/cable,
 /obj/structure/rack,
 /obj/item/stack/cable_coil,
 /turf/open/floor/plating,
@@ -35333,6 +35328,7 @@
 	id = "aftport";
 	name = "Port Quarter Solar Control"
 	},
+/obj/structure/cable,
 /turf/open/floor/plating,
 /area/station/maintenance/solars/port/aft)
 "kAc" = (
@@ -38706,6 +38702,7 @@
 /obj/effect/turf_decal/stripes/line{
 	dir = 8
 	},
+/obj/machinery/light/floor/has_bulb,
 /turf/open/floor/plating,
 /area/station/security/processing)
 "ltX" = (
@@ -47029,6 +47026,10 @@
 "nTC" = (
 /turf/open/floor/iron,
 /area/station/security/office)
+"nTD" = (
+/obj/machinery/light/floor/has_bulb,
+/turf/open/floor/iron/grimy,
+/area/station/service/library)
 "nTE" = (
 /obj/machinery/computer/warrant,
 /obj/effect/turf_decal/bot,
@@ -51428,9 +51429,6 @@
 "plQ" = (
 /turf/closed/wall/r_wall,
 /area/space/nearstation)
-"pma" = (
-/turf/open/floor/plating,
-/area/station/maintenance/solars/port/aft)
 "pmc" = (
 /obj/effect/turf_decal/tile/neutral{
 	dir = 1
@@ -51855,7 +51853,6 @@
 /area/station/security/checkpoint/escape)
 "prO" = (
 /obj/structure/bookcase/random/nonfiction,
-/obj/machinery/light/floor/has_bulb,
 /obj/structure/disposalpipe/segment{
 	dir = 4
 	},
@@ -55983,6 +55980,13 @@
 /obj/machinery/door/firedoor,
 /turf/open/floor/carpet,
 /area/station/service/bar)
+"qBj" = (
+/obj/structure/cable,
+/obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
+/obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
+/obj/machinery/light/floor/has_bulb,
+/turf/open/floor/iron/dark,
+/area/station/service/theater)
 "qBx" = (
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /obj/structure/cable,
@@ -58826,6 +58830,7 @@
 /obj/effect/turf_decal/caution/stand_clear{
 	dir = 4
 	},
+/obj/machinery/light/floor/has_bulb,
 /turf/open/floor/plating,
 /area/station/security/processing)
 "rrO" = (
@@ -58891,6 +58896,7 @@
 /area/station/service/library)
 "rsF" = (
 /obj/machinery/iv_drip,
+/obj/machinery/light/floor/has_bulb,
 /turf/open/floor/iron/dark,
 /area/station/medical/treatment_center)
 "rsL" = (
@@ -68833,6 +68839,7 @@
 /obj/structure/cable,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
+/obj/machinery/light/floor/has_bulb,
 /turf/open/floor/wood,
 /area/station/service/theater)
 "ukt" = (
@@ -73264,6 +73271,7 @@
 /area/station/command/bridge)
 "vwE" = (
 /obj/effect/decal/cleanable/dirt/dust,
+/obj/structure/cable,
 /turf/open/floor/iron,
 /area/station/maintenance/solars/port/aft)
 "vwU" = (
@@ -78113,7 +78121,6 @@
 /obj/machinery/door/airlock/external{
 	name = "Gulag Shuttle Airlock"
 	},
-/obj/machinery/light/floor/has_bulb,
 /turf/open/floor/plating,
 /area/station/security/processing)
 "wTF" = (
@@ -81836,6 +81843,7 @@
 /obj/structure/cable,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
 /obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
+/obj/machinery/light/floor/has_bulb,
 /turf/open/floor/eighties/red{
 	icon = 'goon/icons/turf/floors.dmi';
 	icon_state = "clown_carpet"
@@ -88743,7 +88751,7 @@ fel
 mux
 saq
 ikP
-iRD
+gbR
 azt
 agO
 mux
@@ -96345,7 +96353,7 @@ lXw
 nhC
 nhC
 sJw
-pma
+dEb
 sJw
 lXw
 nhC
@@ -96859,7 +96867,7 @@ sJw
 kAa
 aAP
 vwE
-pma
+dEb
 sJw
 lXw
 nhC
@@ -109409,7 +109417,7 @@ uGY
 gck
 prO
 bwX
-gJm
+bwX
 gck
 umk
 tyv
@@ -110179,7 +110187,7 @@ svf
 ifR
 iMW
 fwA
-iLO
+nTD
 aaT
 ttd
 vnu
@@ -121447,10 +121455,10 @@ bTD
 ofY
 ukm
 bli
+qBj
 rJj
 rJj
-rJj
-rJj
+qBj
 hSn
 xYR
 vjd
