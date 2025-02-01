@@ -365,6 +365,7 @@
 /datum/action/proc/create_button()
 	var/atom/movable/screen/movable/action_button/button = new()
 	button.linked_action = src
+	button.actiontooltipstyle = buttontooltipstyle // monkestation addition?? wtf why wasn't this used??
 	build_button_icon(button, ALL, TRUE)
 	return button
 

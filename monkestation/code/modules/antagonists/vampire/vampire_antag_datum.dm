@@ -69,17 +69,14 @@
 	else
 		RegisterSignal(user, COMSIG_MOB_HUD_CREATED, PROC_REF(create_hud))
 
-	for (var/action_type in current_abilities)
-		var/datum/action/cooldown/vampire/action = current_abilities[action_type]
-		action.Grant(user)
+	grant_abilities()
 
 /datum/antagonist/vampire/remove_innate_effects(mob/living/mob_override)
 	. = ..()
 	if (!user)
 		return
 
-	for (var/datum/action/cooldown/vampire/action in user.actions)
-		action.Remove(user)
+	remove_abilities()
 
 	set_masquerade(TRUE) // This removes the elements added by not being in masquerade, leaving only traits.
 	REMOVE_TRAITS_IN(user, REF(src)) // And this then clears the traits. This should also be after removing actions.

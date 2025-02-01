@@ -21,3 +21,6 @@
 
 /// The amount of lifeforce it costs for a vampire to regrow a limb.
 #define VAMPIRE_LIMB_REGROWTH_COST 2
+
+/// Arbitrary string used as a placeholder for blocked abilities. (abilities you can't buy)
+#define VAMPIRE_ABILITY_BLOCKED "blocked"

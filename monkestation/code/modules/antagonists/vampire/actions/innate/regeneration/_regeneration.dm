@@ -13,10 +13,13 @@
 	. = ..()
 	reset()
 	RegisterSignal(user, COMSIG_LIVING_LIFE, PROC_REF(on_life))
+	RegisterSignal(user, COMSIG_MOVABLE_MOVED, PROC_REF(check_torpor))
+	check_torpor()
 
 /datum/action/cooldown/vampire/regeneration/toggle_off()
 	. = ..()
-	UnregisterSignal(user, COMSIG_LIVING_LIFE)
+	UnregisterSignal(user, list(COMSIG_LIVING_LIFE, COMSIG_MOVABLE_MOVED))
+	end_torpor()
 
 /datum/action/cooldown/vampire/regeneration/proc/on_life(datum/source, seconds_per_tick, times_fired)
 	SIGNAL_HANDLER
@@ -33,12 +36,19 @@
 	if (IS_THRALL(user))
 		regen_rate *= 0.5
 
+	var/is_in_torpor = user.has_status_effect(/datum/status_effect/vampire/torpor)
+	if (is_in_torpor)
+		regen_rate *= 2
+
 	var/total_cost = 0
 	total_cost += handle_limb_regen(regen_rate)
 	total_cost += handle_limb_regrowth(regen_rate)
 	total_cost += handle_organ_regen(regen_rate)
 	total_cost += handle_organ_regrowth(regen_rate)
 	total_cost += handle_wound_regen(regen_rate)
+
+	if (is_in_torpor)
+		total_cost *= 0.5
 
 	if (total_cost)
 		antag_datum.adjust_lifeforce(-total_cost)
@@ -66,3 +76,16 @@
 	organ_regrowth_accumulation = 0
 	wound_regen_accumulation = 0
 	is_reviving = FALSE
+
+/datum/action/cooldown/vampire/regeneration/proc/check_torpor()
+	SIGNAL_HANDLER
+	if (istype(user.loc, /obj/structure/closet/crate/coffin))
+		start_torpor()
+	else
+		end_torpor()
+
+/datum/action/cooldown/vampire/regeneration/proc/start_torpor()
+	user.apply_status_effect(/datum/status_effect/vampire/torpor)
+
+/datum/action/cooldown/vampire/regeneration/proc/end_torpor()
+	user.remove_status_effect(/datum/status_effect/vampire/torpor)
