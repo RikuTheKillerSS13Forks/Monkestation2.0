@@ -607,13 +607,13 @@ GLOBAL_LIST_EMPTY_TYPED(closets, /obj/structure/closet)
 	return 1
 
 /obj/structure/closet/relaymove(mob/living/user, direction)
-	if(user.stat || !isturf(loc))
+	/*if(user.stat || !isturf(loc)) MONKESTATION EDIT: Scuse me wtf is the point of this?? JUST USE RESIST ACT!!
 		return
 	if(locked)
 		if(message_cooldown <= world.time)
 			message_cooldown = world.time + 50
 			to_chat(user, span_warning("[src]'s door won't budge!"))
-		return
+		return*/
 	container_resist_act(user)
 
 

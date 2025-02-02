@@ -6,7 +6,8 @@
 	is_toggleable = TRUE
 	vampire_check_flags = VAMPIRE_AC_FRENZY
 
-/datum/action/cooldown/vampire/masquerade/New(Target, original)
+/datum/action/cooldown/vampire/masquerade/Grant(mob/granted_to)
+	check_flags = AB_CHECK_CONSCIOUS // This is so that the signals register properly.
 	. = ..()
 	update_active_state()
 
@@ -26,5 +27,5 @@
 /datum/action/cooldown/vampire/masquerade/proc/update_active_state()
 	SIGNAL_HANDLER
 	is_active = antag_datum.masquerade_enabled
-	build_all_button_icons(UPDATE_BUTTON_BACKGROUND)
 	check_flags = is_active ? NONE : AB_CHECK_CONSCIOUS // You can turn it off while unconscious or even dead.
+	build_all_button_icons(UPDATE_BUTTON_BACKGROUND)

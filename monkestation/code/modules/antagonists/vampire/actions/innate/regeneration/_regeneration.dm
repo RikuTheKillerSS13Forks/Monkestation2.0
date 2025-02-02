@@ -11,10 +11,9 @@
 
 /datum/action/cooldown/vampire/regeneration/toggle_on()
 	. = ..()
-	reset()
 	RegisterSignal(user, COMSIG_LIVING_LIFE, PROC_REF(on_life))
-	RegisterSignal(user, COMSIG_MOVABLE_MOVED, PROC_REF(check_torpor))
-	check_torpor()
+	RegisterSignal(user, COMSIG_MOVABLE_MOVED, PROC_REF(on_moved))
+	check_can_heal()
 
 /datum/action/cooldown/vampire/regeneration/toggle_off()
 	. = ..()
@@ -24,8 +23,7 @@
 /datum/action/cooldown/vampire/regeneration/proc/on_life(datum/source, seconds_per_tick, times_fired)
 	SIGNAL_HANDLER
 
-	if (antag_datum.masquerade_enabled || antag_datum.current_lifeforce <= 0)
-		reset()
+	if (!check_can_heal(can_start_torpor = FALSE)) // If this could start torpor you'd be stunlocked.
 		return
 
 	var/regen_rate = DELTA_WORLD_TIME(SSmobs)
@@ -64,25 +62,32 @@
 	handle_revival()
 
 /datum/action/cooldown/vampire/regeneration/on_masquerade(datum/source, new_state, old_state)
-	if (new_state)
-		reset()
+	check_can_heal()
 
 /datum/action/cooldown/vampire/regeneration/on_lifeforce_changed(datum/source, new_amount, old_amount)
-	if (new_amount <= 0)
+	check_can_heal(can_start_torpor = FALSE) // The argument is a "just in case" thing in case you keep bouncing between 0 and some other value.
+
+/datum/action/cooldown/vampire/regeneration/proc/on_moved()
+	SIGNAL_HANDLER
+	check_can_heal()
+
+/datum/action/cooldown/vampire/regeneration/proc/check_can_heal(can_start_torpor = TRUE)
+	var/can_heal = can_heal()
+	if (!can_heal)
 		reset()
+		end_torpor()
+	else if (can_start_torpor && istype(user.loc, /obj/structure/closet/crate/coffin))
+		start_torpor()
+	return can_heal
+
+/datum/action/cooldown/vampire/regeneration/proc/can_heal()
+	return !antag_datum.masquerade_enabled && antag_datum.current_lifeforce > 0
 
 /datum/action/cooldown/vampire/regeneration/proc/reset()
 	limb_regrowth_accumulation = 0
 	organ_regrowth_accumulation = 0
 	wound_regen_accumulation = 0
 	is_reviving = FALSE
-
-/datum/action/cooldown/vampire/regeneration/proc/check_torpor()
-	SIGNAL_HANDLER
-	if (istype(user.loc, /obj/structure/closet/crate/coffin))
-		start_torpor()
-	else
-		end_torpor()
 
 /datum/action/cooldown/vampire/regeneration/proc/start_torpor()
 	user.apply_status_effect(/datum/status_effect/vampire/torpor)

@@ -6,11 +6,19 @@
 
 /obj/structure/closet/crate/coffin/examine(mob/user)
 	. = ..()
+	if (locked)
+		. += span_notice("It can be <b>pried</b> open.")
 	if (IS_VAMPIRE(user))
 		. += span_cult("A fitting place of rest. You can recover far faster within.")
 		. += span_cult("However, you are vulnerable while asleep.")
 		if (!anchored)
 			. += span_cult("Anchoring it would be a fine choice.")
+
+/obj/structure/closet/crate/coffin/close(mob/living/user)
+	. = ..()
+	if (!locked && (user in src) && IS_VAMPIRE(user))
+		to_chat(user, span_notice("You flip a secret latch and lock yourself inside \the [src]."))
+		locked = TRUE
 
 /obj/structure/closet/crate/coffin/can_open(mob/living/user)
 	if (!IS_VAMPIRE(user))
@@ -30,6 +38,8 @@
 	return TRUE // OPEN SESAME DAMNIT!!
 
 /obj/structure/closet/crate/coffin/crowbar_act(mob/living/user, obj/item/tool)
+	if (user.istate & ISTATE_HARM)
+		return FALSE
 	if (!locked || welded) // You can't pry open the lid of a welded coffin.
 		return FALSE
 
@@ -41,7 +51,7 @@
 	playsound(src, 'sound/machines/airlock_alien_prying.ogg', vol = 20, vary = TRUE)
 
 	if(!tool.use_tool(src, user, pry_lid_time))
-		return FALSE
+		return TRUE
 	bust_open()
 
 	user.visible_message(

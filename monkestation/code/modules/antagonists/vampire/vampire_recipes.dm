@@ -1,22 +1,13 @@
-/datum/crafting_recipe/coffin
-	name = "Coffin"
-	result = /obj/structure/closet/crate/coffin
-	reqs = list(
-		/obj/item/stack/sheet/mineral/wood = 5,
-	)
-	time = 15 SECONDS
-	category = CAT_STRUCTURE
-
 /datum/crafting_recipe/blackcoffin
 	name = "Black Coffin"
 	result = /obj/structure/closet/crate/coffin/blackcoffin
-	tool_behaviors = list(TOOL_WELDER, TOOL_SCREWDRIVER)
+	tool_behaviors = list(TOOL_WELDER)
 	reqs = list(
 		/obj/item/stack/sheet/cloth = 1,
 		/obj/item/stack/sheet/mineral/wood = 5,
 		/obj/item/stack/sheet/iron = 1,
 	)
-	time = 15 SECONDS
+	time = 10 SECONDS
 	category = CAT_STRUCTURE
 
 /datum/crafting_recipe/meatcoffin
@@ -27,13 +18,14 @@
 		/obj/item/food/meat/slab = 5,
 		/obj/item/restraints/handcuffs/cable = 1,
 	)
-	time = 15 SECONDS
+	time = 10 SECONDS
 	category = CAT_STRUCTURE
 	always_available = FALSE
 
 /datum/crafting_recipe/metalcoffin
 	name = "Metal Coffin"
 	result = /obj/structure/closet/crate/coffin/metalcoffin
+	tool_behaviors = list(TOOL_WELDER)
 	reqs = list(
 		/obj/item/stack/sheet/iron = 6,
 		/obj/item/stack/rods = 2,
