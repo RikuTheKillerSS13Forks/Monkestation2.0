@@ -534,8 +534,9 @@
 		if(wounding_dmg >= WOUND_MINIMUM_DAMAGE && wound_bonus != CANT_WOUND)
 			check_wounding(wounding_type, wounding_dmg, wound_bonus, bare_wound_bonus, attack_direction)
 
-	for(var/datum/wound/iter_wound as anything in wounds)
-		iter_wound.receive_damage(wounding_type, wounding_dmg, wound_bonus, damage_source)
+	if (owner) // MONKESTATION EDIT: Basically ALL wound damage receives use the owner in some way. This led to runtimes.
+		for(var/datum/wound/iter_wound as anything in wounds)
+			iter_wound.receive_damage(wounding_type, wounding_dmg, wound_bonus, damage_source)
 
 	/*
 	// END WOUND HANDLING

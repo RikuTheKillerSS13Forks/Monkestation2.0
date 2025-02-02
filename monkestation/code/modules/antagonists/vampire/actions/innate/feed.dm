@@ -60,9 +60,13 @@
 	is_neck_feed = user.grab_state >= GRAB_AGGRESSIVE || !iscarbon(target) // Lifting up the wrist of a mouse would be pretty wack. Also you can't aggro grab them.
 
 	if (is_neck_feed)
-		to_chat(target, span_userdanger("[user] opens [user.p_their()] mouth, revealing a pair of fangs that are closing in on your neck!"))
+		target.show_message(span_userdanger("[user] opens [user.p_their()] mouth, revealing a pair of fangs that are closing in on your neck!"), MSG_VISUAL)
 	else
-		to_chat(target, span_danger("[user] starts to lift your wrist up to [user.p_their()] mouth."))
+		target.show_message(
+			msg = span_danger("[user] starts to lift your wrist up to [user.p_their()] mouth."),
+			alt_msg = span_danger("You feel something tugging at your wrist."),
+			type = MSG_VISUAL
+		)
 
 	if (!do_after(user, 2 SECONDS, target, timed_action_flags = (IGNORE_SLOWDOWNS | IGNORE_USER_LOC_CHANGE | IGNORE_TARGET_LOC_CHANGE), extra_checks = CALLBACK(src, PROC_REF(start_feed_extra_checks))))
 		user.balloon_alert(user, "interrupted!")
@@ -86,7 +90,10 @@
 			self_message = span_notice("You sink your fangs into [victim]'s neck."),
 			ignored_mobs = list(victim),
 		)
-		to_chat(victim, span_userdanger("[user] sinks [user.p_their()] fangs into your neck!"))
+		victim.show_message(
+			msg = span_userdanger("[user] sinks [user.p_their()] fangs into your neck!"), type = MSG_VISUAL,
+			alt_msg = span_userdanger("You feel a sharp pain in your neck!"),
+		)
 
 		if (!HAS_TRAIT(victim, TRAIT_ANALGESIA))
 			victim.emote("scream")
@@ -96,7 +103,10 @@
 			self_message = span_notice("You gently sink your fangs into [victim]'s wrist."),
 			ignored_mobs = list(victim),
 		)
-		to_chat(victim, span_danger("[user] gently sinks [user.p_their()] fangs into your wrist."))
+		victim.show_message(
+			msg = span_danger("[user] gently sinks [user.p_their()] fangs into your wrist."), type = MSG_VISUAL,
+			alt_msg = span_danger("You feel a slight, yet sharp pain in your wrist."),
+		)
 
 		if (!HAS_TRAIT(victim, TRAIT_ANALGESIA))
 			victim.emote("flinch")
@@ -130,7 +140,10 @@
 			self_message = span_warning("Your fangs are torn from [victim]'s [feed_name]!"),
 			ignored_mobs = list(victim),
 		)
-		to_chat(victim, span_userdanger("[user]'s fangs are torn from your [feed_name]!"))
+		victim.show_message(
+			msg = span_userdanger("[user]'s fangs are torn from your [feed_name]!"), type = MSG_VISUAL,
+			alt_msg = span_userdanger("The sharp pain in your neck grows worse!")
+		)
 		playsound(victim, 'sound/effects/wounds/blood2.ogg', vol = 50, vary = TRUE, extrarange = MEDIUM_RANGE_SOUND_EXTRARANGE)
 
 		victim.apply_damage(rand(8, 12), BRUTE, feed_zone, wound_bonus = CANT_WOUND) // This causes them to make a pain emote so there's no need to do custom logic.
@@ -140,7 +153,10 @@
 			self_message = span_notice("You lift your fangs from [victim]'s [feed_name]."),
 			ignored_mobs = list(victim),
 		)
-		to_chat(victim, span_green("[user] lifts [user.p_their()] fangs from your [feed_name]."))
+		victim.show_message(
+			msg = span_green("[user] lifts [user.p_their()] fangs from your [feed_name]."), type = MSG_VISUAL,
+			alt_msg = span_green("The pain in your wrist disappears.")
+		)
 
 	if (iscarbon(victim))
 		var/feed_bodypart = victim.get_bodypart(feed_zone)

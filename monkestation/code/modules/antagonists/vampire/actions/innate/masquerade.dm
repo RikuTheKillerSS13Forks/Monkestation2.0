@@ -11,6 +11,10 @@
 	. = ..()
 	update_active_state()
 
+/datum/action/cooldown/vampire/masquerade/Remove(mob/removed_from)
+	is_active = FALSE // Avoids 'toggle_off()', as this can only ever be removed if the antag datum is removed. And the process of removing the antag datum enables masquerade.
+	return ..()
+
 /datum/action/cooldown/vampire/masquerade/Destroy()
 	UnregisterSignal(antag_datum, COMSIG_VAMPIRE_MASQUERADE)
 	return ..()

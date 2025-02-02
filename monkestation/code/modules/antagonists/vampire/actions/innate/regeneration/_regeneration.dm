@@ -72,6 +72,8 @@
 	check_can_heal()
 
 /datum/action/cooldown/vampire/regeneration/proc/check_can_heal(can_start_torpor = TRUE)
+	if (!user) // I had 'end_torpor()' get called without an user, probably has to do with removing the action? Anyway, this should fix that.
+		return
 	var/can_heal = can_heal()
 	if (!can_heal)
 		reset()

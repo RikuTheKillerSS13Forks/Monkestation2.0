@@ -20,7 +20,7 @@
 	)
 	time = 10 SECONDS
 	category = CAT_STRUCTURE
-	always_available = FALSE
+	always_available = FALSE // Vampire only.
 
 /datum/crafting_recipe/metalcoffin
 	name = "Metal Coffin"
@@ -32,6 +32,7 @@
 	)
 	time = 10 SECONDS
 	category = CAT_STRUCTURE
+	always_available = FALSE // Vampire only.
 
 /datum/crafting_recipe/securecoffin
 	name = "Secure Coffin"
@@ -44,7 +45,7 @@
 	)
 	time = 15 SECONDS
 	category = CAT_STRUCTURE
-	always_available = FALSE
+	always_available = FALSE // Vampire only.
 
 /*
 /datum/crafting_recipe/vassalrack
@@ -86,6 +87,7 @@
 	time = 5 SECONDS
 	category = CAT_STRUCTURE
 	always_available = FALSE
+*/
 
 /datum/crafting_recipe/stake
 	name = "Stake"
@@ -99,13 +101,13 @@
 	result = /obj/item/stake/hardened
 	tool_behaviors = list(TOOL_WELDER)
 	reqs = list(/obj/item/stack/rods = 1)
-	time = 6 SECONDS
+	time = 4 SECONDS
 	category = CAT_WEAPON_MELEE
-	always_available = FALSE
+	always_available = FALSE // Hunter only.
 
 /datum/crafting_recipe/silver_stake
 	name = "Silver Stake"
-	result = /obj/item/stake/hardened/silver
+	result = /obj/item/stake/silver
 	tool_behaviors = list(TOOL_WELDER)
 	reqs = list(
 		/obj/item/stack/sheet/mineral/silver = 1,
@@ -113,5 +115,4 @@
 	)
 	time = 8 SECONDS
 	category = CAT_WEAPON_MELEE
-	always_available = FALSE
-*/
+	always_available = FALSE // Hunter only.
