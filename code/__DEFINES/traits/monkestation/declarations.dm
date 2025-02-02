@@ -59,8 +59,10 @@
 // /datum/mind + /mob/living
 /// Prevents the user from casting spells using sign language. Works on both /datum/mind and /mob/living.
 #define TRAIT_CANT_SIGN_SPELLS	"cant_sign_spells"
-/// You have special interactions with bloodsuckers and the occult.
+/// You have special interactions with vampires and the occult.
 #define TRAIT_OCCULTIST			"occultist"
+/// Mindshielded victim who has had their will broken and can be enthralled by a vampire.
+#define TRAIT_MIND_BREAK		"mind_break"
 
 // /datum/mind
 /// Indicates that the user has been removed from the crew manifest. Used to track if multiple antags have removed the same person.
