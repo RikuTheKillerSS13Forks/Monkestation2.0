@@ -9621,11 +9621,11 @@
 /turf/open/floor/wood,
 /area/station/hallway/primary/central)
 "bSa" = (
-/obj/structure/table,
 /obj/structure/window/reinforced/spawner/directional/east,
 /obj/structure/window/reinforced/spawner/directional/west,
 /obj/effect/spawner/random/aimodule/harmful,
 /obj/machinery/light/small/directional/east,
+/obj/structure/table/reinforced,
 /turf/open/floor/iron,
 /area/station/ai_monitored/turret_protected/ai_upload)
 "bSd" = (
@@ -25075,7 +25075,6 @@
 /turf/open/floor/wood/parquet,
 /area/station/service/theater)
 "eNV" = (
-/obj/structure/table,
 /obj/structure/window/reinforced/spawner/directional/west,
 /obj/structure/window/reinforced/spawner/directional/east,
 /obj/item/ai_module/core/freeformcore{
@@ -25088,6 +25087,7 @@
 	pixel_y = -3
 	},
 /obj/machinery/light/small/directional/west,
+/obj/structure/table/reinforced,
 /turf/open/floor/iron,
 /area/station/ai_monitored/turret_protected/ai_upload)
 "eNX" = (
@@ -32967,7 +32967,6 @@
 /turf/open/floor/plating,
 /area/station/maintenance/central)
 "gqZ" = (
-/obj/structure/table,
 /obj/structure/window/reinforced/spawner/directional/east,
 /obj/structure/window/reinforced/spawner/directional/north,
 /obj/item/ai_module/supplied/oxygen{
@@ -32976,8 +32975,10 @@
 	},
 /obj/machinery/door/window/brigdoor/right/directional/west{
 	id = list("ai_upload");
-	name = "High-Risk Modules"
+	name = "High-Risk Modules";
+	req_access = list("rd")
 	},
+/obj/structure/table/reinforced,
 /turf/open/floor/iron,
 /area/station/ai_monitored/turret_protected/ai_upload)
 "grb" = (
@@ -56558,10 +56559,10 @@
 /turf/open/floor/iron,
 /area/station/service/hydroponics)
 "kUZ" = (
-/obj/machinery/rnd/production/circuit_imprinter,
 /obj/effect/turf_decal/bot,
 /obj/machinery/firealarm/directional/south,
 /obj/machinery/camera/directional/south,
+/obj/machinery/rnd/production/circuit_imprinter/department/engineering,
 /turf/open/floor/iron/dark,
 /area/station/engineering/storage_shared)
 "kVa" = (
@@ -61529,6 +61530,11 @@
 /area/station/engineering/atmos)
 "lTH" = (
 /obj/effect/turf_decal/bot,
+/mob/living/basic/pet/poppy,
+/obj/structure/bed/dogbed{
+	anchored = 1;
+	name = "Poppy's bed"
+	},
 /turf/open/floor/iron/dark,
 /area/station/engineering/supermatter/room)
 "lTN" = (
@@ -62025,7 +62031,6 @@
 /turf/open/floor/iron,
 /area/station/commons/dorms)
 "lYQ" = (
-/obj/structure/table,
 /obj/item/ai_module/supplied/quarantine{
 	pixel_x = 3;
 	pixel_y = 3
@@ -62038,6 +62043,7 @@
 /obj/machinery/power/apc/auto_name/directional/north,
 /obj/structure/cable,
 /obj/machinery/camera/autoname/directional/north,
+/obj/structure/table/reinforced,
 /turf/open/floor/iron,
 /area/station/ai_monitored/turret_protected/ai_upload)
 "lYV" = (
@@ -79824,14 +79830,14 @@
 /turf/open/floor/iron,
 /area/station/maintenance/starboard/fore)
 "pxn" = (
-/obj/structure/table,
 /obj/structure/window/reinforced/spawner/directional/west,
 /obj/structure/window/reinforced/spawner/directional/north,
 /obj/effect/spawner/random/aimodule/neutral,
-/obj/machinery/door/window/right/directional/east{
+/obj/machinery/door/window/left/directional/east{
 	name = "Core Modules";
-	req_access = list("ai_upload")
+	req_access = list("rd")
 	},
+/obj/structure/table/reinforced,
 /turf/open/floor/iron,
 /area/station/ai_monitored/turret_protected/ai_upload)
 "pxt" = (
@@ -79956,7 +79962,6 @@
 /turf/open/floor/plating,
 /area/station/maintenance/department/security/greater)
 "pyq" = (
-/obj/structure/table,
 /obj/structure/window/reinforced/spawner/directional/east,
 /obj/structure/window/reinforced/spawner/directional/south,
 /obj/item/ai_module/supplied/protect_station,
@@ -79966,8 +79971,10 @@
 	},
 /obj/machinery/door/window/brigdoor/left/directional/west{
 	id = list("ai_upload");
-	name = "High-Risk Modules"
+	name = "High-Risk Modules";
+	req_access = list("rd")
 	},
+/obj/structure/table/reinforced,
 /turf/open/floor/iron,
 /area/station/ai_monitored/turret_protected/ai_upload)
 "pyr" = (
@@ -80912,14 +80919,14 @@
 /turf/open/floor/wood/large,
 /area/station/science/auxlab/firing_range)
 "pJf" = (
-/obj/structure/table,
 /obj/structure/window/reinforced/spawner/directional/west,
 /obj/structure/window/reinforced/spawner/directional/south,
 /obj/effect/spawner/random/aimodule/harmless,
 /obj/machinery/door/window/right/directional/east{
 	name = "Core Modules";
-	req_access = list("ai_upload")
+	req_access = list("rd")
 	},
+/obj/structure/table/reinforced,
 /turf/open/floor/iron,
 /area/station/ai_monitored/turret_protected/ai_upload)
 "pJq" = (
@@ -107587,18 +107594,6 @@
 /obj/machinery/ntnet_relay,
 /turf/open/floor/circuit/telecomms/mainframe,
 /area/station/tcommsat/server)
-"uOa" = (
-/obj/machinery/door/airlock/hatch{
-	name = "MiniSat Space Access Airlock"
-	},
-/obj/effect/mapping_helpers/airlock/cyclelink_helper_multi{
-	cycle_id = "AIsatAirlock"
-	},
-/obj/structure/cable,
-/obj/machinery/atmospherics/pipe/smart/manifold4w/scrubbers/hidden/layer2,
-/obj/machinery/atmospherics/pipe/smart/manifold4w/supply/hidden/layer4,
-/turf/open/floor/plating,
-/area/station/ai_monitored/aisat/exterior)
 "uOh" = (
 /obj/structure/cable,
 /turf/open/floor/iron/dark/side,
@@ -220911,7 +220906,7 @@ gLc
 gLc
 gLc
 tQB
-uOa
+nEX
 mcW
 kKI
 xya

@@ -13742,6 +13742,10 @@
 "dkO" = (
 /turf/open/floor/iron,
 /area/station/security/brig)
+"dkU" = (
+/mob/living/basic/bot/cleanbot/medbay,
+/turf/open/floor/iron/dark,
+/area/station/medical/treatment_center)
 "dlb" = (
 /obj/machinery/bluespace_beacon,
 /obj/effect/turf_decal/trimline/yellow/filled/warning,
@@ -16132,7 +16136,7 @@
 /obj/effect/spawner/random/aimodule/neutral,
 /obj/machinery/door/window/left/directional/east{
 	name = "Neutral Modules";
-	req_access = list("captain")
+	req_access = list("rd")
 	},
 /obj/item/ai_module/core/freeformcore,
 /turf/open/floor/circuit,
@@ -26536,7 +26540,7 @@
 	name = "Delivery Lockdown";
 	id = "nodeliver"
 	},
-/obj/machinery/rnd/production/circuit_imprinter,
+/obj/machinery/rnd/production/circuit_imprinter/department/engineering,
 /turf/open/floor/plastic,
 /area/station/engineering/break_room)
 "hqi" = (
@@ -61506,7 +61510,7 @@
 /obj/effect/spawner/random/aimodule/harmful,
 /obj/machinery/door/window/left/directional/east{
 	name = "Dangerous Modules";
-	req_access = list("captain")
+	req_access = list("rd")
 	},
 /obj/item/ai_module/supplied/crimereligion,
 /obj/item/ai_module/zeroth/coderedmartiallaw,
@@ -178636,7 +178640,7 @@ ecW
 dXo
 lTc
 lrQ
-xOn
+dkU
 gHp
 dHv
 xSZ
