@@ -65,7 +65,7 @@
 
 	var/target_zone_name = target_bodypart.plaintext_zone
 
-	if (target.mobility_flags & MOBILITY_MOVE) // There was a pierce immunity check here, but you could metagame the trait by decapping and then staking, so I removed it. It was also dumb to begin with.
+	if (!can_be_staked(target))
 		target.balloon_alert(user, "moving too much!")
 		return
 
@@ -82,7 +82,7 @@
 	)
 	playsound(target, 'sound/magic/demon_consume.ogg', vol = 50, vary = TRUE)
 
-	if (!do_after(user, stake_time, target, extra_checks = CALLBACK(target, TYPE_PROC_REF(/mob/living/carbon, can_be_staked))))
+	if (!do_after(user, stake_time, target, extra_checks = CALLBACK(src, PROC_REF(can_be_staked), target)))
 		target.balloon_alert(user, "interrupted!")
 		return
 
@@ -105,9 +105,9 @@
 	if (tryEmbed(target_bodypart, forced = TRUE) != COMPONENT_EMBED_SUCCESS)
 		return
 
+	var/obj/item/organ/target_brain = target.get_organ_slot(ORGAN_SLOT_BRAIN) // The damage can cause a dismember, so cache this here.
 	target.apply_damage(force * 10, BRUTE, target_zone, wound_bonus = 100, sharpness = sharpness, attack_direction = get_dir(user, target)) // YEOWCH
 
-	var/obj/item/organ/target_brain = target.get_organ_slot(ORGAN_SLOT_BRAIN)
 	if (!target_brain || check_zone(target_brain.zone) != target_zone)
 		to_chat(user, span_warning("There was a lack of resistance in [target.p_their()] [target_zone_name]... wait, there was no brain inside!"))
 		return // You really just staked someone in a non-vital spot. Congrats!
@@ -129,9 +129,12 @@
 		target.visible_message(span_bolddanger("[target]'s [target_zone_name] bursts into a shower of viscera from the sheer force of \the [src]!"))
 		qdel(target_bodypart)
 
+	visible_message(span_warning("\The [src] burns up."))
+	qdel(src) // Just to make sure it gets destroyed.
+
 /// Can this mob be staked? Used as an extra check in the do_after for staking someone.
-/mob/living/carbon/proc/can_be_staked()
-	return !(mobility_flags & MOBILITY_MOVE) || stat != CONSCIOUS
+/obj/item/stake/proc/can_be_staked(mob/living/carbon/target)
+	return !target.key || !target.mind || target.stat != CONSCIOUS || !(target.mobility_flags & MOBILITY_MOVE) // Checks for key/mind instead of client so you can't cheese it with a disconnect.
 
 /obj/item/stake/proc/try_stake_alt(atom/target, mob/living/user)
 	var/is_brain = istype(target, /obj/item/organ/internal/brain)
@@ -142,6 +145,7 @@
 	if (DOING_INTERACTION_WITH_TARGET(user, target)) // Don't spam please.
 		return
 
+	target.balloon_alert(user, "staking...")
 	user.visible_message(
 		message = span_danger("[user] starts driving \the [src] into [target]!"),
 		self_message = span_warning("You start driving \the [src] into [target]!"),
@@ -172,27 +176,35 @@
 	new /obj/effect/decal/cleanable/ash(target.loc)
 	qdel(target)
 
+	visible_message(span_warning("\The [src] burns up."))
+	qdel(src) // Just to make sure it gets destroyed.
+
 /obj/item/stake/proc/try_dust_head(obj/item/bodypart/head/head, mob/living/user)
 	if (!istype(head))
 		return FALSE
 
+	forceMove(head) // Done before the early return so that deleting the head deletes the stake.
+
+	if (IS_VAMPIRE(head.brainmob)) // There is no point in damaging the head and brain if it's going to be destroyed.
+		return TRUE
+
 	var/brain_found = FALSE
 	for (var/obj/item/organ/internal/brain/brain in head)
-		. |= try_dust_brain(brain)
+		brain.apply_organ_damage(brain.maxHealth) // You're shoving a giant, sharpened wooden stick into their brain.
 		brain_found = TRUE
 
-	if (!.)
-		head.receive_damage(brute = force * 10, wound_bonus = 100, sharpness = sharpness)
-
 	if (!brain_found)
-		to_chat(user, span_warning("There was a lack of resistance in [head]... wait, there was no brain inside!"))
+		to_chat(user, span_warning("There was a lack of resistance in it... wait, there was no brain inside!"))
+
+	head.receive_damage(brute = force * 10, wound_bonus = 100, sharpness = sharpness) // Do this after the brain stuff, just in case someone EVER links damage to butchering.
 
 /obj/item/stake/proc/try_dust_brain(obj/item/organ/internal/brain/brain)
 	if (!istype(brain))
 		return FALSE
-	. = IS_VAMPIRE(brain.brainmob)
-	if (!.)
-		brain.apply_organ_damage(brain.maxHealth) // You're shoving a giant, sharpened wooden stick into their brain.
+	if (IS_VAMPIRE(brain.brainmob)) // There is no point in damaging the brain if it's going to be destroyed.
+		return TRUE
+
+	brain.apply_organ_damage(brain.maxHealth) // You're shoving a giant, sharpened wooden stick into their brain.
 
 /// Created by heat treating a simple stake with a welder.
 /obj/item/stake/hardened
