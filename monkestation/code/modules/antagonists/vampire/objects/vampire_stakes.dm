@@ -130,7 +130,7 @@
 		qdel(target_bodypart)
 
 	visible_message(span_warning("\The [src] burns up."))
-	qdel(src) // Just to make sure it gets destroyed.
+	qdel(src) // Make sure it gets destroyed.
 
 /// Can this mob be staked? Used as an extra check in the do_after for staking someone.
 /obj/item/stake/proc/can_be_staked(mob/living/carbon/target)
@@ -177,7 +177,7 @@
 	qdel(target)
 
 	visible_message(span_warning("\The [src] burns up."))
-	qdel(src) // Just to make sure it gets destroyed.
+	qdel(src) // Make sure it gets destroyed.
 
 /obj/item/stake/proc/try_dust_head(obj/item/bodypart/head/head, mob/living/user)
 	if (!istype(head))
