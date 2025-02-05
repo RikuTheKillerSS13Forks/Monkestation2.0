@@ -182,9 +182,6 @@
 /obj/item/stake/proc/try_dust_head(obj/item/bodypart/head/head, mob/living/user)
 	if (!istype(head))
 		return FALSE
-
-	forceMove(head) // Done before the early return so that deleting the head deletes the stake.
-
 	if (IS_VAMPIRE(head.brainmob)) // There is no point in damaging the head and brain if it's going to be destroyed.
 		return TRUE
 
@@ -196,6 +193,7 @@
 	if (!brain_found)
 		to_chat(user, span_warning("There was a lack of resistance in it... wait, there was no brain inside!"))
 
+	forceMove(head)
 	head.receive_damage(brute = force * 10, wound_bonus = 100, sharpness = sharpness) // Do this after the brain stuff, just in case someone EVER links damage to butchering.
 
 /obj/item/stake/proc/try_dust_brain(obj/item/organ/internal/brain/brain)
