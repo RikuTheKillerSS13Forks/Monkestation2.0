@@ -6545,6 +6545,7 @@
 #include "monkestation\code\modules\antagonists\vampire\clans\_vampire_clan.dm"
 #include "monkestation\code\modules\antagonists\vampire\clans\caitiff.dm"
 #include "monkestation\code\modules\antagonists\vampire\objects\vampire_coffins.dm"
+#include "monkestation\code\modules\antagonists\vampire\objects\vampire_necklaces.dm"
 #include "monkestation\code\modules\antagonists\vampire\objects\vampire_stakes.dm"
 #include "monkestation\code\modules\antagonists\vampire\status_effects\_vampire_status_effect.dm"
 #include "monkestation\code\modules\antagonists\vampire\status_effects\torpor.dm"

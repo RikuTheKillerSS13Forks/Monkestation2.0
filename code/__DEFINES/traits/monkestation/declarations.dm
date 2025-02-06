@@ -153,4 +153,8 @@
 #define TRAIT_LIGHT_SLEEPER "light_sleeper"
 /// Makes a mob throw guns instead of shooting them, works with TRAIT_NOGUNS
 #define TRAIT_THROW_GUNS "throw_guns"
+
+/// Mob can't be fed from by vampires.
+#define TRAIT_FEED_PROTECTION "feed_protection"
+
 // END TRAIT DEFINES
