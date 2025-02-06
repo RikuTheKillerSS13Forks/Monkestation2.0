@@ -36,17 +36,21 @@
 	var/mob/living/target = user.pulling
 	var/datum/antagonist/vampire/target_antag_datum = target.mind?.has_antag_datum(/datum/antagonist/vampire)
 
+	if (HAS_TRAIT(target, TRAIT_FEED_PROTECTION))
+		if (feedback)
+			target.balloon_alert(user, "protected!")
+		return FALSE
 	if (user.is_mouth_covered() && !isplasmaman(user))
 		if (feedback)
 			user.balloon_alert(user, "mouth covered!")
 		return FALSE
 	if (target_antag_datum && target_antag_datum.current_lifeforce <= 0)
 		if (feedback)
-			user.balloon_alert(user, "[target.p_they()] lack[target.p_s()] lifeforce!")
+			target.balloon_alert(user, "no lifeforce!")
 		return FALSE
 	if (target.blood_volume <= 0 || HAS_TRAIT(target, TRAIT_NOBLOOD))
 		if (feedback)
-			user.balloon_alert(user, "[target.p_they()] lack[target.p_s()] blood!")
+			target.balloon_alert(user, "no blood!")
 		return FALSE
 	return TRUE
 
@@ -80,6 +84,7 @@
 	victim = target
 	. = ..()
 
+	ADD_TRAIT(user, TRAIT_MUTE, REF(src))
 	ADD_TRAIT(victim, TRAIT_NODEATH, REF(src))
 	RegisterSignal(victim, COMSIG_QDELETING, PROC_REF(toggle_off))
 	RegisterSignal(victim, COMSIG_LIVING_LIFE, PROC_REF(on_victim_life))
@@ -116,6 +121,7 @@
 /datum/action/cooldown/vampire/feed/toggle_off(forced)
 	. = ..()
 
+	REMOVE_TRAIT(user, TRAIT_MUTE, REF(src))
 	REMOVE_TRAIT(victim, TRAIT_NODEATH, REF(src))
 	UnregisterSignal(victim, list(COMSIG_QDELETING, COMSIG_LIVING_LIFE))
 
@@ -175,10 +181,10 @@
 
 /datum/action/cooldown/vampire/feed/proc/check_active_feed(datum/antagonist/vampire/victim_antag_datum)
 	if (victim_antag_datum && victim_antag_datum.current_lifeforce <= 0)
-		user.balloon_alert(user, "[victim.p_theyre()] out of lifeforce!")
+		victim.balloon_alert(user, "out of lifeforce!")
 		toggle_off()
 	if (victim.blood_volume <= 0 || HAS_TRAIT(victim, TRAIT_NOBLOOD))
-		user.balloon_alert(user, "[victim.p_theyre()] out of blood!")
+		victim.balloon_alert(user, "out of blood!")
 		toggle_off()
 
 /datum/action/cooldown/vampire/feed/proc/on_victim_life(datum/source, seconds_per_tick, times_fired)

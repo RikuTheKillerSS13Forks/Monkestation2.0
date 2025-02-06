@@ -116,3 +116,24 @@
 	time = 8 SECONDS
 	category = CAT_WEAPON_MELEE
 	always_available = FALSE // Hunter only.
+
+/datum/crafting_recipe/garlic_necklace
+	name = "Garlic Necklace"
+	result = /obj/item/clothing/neck/necklace/garlic
+	reqs = list(
+		/obj/item/food/grown/garlic = 1,
+		/obj/item/stack/cable_coil = 3,
+	)
+	time = 5 SECONDS
+	category = CAT_EQUIPMENT
+
+/datum/crafting_recipe/cross_necklace
+	name = "Cross Necklace"
+	result = /obj/item/clothing/neck/necklace/cross
+	tool_behaviors = list(TOOL_WELDER)
+	reqs = list(
+		/obj/item/stack/sheet/mineral/silver = 2,
+	)
+	time = 5 SECONDS
+	category = CAT_EQUIPMENT
+	always_available = FALSE // Hunter only.
