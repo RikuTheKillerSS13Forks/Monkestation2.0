@@ -112,7 +112,7 @@
 		to_chat(user, span_warning("There was a lack of resistance in [target.p_their()] [target_zone_name]... wait, there was no brain inside!"))
 		return // You really just staked someone in a non-vital spot. Congrats!
 
-	if (!IS_VAMPIRE(target))
+	if (!IS_VAMPIRE(target) || !(target_brain.organ_flags & ORGAN_VITAL)) // In case someone gets ling + vamp or similar.
 		target_brain.apply_organ_damage(target_brain.maxHealth) // You're shoving a giant, sharpened wooden stick into their brain.
 		return
 
