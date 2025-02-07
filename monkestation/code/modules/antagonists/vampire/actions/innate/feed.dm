@@ -54,8 +54,8 @@
 		return FALSE
 	return TRUE
 
-/datum/action/cooldown/vampire/feed/proc/start_feed_extra_checks()
-	if (!isliving(user.pulling) || user.grab_state < (is_neck_feed && iscarbon(user.pulling) ? GRAB_AGGRESSIVE : GRAB_PASSIVE))
+/datum/action/cooldown/vampire/feed/proc/start_feed_extra_checks(mob/living/target)
+	if (user.pulling != target || user.grab_state < (is_neck_feed && iscarbon(target) ? GRAB_AGGRESSIVE : GRAB_PASSIVE))
 		return FALSE
 	return can_feed()
 
@@ -72,7 +72,7 @@
 			type = MSG_VISUAL
 		)
 
-	if (!do_after(user, 2 SECONDS, target, timed_action_flags = (IGNORE_SLOWDOWNS | IGNORE_USER_LOC_CHANGE | IGNORE_TARGET_LOC_CHANGE), extra_checks = CALLBACK(src, PROC_REF(start_feed_extra_checks))))
+	if (!do_after(user, 2 SECONDS, target, timed_action_flags = IGNORE_SLOWDOWNS, extra_checks = CALLBACK(src, PROC_REF(start_feed_extra_checks), target)))
 		user.balloon_alert(user, "interrupted!")
 		return
 
