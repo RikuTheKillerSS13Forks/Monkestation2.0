@@ -1,5 +1,10 @@
 /datum/antagonist/vampire/process(seconds_per_tick)
-	if(QDELETED(user) || user.stat == DEAD)
+	if(QDELETED(user))
+		return
+
+
+
+	if (user.stat == DEAD)
 		return
 
 	if (current_lifeforce <= 0 && !HAS_TRAIT(user, TRAIT_NODEATH))
@@ -7,3 +12,5 @@
 		return
 
 	adjust_lifeforce(lifeforce_per_second * DELTA_WORLD_TIME(SSprocessing)) // Even a 5% difference could make your lifeforce last several minutes more or less.
+
+/datum/antagonist/vampire/proc/check_starlight()
