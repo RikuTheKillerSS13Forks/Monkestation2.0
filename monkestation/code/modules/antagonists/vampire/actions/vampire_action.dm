@@ -40,8 +40,12 @@
 	. = ..()
 
 	if (is_active)
-		toggle_on()
+		if (IsAvailable())
+			toggle_on()
+		else
+			is_active = FALSE
 
+	RegisterSignal(user, SIGNAL_ADDTRAIT(TRAIT_VAMPIRE_STARLIT), PROC_REF(on_starlit_added))
 	RegisterSignal(user, COMSIG_MOB_STATCHANGE, PROC_REF(on_stat_changed), override = TRUE) // This overrides the default stat change check.
 
 /datum/action/cooldown/vampire/Remove(mob/removed_from)
@@ -68,6 +72,10 @@
 	if ((vampire_check_flags & VAMPIRE_AC_FRENZY) && antag_datum.current_lifeforce <= 0)
 		if (feedback)
 			user.balloon_alert(user, "not while in a frenzy!")
+		return FALSE
+	if ((vampire_check_flags & VAMPIRE_AC_STARLIT) && HAS_TRAIT(user, TRAIT_VAMPIRE_STARLIT))
+		if (feedback)
+			user.balloon_alert(user, "not while in starlight!")
 		return FALSE
 
 /datum/action/cooldown/vampire/Activate(atom/target)
@@ -101,6 +109,12 @@
 /datum/action/cooldown/vampire/proc/on_lifeforce_changed(datum/source, new_amount, old_amount)
 	SIGNAL_HANDLER
 	if ((vampire_check_flags & VAMPIRE_AC_FRENZY) && new_amount <= 0 && is_toggleable && is_active)
+		toggle_off()
+	build_all_button_icons(UPDATE_BUTTON_STATUS)
+
+/datum/action/cooldown/vampire/proc/on_starlit_added(datum/source)
+	SIGNAL_HANDLER
+	if ((vampire_check_flags & VAMPIRE_AC_STARLIT) && HAS_TRAIT(user, TRAIT_VAMPIRE_STARLIT) && is_toggleable && is_active)
 		toggle_off()
 	build_all_button_icons(UPDATE_BUTTON_STATUS)
 

@@ -156,5 +156,7 @@
 
 /// Mob can't be fed from by vampires.
 #define TRAIT_FEED_PROTECTION "feed_protection"
+/// Mob is a vampire exposed to starlight.
+#define TRAIT_VAMPIRE_STARLIT "vampire_starlit"
 
 // END TRAIT DEFINES

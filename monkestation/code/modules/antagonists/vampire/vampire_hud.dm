@@ -46,6 +46,8 @@
 	QDEL_NULL(lifeforce_display)
 	QDEL_NULL(rank_display)
 
+	UnregisterSignal(user, COMSIG_MOB_HUD_CREATED) // Just to be sure.
+
 /// Updates HUD displays for lifeforce and rank.
 /datum/antagonist/vampire/proc/update_hud()
 	var/color

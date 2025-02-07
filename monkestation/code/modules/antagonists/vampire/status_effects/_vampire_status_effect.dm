@@ -27,18 +27,18 @@
 	if (!antag_datum)
 		CRASH("Vampire status effect with ID \"[id]\" added to non-vampire mob \"[user]\".")
 
+	RegisterSignal(antag_datum, COMSIG_VAMPIRE_CLEANUP, PROC_REF(on_cleanup))
+
 	return TRUE
 
-// Registering to COMSIG_QDELETING on the antag datum might bring issues, just have the antag datum clean these up.
-// The reason for this is that a decent chunk of these might have effects on removal that are... undesirable.
-// Like frenzy, which will kill you. We don't want that if the antag datum is deleted! So be careful.
-// Things that add these are responsible for cleaning them up, like Regeneration is for Torpor.
 /datum/status_effect/vampire/Destroy()
-	. = ..()
+	. = ..() // Call parent first in case 'on_remove()' uses the 'user' or 'antag_datum' vars.
+
+	UnregisterSignal(antag_datum, COMSIG_VAMPIRE_CLEANUP) // Done here to avoid dropping support for 'on_remove_on_mob_delete = FALSE' or alternatively, duplicating this.
 
 	user = null
 	antag_datum = null
 
-/datum/status_effect/vampire/proc/on_antag_datum_deleted()
+/datum/status_effect/vampire/proc/on_cleanup()
 	SIGNAL_HANDLER
 	qdel(src)

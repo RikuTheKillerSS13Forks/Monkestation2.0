@@ -31,12 +31,15 @@
 	if (!regen_rate) // How would this happen? Coderkind will never know.
 		return
 
-	if (IS_THRALL(user))
-		regen_rate *= 0.5
-
 	var/is_in_torpor = user.has_status_effect(/datum/status_effect/vampire/torpor)
 	if (is_in_torpor)
 		regen_rate *= 2
+
+	if (IS_THRALL(user))
+		regen_rate *= 0.5
+
+	if (HAS_TRAIT(user, TRAIT_VAMPIRE_STARLIT))
+		regen_rate *= 0.7
 
 	var/total_cost = 0
 	total_cost += handle_limb_regen(regen_rate)

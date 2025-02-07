@@ -4,7 +4,7 @@
 	button_icon_state = "power_human"
 	cooldown_time = 5 SECONDS
 	is_toggleable = TRUE
-	vampire_check_flags = VAMPIRE_AC_FRENZY
+	vampire_check_flags = VAMPIRE_AC_FRENZY | VAMPIRE_AC_STARLIT
 
 /datum/action/cooldown/vampire/masquerade/Grant(mob/granted_to)
 	check_flags = AB_CHECK_CONSCIOUS // This is so that the signals register properly.

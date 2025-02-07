@@ -40,6 +40,8 @@
 
 	START_PROCESSING(SSprocessing, src)
 
+	RegisterSignal(user, COMSIG_MOVABLE_MOVED, PROC_REF(on_moved))
+
 	if (user.hud_used)
 		create_hud()
 	else
@@ -47,12 +49,12 @@
 
 	grant_abilities()
 
-/datum/antagonist/vampire/remove_innate_effects(mob/living/mob_override)
+/datum/antagonist/vampire/remove_innate_effects(mob/living/mob_override) // This doesn't use mob_override, but it will keep working anyway unless someone tries adding the antag datum to two mobs at once.
 	. = ..()
 	if (!user)
 		return
 
-	remove_abilities()
+	remove_abilities() // Have this before masquerade is set to avoid it interacting with the masquerade action.
 
 	set_masquerade(TRUE) // This removes the elements added by not being in masquerade, leaving only traits.
 	REMOVE_TRAITS_IN(user, REF(src)) // And this then clears the traits. This should also be after removing actions.
@@ -61,7 +63,11 @@
 
 	STOP_PROCESSING(SSprocessing, src)
 
+	UnregisterSignal(user, COMSIG_MOVABLE_MOVED)
+
 	delete_hud()
+
+	SEND_SIGNAL(src, COMSIG_VAMPIRE_CLEANUP)
 
 	user = null
 

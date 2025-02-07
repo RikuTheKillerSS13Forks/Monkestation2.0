@@ -18,6 +18,8 @@
 #define VAMPIRE_AC_MASQUERADE (1 << 1)
 /// The ability can't be used while in a frenzy.
 #define VAMPIRE_AC_FRENZY (1 << 2)
+/// The ability can't be used while starlit.
+#define VAMPIRE_AC_STARLIT (1 << 3)
 
 /// The amount of lifeforce it costs for a vampire to regrow a limb.
 #define VAMPIRE_LIMB_REGROWTH_COST 2
