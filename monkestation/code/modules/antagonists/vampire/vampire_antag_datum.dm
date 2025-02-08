@@ -73,7 +73,7 @@
 
 /// Turns the given target into a thrall subservient to us.
 /datum/antagonist/vampire/proc/enthrall(mob/living/carbon/human/target)
-	if (!istype(target) || !target.mind)
+	if (!istype(target) || !target.mind) // This is just a sanity check, it's not the actual enthrallment conditions.
 		return
 
 	var/obj/item/organ/internal/flesh_bud/flesh_bud = new()
