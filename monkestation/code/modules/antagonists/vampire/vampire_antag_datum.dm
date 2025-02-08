@@ -15,7 +15,7 @@
 
 /datum/antagonist/vampire/on_gain()
 	for (var/action_type in current_abilities)
-		grant_ability(action_type) // This will initialize the actions.
+		grant_ability(action_type) // This will initialize the actions. Has to be before 'apply_innate_effects()' so 'grant_abilities()' works properly.
 	. = ..()
 	teach_recipes()
 

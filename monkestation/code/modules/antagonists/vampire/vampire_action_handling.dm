@@ -11,17 +11,15 @@
 /datum/antagonist/vampire/proc/grant_abilities()
 	for (var/action_type in current_abilities)
 		var/datum/action/cooldown/vampire/action = current_abilities[action_type]
-		if (istype(action)) // In case it's VAMPIRE_ABILITY_BLOCKED
-			action.Grant(user)
+		action.Grant(user)
 
 /datum/antagonist/vampire/proc/remove_abilities()
 	for (var/action_type in current_abilities)
 		var/datum/action/cooldown/vampire/action = current_abilities[action_type]
-		if (istype(action)) // In case it's VAMPIRE_ABILITY_BLOCKED
-			action.Remove(user)
+		action.Remove(user)
 
 /datum/antagonist/vampire/proc/grant_ability(type)
-	if (current_abilities[type] != null)
+	if (current_abilities[type])
 		return
 
 	var/datum/action/cooldown/vampire/new_action = new type(src)
@@ -31,20 +29,8 @@
 		new_action.Grant(user)
 
 /datum/antagonist/vampire/proc/remove_ability(type)
-	if (current_abilities[type] == VAMPIRE_ABILITY_BLOCKED)
-		return
 	qdel(current_abilities[type])
 	current_abilities[type] = null
 
 /datum/antagonist/vampire/proc/get_ability(type)
-	var/datum/action/cooldown/vampire/action = current_abilities[type]
-	return istype(action) ? action : null
-
-/datum/antagonist/vampire/proc/block_ability(type)
-	qdel(current_abilities[type])
-	current_abilities[type] = VAMPIRE_ABILITY_BLOCKED
-
-/datum/antagonist/vampire/proc/unblock_ability(type)
-	if (current_abilities[type] != VAMPIRE_ABILITY_BLOCKED)
-		return
-	current_abilities[type] = null
+	return current_abilities[type]
