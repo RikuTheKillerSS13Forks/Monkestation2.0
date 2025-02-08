@@ -122,3 +122,9 @@
 #define COUNT_TRAIT_SOURCES(target, trait) length(GET_TRAIT_SOURCES(target, trait))
 /// A simple helper for checking traits in a mob's mind
 #define HAS_MIND_TRAIT(target, trait) (HAS_TRAIT(target, trait) || (target.mind ? HAS_TRAIT(target.mind, trait) : FALSE))
+
+// MONKESTATION ADDITION START
+/// Helper for traits that cancel other traits in some way. Used by TRAIT_FAKEBLOOD to bypass TRAIT_NOBLOOD for 'get_blood_type()', for example.
+/// Specifically, it checks if the target has 'trait' from a source that doesn't also give 'pair'.
+#define HAS_TRAIT_NOT_PAIRED_WITH(target, trait, pair) HAS_TRAIT_NOT_FROM(target, trait, GET_TRAIT_SOURCES(target, pair))
+// MONKESTATION ADDITION END

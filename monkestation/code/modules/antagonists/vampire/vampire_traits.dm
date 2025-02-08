@@ -25,5 +25,6 @@
 
 	/// Traits that vampires only have while in masquerade.
 	var/static/list/masquerade_traits = list(
-		// add fake blood and fake genes here later
+		TRAIT_FAKEGENES,
+		TRAIT_FAKEBLOOD,
 	)

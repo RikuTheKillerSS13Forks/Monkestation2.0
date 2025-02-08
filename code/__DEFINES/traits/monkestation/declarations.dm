@@ -43,8 +43,6 @@
 #define TRAIT_INSTANT_RELOAD "instant_reload"
 /// If an oozeling is currently protecting themselves from water.
 #define TRAIT_SLIME_HYDROPHOBIA "slime_hydrophobia"
-/// Falsifies Health analyzer blood levels
-#define TRAIT_MASQUERADE "masquerade"
 /// Prevents the user from entering stamina crit.
 #define TRAIT_CANT_STAMCRIT "cant_stamcrit"
 /// This mob will automatically revive when healed enough.
@@ -55,6 +53,16 @@
 #define TRAIT_CONVERSION_FLASHED "conversion_flashed"
 /// For when a mob has been consumed by a zombie
 #define TRAIT_ZOMBIE_CONSUMED "zombie_consumed"
+/// Mob can't be fed from by vampires.
+#define TRAIT_FEED_PROTECTION "feed_protection"
+/// Mob is a vampire exposed to starlight.
+#define TRAIT_VAMPIRE_STARLIT "vampire_starlit"
+/// Superficial gene analysis will report genes even if the mob has none.
+/// Only applies if TRAIT_GENELESS comes from the same source as this.
+#define TRAIT_FAKEGENES "fakegenes"
+/// Health analyzers will show 100% blood volume even if the mob has none.
+/// Only applies if TRAIT_NOBLOOD comes from the same source as this.
+#define TRAIT_FAKEBLOOD "fakeblood"
 
 // /datum/mind + /mob/living
 /// Prevents the user from casting spells using sign language. Works on both /datum/mind and /mob/living.
@@ -153,10 +161,5 @@
 #define TRAIT_LIGHT_SLEEPER "light_sleeper"
 /// Makes a mob throw guns instead of shooting them, works with TRAIT_NOGUNS
 #define TRAIT_THROW_GUNS "throw_guns"
-
-/// Mob can't be fed from by vampires.
-#define TRAIT_FEED_PROTECTION "feed_protection"
-/// Mob is a vampire exposed to starlight.
-#define TRAIT_VAMPIRE_STARLIT "vampire_starlit"
 
 // END TRAIT DEFINES

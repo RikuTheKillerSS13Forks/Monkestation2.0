@@ -293,8 +293,8 @@
 		return null
 	return GLOB.blood_types[/datum/blood_type/xenomorph]
 
-/mob/living/carbon/human/get_blood_type()
-	if(HAS_TRAIT(src, TRAIT_HUSK) || isnull(dna) || HAS_TRAIT(src, TRAIT_NOBLOOD))
+/mob/living/carbon/human/get_blood_type() // WARNING: Do not use this to determine if a mob can bleed. Only use it for visuals/scans due to TRAIT_FAKEBLOOD. Check for TRAIT_NOBLOOD instead.
+	if(HAS_TRAIT(src, TRAIT_HUSK) || isnull(dna) || HAS_TRAIT_NOT_PAIRED_WITH(src, TRAIT_NOBLOOD, TRAIT_FAKEBLOOD)) // MONKESTATION EDIT: TRAIT_FAKEBLOOD
 		return null
 	if(check_holidays(APRIL_FOOLS) && is_clown_job(mind?.assigned_role))
 		return GLOB.blood_types[/datum/blood_type/clown]
