@@ -7,7 +7,7 @@
 	if (user.stat == DEAD)
 		return
 
-	if (current_lifeforce <= 0 && !HAS_TRAIT(user, TRAIT_NODEATH))
+	if (current_lifeforce <= 0 && !HAS_TRAIT(user, TRAIT_NODEATH)) // Has to be before adjusting lifeforce in case 'lifeforce_per_second' is positive.
 		user.death(gibbed = FALSE, cause_of_death = "vampiric malnutrition") // Replace this with frenzy later.
 		return
 
