@@ -2,7 +2,9 @@
 
 /obj/item/organ/internal/flesh_bud
 	name = "flesh bud"
-	desc = "An abominable and sickly looking ball of flesh. It has tendrils jutting out from all sides."
+	desc = "An abominable and sickly looking ball of flesh with tendrils soaked in a clear fluid. Almost like a brain tumor, but so much worse."
+	icon = 'monkestation/icons/vampires/vampire_obj.dmi'
+	icon_state = "flesh_bud"
 	zone = BODY_ZONE_HEAD
 	slot = ORGAN_SLOT_VAMPIRE_FLESH_BUD
 
@@ -24,7 +26,7 @@
 	RegisterSignals(mind, list(COMSIG_MIND_TRANSFERRED, COMSIG_QDELETING), PROC_REF(on_mind_removed_from_owner))
 
 	var/datum/antagonist/vampire/thrall/antag_datum = mind.has_antag_datum(/datum/antagonist/vampire)
-	if (antag_datum && antag_datum.current_rank > 0)
+	if (antag_datum?.current_rank > 0)
 		return
 
 	mind.add_antag_datum(/datum/antagonist/vampire/thrall)
@@ -33,7 +35,7 @@
 	UnregisterSignal(mind, list(COMSIG_MIND_TRANSFERRED, COMSIG_QDELETING), PROC_REF(on_mind_removed_from_owner))
 
 	var/datum/antagonist/vampire/thrall/antag_datum = mind.has_antag_datum(/datum/antagonist/vampire/thrall)
-	if (antag_datum && antag_datum.current_rank > 0)
+	if (antag_datum?.current_rank > 0)
 		return
 
 	mind.remove_antag_datum(/datum/antagonist/vampire/thrall)
