@@ -67,9 +67,9 @@
 
 	delete_hud()
 
-	SEND_SIGNAL(src, COMSIG_VAMPIRE_CLEANUP)
+	SEND_SIGNAL(src, COMSIG_VAMPIRE_CLEANUP) // This, possibly among other things, makes vampire status effects self-destruct.
 
-	user = null
+	user = null // DO THIS LAST PLEASE
 
 /// Turns the given target into a thrall subservient to us.
 /datum/antagonist/vampire/proc/enthrall(mob/living/carbon/human/target)
