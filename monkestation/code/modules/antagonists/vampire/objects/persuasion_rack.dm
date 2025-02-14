@@ -59,6 +59,7 @@
 		ADD_TRAIT(victim.mind, TRAIT_MIND_BREAK, PERSUASION_RACK_TRAIT)
 		// todo: come up with flavor message here
 		victim.balloon_alert(user, "mind broken!")
+		progress = 0
 
 /obj/structure/persuasion_rack/proc/find_torture_tool(mob/living/user)
 	var/obj/item/tool
