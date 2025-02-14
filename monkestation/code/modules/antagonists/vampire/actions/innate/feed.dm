@@ -11,6 +11,9 @@
 	/// A hard ref to whoever we're feeding from.
 	var/mob/living/victim = null
 
+	/// Whether we're enthralling someone right now.
+	var/is_enthralling = FALSE
+
 /datum/action/cooldown/vampire/feed/Grant(mob/granted_to)
 	. = ..()
 	RegisterSignals(user, list(COMSIG_MOVABLE_SET_GRAB_STATE, COMSIG_LIVING_START_PULL, COMSIG_ATOM_NO_LONGER_PULLING), PROC_REF(on_update_grab_state))
@@ -179,6 +182,12 @@
 		return FALSE
 	return TRUE
 
+/datum/action/cooldown/vampire/feed/proc/on_update_grab_state()
+	SIGNAL_HANDLER
+	if (!QDELETED(victim))
+		check_active_grab()
+	build_all_button_icons(UPDATE_BUTTON_STATUS)
+
 /datum/action/cooldown/vampire/feed/proc/check_active_feed(datum/antagonist/vampire/victim_antag_datum)
 	if (victim_antag_datum && victim_antag_datum.current_lifeforce <= 0)
 		victim.balloon_alert(user, "out of lifeforce!")
@@ -234,8 +243,23 @@
 	antag_datum.adjust_lifeforce(lifeforce_to_take)
 	victim_antag_datum.adjust_lifeforce(-lifeforce_to_take)
 
-/datum/action/cooldown/vampire/feed/proc/on_update_grab_state()
-	SIGNAL_HANDLER
-	if (!QDELETED(victim))
-		check_active_grab()
-	build_all_button_icons(UPDATE_BUTTON_STATUS)
+/datum/action/cooldown/vampire/feed/proc/can_enthrall(feedback)
+	if (IS_VAMPIRE(victim))
+		return FALSE
+	if (victim.stat == DEAD)
+		if (feedback)
+			victim.balloon_alert(user, "dead!")
+		return FALSE
+	if (!victim.mind)
+		if (feedback)
+			victim.balloon_alert(user, "mindless!")
+		return FALSE
+	if (HAS_MIND_TRAIT(victim, TRAIT_UNCONVERTABLE))
+		if (feedback)
+			victim.balloon_alert(user, "unconvertable!")
+		return FALSE
+	if (HAS_TRAIT(victim, TRAIT_MINDSHIELD))
+		if (feedback)
+			victim.balloon_alert(user, "mindshielded!")
+		return FALSE
+	return TRUE
