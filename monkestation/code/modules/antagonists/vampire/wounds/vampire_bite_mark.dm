@@ -9,7 +9,7 @@
 	undiagnosed_name = "Bite Wound"
 
 	desc = "Patient's skin has been pierced in 4 locations, in the pattern of a vampire's bite."
-	treat_text = "Wait it out, apply gauze, suture it closed or cauterize it."
+	treat_text = "Wait it out, apply gauze to it, suture it closed or cauterize it."
 	examine_desc = "has a bite mark on it"
 
 	treatable_by = list(/obj/item/stack/medical/suture, /obj/item/stack/medical/gauze)
