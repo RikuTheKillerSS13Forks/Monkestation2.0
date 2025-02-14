@@ -8048,24 +8048,6 @@
 	},
 /turf/open/floor/mineral/plastitanium/red,
 /area/centcom/syndicate_mothership/expansion_chemicalwarfare)
-"avM" = (
-/obj/effect/turf_decal/siding/thinplating_new/dark{
-	dir = 1
-	},
-/obj/structure/table/glass/plasmaglass,
-/obj/structure/reagent_dispensers/wall/virusfood/directional/north,
-/obj/item/clothing/gloves/latex,
-/obj/item/healthanalyzer{
-	pixel_y = 3
-	},
-/obj/item/plant_analyzer,
-/obj/item/clothing/glasses/science,
-/obj/item/reagent_containers/spray/chemsprayer/bioterror{
-	pixel_x = -6;
-	pixel_y = 10
-	},
-/turf/open/floor/mineral/plastitanium/red,
-/area/centcom/syndicate_mothership/expansion_bioterrorism)
 "avN" = (
 /obj/structure/railing/wood,
 /obj/structure/table/reinforced,
@@ -19498,14 +19480,6 @@
 "bpz" = (
 /turf/open/floor/material/meat,
 /area/centcom/central_command_areas/admin)
-"brG" = (
-/obj/structure/table/reinforced/plasmarglass,
-/obj/machinery/fax{
-	fax_name = "Raziel's Desk";
-	name = "Cassiel's Fax Machine"
-	},
-/turf/open/floor/mineral/titanium/purple,
-/area/centcom/central_command_areas/adminroom)
 "bsr" = (
 /obj/machinery/corral_corner{
 	mapping_id = "11"
@@ -19825,6 +19799,29 @@
 	},
 /turf/open/floor/wood/large,
 /area/centcom/central_command_areas/admin)
+"cdS" = (
+/obj/structure/sign{
+	name = "wall";
+	icon = 'icons/turf/walls/wood_wall.dmi';
+	icon_state = "wood_wall-6";
+	pixel_y = 32;
+	layer = 2.8;
+	pixel_x = -32
+	},
+/obj/structure/sign{
+	name = "wall";
+	icon = 'icons/turf/walls/wood_wall.dmi';
+	icon_state = "wood_wall-12";
+	pixel_y = 32;
+	layer = 2.8
+	},
+/obj/structure/table/wood,
+/obj/machinery/fax/messageadmins{
+	fax_name = "Wolf's Office";
+	visible_to_network = 0
+	},
+/turf/open/floor/wood,
+/area/centcom/central_command_areas/adminroom)
 "cdU" = (
 /obj/effect/turf_decal/tile/hot_pink/fourcorners,
 /obj/effect/turf_decal/tile/hot_pink/fourcorners,
@@ -20165,28 +20162,6 @@
 /obj/structure/sign/poster/official/nanotrasen_logo/directional/east,
 /turf/open/floor/iron/dark/herringbone,
 /area/centcom/central_command_areas/admin)
-"cQL" = (
-/obj/structure/sign{
-	name = "wall";
-	icon = 'icons/turf/walls/wood_wall.dmi';
-	icon_state = "wood_wall-6";
-	pixel_y = 32;
-	layer = 2.8;
-	pixel_x = -32
-	},
-/obj/structure/sign{
-	name = "wall";
-	icon = 'icons/turf/walls/wood_wall.dmi';
-	icon_state = "wood_wall-12";
-	pixel_y = 32;
-	layer = 2.8
-	},
-/obj/structure/table/wood,
-/obj/machinery/fax/messageadmins{
-	fax_name = "Wolf's Office"
-	},
-/turf/open/floor/wood,
-/area/centcom/central_command_areas/adminroom)
 "cSL" = (
 /obj/structure/sign{
 	name = "wall";
@@ -20531,14 +20506,6 @@
 	},
 /obj/structure/flora/bush/reed/style_2,
 /turf/open/water/arena,
-/area/centcom/central_command_areas/admin)
-"dNQ" = (
-/obj/structure/table/greyscale,
-/obj/machinery/fax/messageadmins{
-	fax_name = "Central Command Intern Office";
-	pixel_y = 4
-	},
-/turf/open/floor/iron/dark/herringbone,
 /area/centcom/central_command_areas/admin)
 "dPS" = (
 /obj/structure/stone_tile/surrounding_tile{
@@ -23302,15 +23269,6 @@
 	dir = 4
 	},
 /area/centcom/syndicate_mothership/expansion_bulldozer)
-"jQz" = (
-/obj/effect/turf_decal/siding/wood{
-	dir = 1
-	},
-/obj/effect/turf_decal/siding/wood{
-	dir = 10
-	},
-/turf/open/floor/wood,
-/area/centcom/central_command_areas/adminroom)
 "jQK" = (
 /obj/machinery/light/directional/east,
 /turf/open/floor/sandy_dirt,
@@ -23366,6 +23324,14 @@
 /obj/item/restraints/handcuffs/cable/white,
 /turf/open/floor/carpet/neon/simple/blue/nodots,
 /area/centcom/central_command_areas/prison)
+"jVB" = (
+/obj/structure/table/reinforced,
+/obj/machinery/fax{
+	name = "Beverly's Fax Machine";
+	visible_to_network = 0
+	},
+/turf/open/floor/carpet/red,
+/area/centcom/central_command_areas/admin)
 "jWH" = (
 /obj/effect/turf_decal/sand/plating,
 /turf/closed/indestructible/wood,
@@ -24121,6 +24087,15 @@
 /obj/structure/flora/rock/pile/jungle/large/style_random,
 /turf/open/floor/grass,
 /area/centcom/central_command_areas/evacuation)
+"mmN" = (
+/obj/effect/turf_decal/siding/wood{
+	dir = 1
+	},
+/obj/effect/turf_decal/siding/wood{
+	dir = 10
+	},
+/turf/open/floor/wood,
+/area/centcom/central_command_areas/adminroom)
 "mrt" = (
 /obj/structure/railing/wooden_fence,
 /obj/effect/turf_decal/siding/wood{
@@ -24307,10 +24282,6 @@
 	},
 /turf/open/floor/plastic,
 /area/centcom/central_command_areas/admin)
-"mSS" = (
-/obj/item/flashlight/flare/candle/amber,
-/turf/open/floor/carpet/red,
-/area/centcom/central_command_areas/adminroom)
 "mTh" = (
 /obj/structure/sign{
 	name = "wall";
@@ -25117,13 +25088,6 @@
 	},
 /turf/open/floor/iron/dark/smooth_large,
 /area/centcom/central_command_areas/retirement_yard)
-"pcz" = (
-/obj/structure/table/reinforced,
-/obj/machinery/fax{
-	name = "Beverly's Fax Machine"
-	},
-/turf/open/floor/carpet/red,
-/area/centcom/central_command_areas/admin)
 "peK" = (
 /obj/structure/railing/wood{
 	dir = 4
@@ -25697,6 +25661,10 @@
 	},
 /turf/open/floor/carpet/green,
 /area/centcom/central_command_areas/adminroom)
+"qzJ" = (
+/obj/item/flashlight/flare/candle/amber,
+/turf/open/floor/carpet/red,
+/area/centcom/central_command_areas/adminroom)
 "qAI" = (
 /obj/structure/sign{
 	name = "wall";
@@ -26106,6 +26074,15 @@
 	pixel_y = 19
 	},
 /turf/open/floor/wood/tile,
+/area/centcom/central_command_areas/admin)
+"rEa" = (
+/obj/structure/table/greyscale,
+/obj/machinery/fax/messageadmins{
+	fax_name = "Central Command Intern Office";
+	pixel_y = 4;
+	visible_to_network = 0
+	},
+/turf/open/floor/iron/dark/herringbone,
 /area/centcom/central_command_areas/admin)
 "rEM" = (
 /obj/effect/turf_decal/siding/wood/corner,
@@ -28295,6 +28272,24 @@
 	dir = 8
 	},
 /area/cruiser_dock)
+"wRf" = (
+/obj/effect/turf_decal/siding/thinplating_new/dark{
+	dir = 1
+	},
+/obj/structure/table/glass/plasmaglass,
+/obj/structure/reagent_dispensers/wall/virusfood/directional/north,
+/obj/item/clothing/gloves/latex,
+/obj/item/healthanalyzer{
+	pixel_y = 3
+	},
+/obj/item/plant_analyzer,
+/obj/item/clothing/glasses/pathology,
+/obj/item/reagent_containers/spray/chemsprayer/bioterror{
+	pixel_x = -6;
+	pixel_y = 10
+	},
+/turf/open/floor/mineral/plastitanium/red,
+/area/centcom/syndicate_mothership/expansion_bioterrorism)
 "wSw" = (
 /obj/structure/showcase/machinery/tv,
 /turf/open/floor/carpet/red,
@@ -28473,6 +28468,15 @@
 	},
 /turf/open/floor/carpet/red,
 /area/centcom/central_command_areas/admin)
+"xpq" = (
+/obj/structure/table/reinforced/plasmarglass,
+/obj/machinery/fax{
+	fax_name = "Raziel's Desk";
+	name = "Cassiel's Fax Machine";
+	visible_to_network = 0
+	},
+/turf/open/floor/mineral/titanium/purple,
+/area/centcom/central_command_areas/adminroom)
 "xqm" = (
 /obj/item/bodypart/chest/ipc,
 /obj/item/bodypart/arm/left/ipc,
@@ -30629,7 +30633,7 @@ iTH
 iTH
 iTH
 aPL
-avM
+wRf
 aUe
 aqs
 kCL
@@ -55696,7 +55700,7 @@ mUv
 yhF
 hpU
 kpH
-cQL
+cdS
 aaW
 xkv
 cSL
@@ -58234,7 +58238,7 @@ aaa
 aOn
 cQB
 dro
-dNQ
+rEa
 uAX
 fOv
 fOv
@@ -58766,7 +58770,7 @@ iYt
 nqR
 opq
 opq
-brG
+xpq
 gId
 kpH
 aaa
@@ -63136,7 +63140,7 @@ exa
 exa
 exa
 qja
-jQz
+mmN
 qag
 hkq
 jCt
@@ -64422,7 +64426,7 @@ exa
 exa
 qja
 dtm
-mSS
+qzJ
 qja
 hkq
 fGN
@@ -66457,7 +66461,7 @@ aaa
 aaa
 aaa
 blK
-pcz
+jVB
 tUP
 oQo
 oQo
