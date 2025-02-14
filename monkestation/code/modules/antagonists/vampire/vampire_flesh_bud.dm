@@ -25,7 +25,7 @@
 /obj/item/organ/internal/flesh_bud/proc/add_thrall_datum(datum/mind/mind)
 	RegisterSignals(mind, list(COMSIG_MIND_TRANSFERRED, COMSIG_QDELETING), PROC_REF(on_mind_removed_from_owner))
 
-	var/datum/antagonist/vampire/thrall/antag_datum = mind.has_antag_datum(/datum/antagonist/vampire)
+	var/datum/antagonist/vampire/antag_datum = mind.has_antag_datum(/datum/antagonist/vampire)
 	if (antag_datum?.current_rank > 0)
 		return
 
@@ -34,7 +34,7 @@
 /obj/item/organ/internal/flesh_bud/proc/remove_thrall_datum(datum/mind/mind)
 	UnregisterSignal(mind, list(COMSIG_MIND_TRANSFERRED, COMSIG_QDELETING), PROC_REF(on_mind_removed_from_owner))
 
-	var/datum/antagonist/vampire/thrall/antag_datum = mind.has_antag_datum(/datum/antagonist/vampire/thrall)
+	var/datum/antagonist/vampire/antag_datum = mind.has_antag_datum(/datum/antagonist/vampire)
 	if (antag_datum?.current_rank > 0)
 		return
 
