@@ -44,7 +44,7 @@
 		return
 	victim.balloon_alert(user, "torturing...")
 	// todo: come up with flavor message here
-	if(!do_after(user, 1 SECONDS, victim, extra_checks = CALLBACK(src, PROC_REF(do_after_check), victim), interaction_key = DOAFTER_SOURCE_PERSUASION_RACK))
+	if(!do_after(user, base_time, victim, extra_checks = CALLBACK(src, PROC_REF(do_after_check), victim), interaction_key = DOAFTER_SOURCE_PERSUASION_RACK))
 		if(!QDELETED(victim))
 			if(victim.buckled != src)
 				balloon_alert(user, "must remain buckled!")
@@ -59,6 +59,7 @@
 		ADD_TRAIT(victim.mind, TRAIT_MIND_BREAK, PERSUASION_RACK_TRAIT)
 		// todo: come up with flavor message here
 		victim.balloon_alert(user, "mind broken!")
+		progress = 0
 
 /obj/structure/persuasion_rack/proc/find_torture_tool(mob/living/user)
 	var/obj/item/tool
