@@ -14,8 +14,8 @@
 	owner.current?.playsound_local(get_turf(owner.current), 'monkestation/sound/vampires/vampire_alert.ogg', vol = 100, vary = FALSE)
 
 /datum/antagonist/vampire/on_gain()
-	for (var/action_type in current_abilities)
-		grant_ability(action_type) // This will initialize the actions. Has to be before 'apply_innate_effects()' so 'grant_abilities()' works properly.
+	for (var/action_type in current_actions)
+		grant_action(action_type) // This will initialize the actions. Has to be before 'apply_innate_effects()' so 'grant_actions()' works properly.
 	. = ..()
 	teach_recipes()
 
@@ -47,14 +47,14 @@
 	else
 		RegisterSignal(user, COMSIG_MOB_HUD_CREATED, PROC_REF(create_hud))
 
-	grant_abilities()
+	grant_actions()
 
 /datum/antagonist/vampire/remove_innate_effects(mob/living/mob_override) // This doesn't use mob_override, but it will keep working anyway unless someone tries adding the antag datum to two mobs at once.
 	. = ..()
 	if (!user)
 		return
 
-	remove_abilities() // Have this before masquerade is set to avoid it interacting with the masquerade action.
+	remove_actions() // Have this before masquerade is set to avoid it interacting with the masquerade action.
 
 	set_masquerade(TRUE) // This removes the elements added by not being in masquerade, leaving only traits.
 	REMOVE_TRAITS_IN(user, REF(src)) // And this then clears the traits. This should also be after removing actions.

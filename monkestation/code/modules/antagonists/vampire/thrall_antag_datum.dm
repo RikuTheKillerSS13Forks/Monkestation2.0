@@ -11,7 +11,7 @@
 	current_rank = 0
 	normal_ability_points = 0
 
-	current_abilities = list(
+	current_actions = list(
 		/datum/action/cooldown/vampire/mature,
 		/datum/action/cooldown/vampire/feed,
 		/datum/action/cooldown/vampire/regeneration,
@@ -38,7 +38,7 @@
 	. = ..() // Call after the mature check since this raises their rank.
 
 	remove_damage_bane()
-	grant_ability(/datum/action/cooldown/vampire/masquerade)
+	grant_action(/datum/action/cooldown/vampire/masquerade)
 
 	name = "\improper Vampire" // Congrats, you're a vampire now.
 	roundend_category = "vampires"
