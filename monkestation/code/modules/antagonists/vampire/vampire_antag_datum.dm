@@ -47,7 +47,7 @@
 	else
 		RegisterSignal(user, COMSIG_MOB_HUD_CREATED, PROC_REF(create_hud))
 
-	grant_actions()
+	grant_actions() // Do this last in case an action depends on init stuff.
 
 /datum/antagonist/vampire/remove_innate_effects(mob/living/mob_override) // This doesn't use mob_override, but it will keep working anyway unless someone tries adding the antag datum to two mobs at once.
 	. = ..()
