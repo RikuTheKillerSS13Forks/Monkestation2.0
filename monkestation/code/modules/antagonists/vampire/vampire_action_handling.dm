@@ -1,6 +1,7 @@
 /datum/antagonist/vampire
 	/// Our current abilities in 'list[action_type] = action_instance' format. During init this is a basic list of action types instead.
 	var/list/current_actions = list(
+		/datum/action/adjust_vision/vampire,
 		/datum/action/cooldown/vampire/mature,
 		/datum/action/cooldown/vampire/feed,
 		/datum/action/cooldown/vampire/regeneration,

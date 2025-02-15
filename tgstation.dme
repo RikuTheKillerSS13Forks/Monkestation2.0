@@ -6541,6 +6541,7 @@
 #include "monkestation\code\modules\antagonists\vampire\vampire_starlight.dm"
 #include "monkestation\code\modules\antagonists\vampire\vampire_traits.dm"
 #include "monkestation\code\modules\antagonists\vampire\actions\vampire_action.dm"
+#include "monkestation\code\modules\antagonists\vampire\actions\innate\adjust_vision.dm"
 #include "monkestation\code\modules\antagonists\vampire\actions\innate\feed.dm"
 #include "monkestation\code\modules\antagonists\vampire\actions\innate\masquerade.dm"
 #include "monkestation\code\modules\antagonists\vampire\actions\innate\mature.dm"

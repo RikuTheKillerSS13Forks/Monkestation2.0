@@ -12,6 +12,7 @@
 	normal_ability_points = 0
 
 	current_actions = list(
+		/datum/action/adjust_vision/vampire,
 		/datum/action/cooldown/vampire/mature,
 		/datum/action/cooldown/vampire/feed,
 		/datum/action/cooldown/vampire/regeneration,
@@ -51,7 +52,7 @@
 
 /datum/antagonist/vampire/thrall/proc/apply_damage_bane()
 	if (user?.physiology)
-		user.physiology.brute_mod *= 2
+		user.physiology.brute_mod *= 2 // Before you go thinking this is harsh, remember that these guys are immortal and can kill people with feed. And they have a vampire protecting them.
 		user.physiology.burn_mod *= 2
 
 /datum/antagonist/vampire/thrall/proc/remove_damage_bane()
