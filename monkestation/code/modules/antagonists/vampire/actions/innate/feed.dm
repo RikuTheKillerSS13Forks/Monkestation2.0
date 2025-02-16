@@ -50,11 +50,11 @@
 		if (feedback)
 			user.balloon_alert(user, "mouth covered!")
 		return FALSE
-	if (target_antag_datum && target_antag_datum.current_lifeforce <= 0)
+	if (target_antag_datum && target_antag_datum.current_lifeforce <= LIFEFORCE_REAGENT_LIMIT)
 		if (feedback)
-			target.balloon_alert(user, "no lifeforce!")
+			target.balloon_alert(user, "lifeforce too weak!")
 		return FALSE
-	if (target.blood_volume <= 0 || HAS_TRAIT(target, TRAIT_NOBLOOD))
+	if (!target_antag_datum && (target.blood_volume <= 0 || HAS_TRAIT(target, TRAIT_NOBLOOD)))
 		if (feedback)
 			target.balloon_alert(user, "no blood!")
 		return FALSE
@@ -90,8 +90,10 @@
 	victim = target
 	. = ..()
 
-	// If the mob is actively sentient or has been within the last 30 seconds, then as a certain chef would say, "Finally, some good fucking food."
-	is_good_feed = victim.mind && (victim.stat != DEAD || victim.timeofdeath <= (world.time + 30 SECONDS)) && (victim.client || victim.lastclienttime <= (world.time + 30 SECONDS))
+	is_good_feed = is_good_feed()
+	if (!is_good_feed)
+		victim.balloon_alert(user, "stale")
+		to_chat(user, span_warning("[victim]'s blood is stale. You'll only be able to reach [LIFEFORCE_REAGENT_LIMIT] lifeforce by feeding from [victim.p_them()]."))
 
 	ADD_TRAIT(user, TRAIT_MUTE, REF(src))
 	ADD_TRAIT(victim, TRAIT_NODEATH, REF(src))
@@ -181,6 +183,18 @@
 
 	victim = null
 
+// If the mob is actively sentient or has been within the last 30 seconds, then as a certain chef would say, "Finally, some good fucking food."
+/datum/action/cooldown/vampire/feed/proc/is_good_feed()
+	if (!victim.mind)
+		return FALSE
+	if (IS_VAMPIRE(victim))
+		return TRUE
+	if (victim.stat == DEAD && (world.time - victim.timeofdeath) > 30 SECONDS)
+		return FALSE
+	if (!victim.client && (world.time - victim.lastclienttime) > 30 SECONDS)
+		return FALSE
+	return TRUE
+
 /datum/action/cooldown/vampire/feed/proc/check_active_grab(feedback)
 	if (user.pulling != victim || (user.grab_state < (is_neck_feed && iscarbon(victim) ? GRAB_NECK : GRAB_PASSIVE)))
 		if (feedback)
@@ -196,11 +210,11 @@
 	build_all_button_icons(UPDATE_BUTTON_STATUS)
 
 /datum/action/cooldown/vampire/feed/proc/check_active_feed(datum/antagonist/vampire/victim_antag_datum)
-	if (victim_antag_datum && victim_antag_datum.current_lifeforce <= 0)
-		victim.balloon_alert(user, "out of lifeforce!")
+	if (victim_antag_datum && victim_antag_datum.current_lifeforce <= LIFEFORCE_REAGENT_LIMIT)
+		victim.balloon_alert(user, "lifeforce too weak!")
 		return FALSE
-	if (victim.blood_volume <= 0 || HAS_TRAIT(victim, TRAIT_NOBLOOD))
-		return FALSE // Don't add a balloon alert here, because 'can_enthrall()' WILL send one as well and two at once is dumb.
+	if (!victim_antag_datum && (victim.blood_volume <= 0 || HAS_TRAIT(victim, TRAIT_NOBLOOD)))
+		return FALSE // Don't add a balloon alert here, because 'can_enthrall()' may send one as well and two at once is dumb.
 	return TRUE
 
 /datum/action/cooldown/vampire/feed/proc/on_victim_life(datum/source, seconds_per_tick, times_fired)
@@ -264,7 +278,9 @@
 	antag_datum.adjust_lifeforce(lifeforce_to_take)
 
 /datum/action/cooldown/vampire/feed/proc/can_enthrall(feedback)
-	if (!iscarbon(victim) || IS_VAMPIRE(victim))
+	if (!is_active || !is_neck_feed)
+		return FALSE
+	if (!ishuman(victim) || IS_VAMPIRE(victim))
 		return FALSE
 	if (!check_active_grab(feedback))
 		return FALSE
@@ -292,7 +308,6 @@
 
 /datum/action/cooldown/vampire/feed/proc/try_enthrall()
 	if (!can_enthrall(feedback = TRUE))
-		to_chat(user, span_warning("You fail to enthrall [victim]."))
 		return FALSE
 
 	victim.balloon_alert(user, "enthralling...")
@@ -311,5 +326,11 @@
 
 	antag_datum.adjust_lifeforce(-LIFEFORCE_REAGENT_LIMIT)
 	thrall_antag_datum.set_lifeforce(LIFEFORCE_REAGENT_LIMIT)
+
+	victim.setOxyLoss(0) // Stops them from instantly dying to the oxyloss from having all their blood drained.
+	victim.setOrganLoss(ORGAN_SLOT_BRAIN, 0) // Oxyloss causes brain damage, so we give them a freebie. They'd heal it quickly anyways.
+
+	var/mob/living/carbon/human/human_victim = victim
+	human_victim.cure_all_traumas(TRAUMA_RESILIENCE_LOBOTOMY) // Second part of said freebie. (same trauma resilience level as vampire regen)
 
 	return TRUE

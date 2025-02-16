@@ -44,6 +44,17 @@
 	if (antag_datum.masquerade_enabled)
 		set_light_level(0) // VISION_ACTION_LIGHT_OFF
 
+	var/message = "off" // VISION_ACTION_LIGHT_OFF
+	switch (saved_light_level)
+		if (1) // VISION_ACTION_LIGHT_LOW
+			message = "low"
+		if (2) // VISION_ACTION_LIGHT_MED
+			message = "med"
+		if (3) // VISION_ACTION_LIGHT_HIG
+			message = "high"
+
+	owner.balloon_alert(owner, message) // Makes them able to tell what level they're at even while in masquerade.
+
 /datum/action/adjust_vision/vampire/proc/on_masquerade(datum/source, new_state, old_state)
 	SIGNAL_HANDLER
 	if (!owner) // The masquerade signal is sent while this has no owner when the antag datum is initializing.
