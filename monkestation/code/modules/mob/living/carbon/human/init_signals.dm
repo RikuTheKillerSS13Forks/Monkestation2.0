@@ -1,5 +1,6 @@
 /mob/living/carbon/human/register_init_signals()
 	. = ..()
+	RegisterSignal(src, SIGNAL_ADDTRAIT(TRAIT_NOBLOOD), PROC_REF(on_gain_noblood_trait))
 	RegisterSignal(src, SIGNAL_REMOVETRAIT(TRAIT_NOBLOOD), PROC_REF(on_lose_noblood_trait))
 
 	RegisterSignal(src, SIGNAL_ADDTRAIT(TRAIT_FAT), PROC_REF(on_trait_fat_gain))
