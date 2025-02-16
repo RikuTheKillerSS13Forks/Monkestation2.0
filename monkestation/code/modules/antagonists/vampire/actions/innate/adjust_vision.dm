@@ -46,6 +46,8 @@
 
 /datum/action/adjust_vision/vampire/proc/on_masquerade(datum/source, new_state, old_state)
 	SIGNAL_HANDLER
+	if (!owner) // The masquerade signal is sent while this has no owner when the antag datum is initializing.
+		return
 	if (new_state)
 		set_light_level(0) // VISION_ACTION_LIGHT_OFF
 	else

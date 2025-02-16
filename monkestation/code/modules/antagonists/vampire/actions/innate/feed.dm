@@ -8,6 +8,9 @@
 
 	var/is_neck_feed = FALSE
 
+	/// If we're feeding from a sentient mob. If the feed is bad, then it's limited to LIFEFORCE_REAGENT_LIMIT
+	var/is_good_feed = FALSE
+
 	/// A hard ref to whoever we're feeding from.
 	var/mob/living/victim = null
 
@@ -86,6 +89,9 @@
 
 	victim = target
 	. = ..()
+
+	// If the mob is actively sentient or has been within the last 30 seconds, then as a certain chef would say, "Finally, some good fucking food."
+	is_good_feed = victim.mind && (victim.stat != DEAD || victim.timeofdeath <= (world.time + 30 SECONDS)) && (victim.client || victim.lastclienttime <= (world.time + 30 SECONDS))
 
 	ADD_TRAIT(user, TRAIT_MUTE, REF(src))
 	ADD_TRAIT(victim, TRAIT_NODEATH, REF(src))
@@ -175,9 +181,10 @@
 
 	victim = null
 
-/datum/action/cooldown/vampire/feed/proc/check_active_grab()
+/datum/action/cooldown/vampire/feed/proc/check_active_grab(feedback)
 	if (user.pulling != victim || (user.grab_state < (is_neck_feed && iscarbon(victim) ? GRAB_NECK : GRAB_PASSIVE)))
-		user.balloon_alert(user, "grab lost!")
+		if (feedback)
+			user.balloon_alert(user, "grab lost!")
 		toggle_off(forced = TRUE)
 		return FALSE
 	return TRUE
@@ -191,14 +198,14 @@
 /datum/action/cooldown/vampire/feed/proc/check_active_feed(datum/antagonist/vampire/victim_antag_datum)
 	if (victim_antag_datum && victim_antag_datum.current_lifeforce <= 0)
 		victim.balloon_alert(user, "out of lifeforce!")
-		toggle_off()
+		return FALSE
 	if (victim.blood_volume <= 0 || HAS_TRAIT(victim, TRAIT_NOBLOOD))
-		victim.balloon_alert(user, "out of blood!")
-		toggle_off()
+		return FALSE // Don't add a balloon alert here, because 'can_enthrall()' WILL send one as well and two at once is dumb.
+	return TRUE
 
 /datum/action/cooldown/vampire/feed/proc/on_victim_life(datum/source, seconds_per_tick, times_fired)
 	SIGNAL_HANDLER
-	if (!check_active_grab())
+	if (!check_active_grab(feedback = TRUE))
 		return
 
 	var/datum/antagonist/vampire/victim_antag_datum = victim.mind?.has_antag_datum(/datum/antagonist/vampire)
@@ -217,13 +224,20 @@
 	owner.playsound_local(soundin = 'sound/effects/singlebeat.ogg', vol = 40, vary = TRUE)
 	victim.playsound_local(soundin = 'sound/effects/singlebeat.ogg', vol = 40, vary = TRUE)
 
-	check_active_feed(victim_antag_datum) // We do this after draining so that passive blood regen doesn't keep feeding in limbo.
+	if (check_active_feed(victim_antag_datum)) // We do this after draining so that passive blood regen doesn't keep feeding in limbo.
+		return
+
+	INVOKE_ASYNC(src, PROC_REF(end_feed_async))
+
+/datum/action/cooldown/vampire/feed/proc/end_feed_async()
+	try_enthrall()
+
+	if (is_active) // Because 'can_enthrall()' calls 'check_active_grab()' it can toggle off the action.
+		toggle_off()
 
 /datum/action/cooldown/vampire/feed/proc/handle_blood_feed(feed_rate) // A bit more complex than lifeforce is, due to the feed limit being a thing.
 	var/blood_to_take = min(victim.blood_volume, feed_rate * BLOOD_VOLUME_NORMAL)
 	victim.blood_volume -= blood_to_take // Done before the feed limit, you can still drain blood from someone who has reached the limit. You just don't get anything for it.
-
-	SEND_SIGNAL(victim, COMSIG_MOB_FED_FROM, user, blood_to_take) // This handles hitting the feed limit, possibly other things in the future.
 
 	var/datum/component/feed_limit/feed_limit = victim.mind?.GetComponent(/datum/component/feed_limit)
 	if (!feed_limit)
@@ -231,20 +245,32 @@
 
 	var/lifeforce_to_give = blood_to_take * BLOOD_TO_LIFEFORCE
 
+	if (!is_good_feed)
+		lifeforce_to_give = min(lifeforce_to_give, max(0, LIFEFORCE_REAGENT_LIMIT - antag_datum.current_lifeforce))
+
 	if (feed_limit)
 		lifeforce_to_give = min(lifeforce_to_give, feed_limit.get_remaining_lifeforce()) // So you don't get like 1 tick extra of lifeforce when hitting the limit. Also handles the limit itself.
 
 	if (lifeforce_to_give > 0)
 		antag_datum.adjust_lifeforce(lifeforce_to_give)
+		feed_limit?.increment(victim, user, lifeforce_to_give) // Remember to increment it *after* calling 'get_remaining_lifeforce()'
 
 /datum/action/cooldown/vampire/feed/proc/handle_lifeforce_feed(feed_rate, datum/antagonist/vampire/victim_antag_datum)
-	var/lifeforce_to_take = min(victim_antag_datum.current_lifeforce, LIFEFORCE_PER_HUMAN * feed_rate)
+	// The last part makes it so vampires must leave other vampires with at least LIFEFORCE_REAGENT_LIMIT lifeforce. Prevents them from round removing each other willy nilly without stakes.
+	// More importantly, it prevents one vampire from injecting blood, then having another vampire drink it from them. That could be used to make infinite lifeforce.
+	var/lifeforce_to_take = min(victim_antag_datum.current_lifeforce, LIFEFORCE_PER_HUMAN * feed_rate, max(0, victim_antag_datum.current_lifeforce - LIFEFORCE_REAGENT_LIMIT))
 
-	antag_datum.adjust_lifeforce(lifeforce_to_take)
 	victim_antag_datum.adjust_lifeforce(-lifeforce_to_take)
+	antag_datum.adjust_lifeforce(lifeforce_to_take)
 
 /datum/action/cooldown/vampire/feed/proc/can_enthrall(feedback)
-	if (IS_VAMPIRE(victim))
+	if (!iscarbon(victim) || IS_VAMPIRE(victim))
+		return FALSE
+	if (!check_active_grab(feedback))
+		return FALSE
+	if (antag_datum.current_lifeforce < LIFEFORCE_REAGENT_LIMIT * 2)
+		if (feedback)
+			user.balloon_alert(user, "not enough lifeforce!")
 		return FALSE
 	if (victim.stat == DEAD)
 		if (feedback)
@@ -258,8 +284,32 @@
 		if (feedback)
 			victim.balloon_alert(user, "unconvertable!")
 		return FALSE
-	if (HAS_TRAIT(victim, TRAIT_MINDSHIELD))
+	if (HAS_TRAIT(victim, TRAIT_MINDSHIELD) && !HAS_MIND_TRAIT(victim, TRAIT_MIND_BREAK))
 		if (feedback)
 			victim.balloon_alert(user, "mindshielded!")
 		return FALSE
+	return TRUE
+
+/datum/action/cooldown/vampire/feed/proc/try_enthrall()
+	if (!can_enthrall(feedback = TRUE))
+		to_chat(user, span_warning("You fail to enthrall [victim]."))
+		return FALSE
+
+	victim.balloon_alert(user, "enthralling...")
+	victim.visible_message(message = span_danger("[victim]'s skin begins to turn grey."))
+
+	UnregisterSignal(victim, COMSIG_LIVING_LIFE) // Stop feeding effects at this point.
+
+	// Feeding someone dry takes a long while to begin with, so this being relatively short is fine.
+	if (!do_after(user, 6 SECONDS, victim, timed_action_flags = IGNORE_SLOWDOWNS, extra_checks = CALLBACK(src, PROC_REF(can_enthrall))))
+		user.balloon_alert(user, "interrupted!")
+		return FALSE
+
+	antag_datum.enthrall(victim)
+
+	var/datum/antagonist/vampire/thrall/thrall_antag_datum = victim.mind.has_antag_datum(/datum/antagonist/vampire/thrall)
+
+	antag_datum.adjust_lifeforce(-LIFEFORCE_REAGENT_LIMIT)
+	thrall_antag_datum.set_lifeforce(LIFEFORCE_REAGENT_LIMIT)
+
 	return TRUE

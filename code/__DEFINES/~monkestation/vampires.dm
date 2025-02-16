@@ -11,6 +11,8 @@
 #define BLOOD_TO_LIFEFORCE (LIFEFORCE_PER_HUMAN / BLOOD_VOLUME_NORMAL)
 /// The amount of lifeforce that a vampire loses per second by default.
 #define LIFEFORCE_THIRST (LIFEFORCE_PER_HUMAN / 3600)
+/// The amount of lifeforce a vampire can get via the blood reagent and mindless mobs.
+#define LIFEFORCE_REAGENT_LIMIT LIFEFORCE_PER_HUMAN * 0.2
 
 /// The ability checks whether the vampire has enough lifeforce to use it.
 #define VAMPIRE_AC_LIFEFORCE (1 << 0)
