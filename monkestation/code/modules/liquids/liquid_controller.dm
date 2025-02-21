@@ -110,8 +110,9 @@ SUBSYSTEM_DEF(liquids)
 					continue
 				if(QDELETED(temperature_turf.liquids.liquid_group))
 					QDEL_NULL(temperature_turf.liquids)
-					continue*/
-				temperature_turf.liquids.liquid_group.act_on_queue(temperature_turf)
+					continue
+				temperature_turf.liquids.liquid_group.act_on_queue(temperature_turf)*/
+				PROCESS_LIQUID_TEMP(temperature_turf.liquids.liquid_group, temperature_turf)
 		run_type = SSLIQUIDS_RUN_TYPE_EVAPORATION
 
 	if(run_type == SSLIQUIDS_RUN_TYPE_EVAPORATION && !debug_evaporation)
