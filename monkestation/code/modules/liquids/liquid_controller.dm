@@ -103,14 +103,14 @@ SUBSYSTEM_DEF(liquids)
 		list_clear_nulls(temperature_queue)
 		if(length(temperature_queue))
 			for(var/turf/open/temperature_turf as anything in temperature_queue)
-				if(MC_TICK_CHECK)
+				/*if(MC_TICK_CHECK)
 					return
 				temperature_queue -= temperature_turf
 				if(QDELETED(temperature_turf.liquids))
 					continue
 				if(QDELETED(temperature_turf.liquids.liquid_group))
 					QDEL_NULL(temperature_turf.liquids)
-					continue
+					continue*/
 				temperature_turf.liquids.liquid_group.act_on_queue(temperature_turf)
 		run_type = SSLIQUIDS_RUN_TYPE_EVAPORATION
 
