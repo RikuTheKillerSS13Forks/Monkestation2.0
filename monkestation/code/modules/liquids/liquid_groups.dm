@@ -692,18 +692,19 @@ GLOBAL_VAR_INIT(liquid_debug_colors, FALSE)
 	return TRUE
 
 /datum/liquid_group/proc/process_cached_edges()
-	for(var/turf/cached_turf in cached_edge_turfs)
-		for(var/direction in cached_edge_turfs[cached_turf])
+	for(var/turf/cached_turf as anything in cached_edge_turfs)
+		var/list/directions = cached_edge_turfs[cached_turf]
+		for(var/direction in directions)
 			var/turf/directional_turf = get_step(cached_turf, direction)
 			if(isclosedturf(directional_turf))
 				continue
-			if(!(directional_turf in cached_turf.atmos_adjacent_turfs)) //i hate that this is needed
+			if(!cached_turf.atmos_adjacent_turfs)
 				continue
 			if(!cached_turf.atmos_adjacent_turfs[directional_turf])
 				continue
 			if(spread_liquid(directional_turf, cached_turf))
-				cached_edge_turfs[cached_turf] -= direction
-				if(!length(cached_edge_turfs[cached_turf]))
+				directions -= direction
+				if(!length(directions))
 					cached_edge_turfs -= cached_turf
 
 /datum/liquid_group/proc/check_edges(turf/checker)
@@ -959,8 +960,6 @@ GLOBAL_VAR_INIT(liquid_debug_colors, FALSE)
 	if(isclosedturf(new_turf) || !source_turf.atmos_adjacent_turfs)
 		return
 	if(HAS_TRAIT(new_turf, TRAIT_BLOCK_LIQUID_SPREAD))
-		return
-	if(!(new_turf in source_turf.atmos_adjacent_turfs)) //i hate that this is needed
 		return
 	if(!source_turf.atmos_adjacent_turfs[new_turf])
 		return
