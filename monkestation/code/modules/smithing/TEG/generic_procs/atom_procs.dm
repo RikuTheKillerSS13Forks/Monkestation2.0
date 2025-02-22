@@ -28,10 +28,12 @@
 			continue
 		if(turf in chained_turfs)
 			continue
+		/* /// LIQUID REFACTOR IN PROGRESS ///
 		if(turf.liquids?.liquid_group)
 			chained_turfs |= turf.liquids.liquid_group.members
 		else
 			chained_turfs |= turf
+		*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 
 	var/list/effects = list()

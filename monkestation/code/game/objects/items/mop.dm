@@ -1,3 +1,4 @@
+/* /// LIQUID REFACTOR IN PROGRESS ///
 /obj/item/mop/proc/attack_on_liquids_turf(obj/item/mop/the_mop, turf/target, mob/user, obj/effect/abstract/liquid_turf/liquids)
 	if(!user.Adjacent(target))
 		return FALSE
@@ -24,3 +25,4 @@
 			break
 	user.changeNext_move(CLICK_CD_MELEE)
 	return TRUE
+*/ /// LIQUID REFACTOR IN PROGRESS ///

@@ -26,8 +26,10 @@
 	if(!air_gases)
 		return
 
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	if(liquids && liquids.liquid_group && !liquids.fire_state)
 		liquids.liquid_group.ignite_turf(src)
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 	. = air_gases[/datum/gas/oxygen]
 	var/oxy = . ? .[MOLES] : 0

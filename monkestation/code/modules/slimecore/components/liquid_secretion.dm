@@ -41,6 +41,7 @@
 		src.secretion_interval = secretion_interval
 
 /datum/component/liquid_secretion/process(seconds_per_tick)
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	var/atom/movable/parent = src.parent
 	if(QDELETED(parent))
 		return PROCESS_KILL
@@ -55,3 +56,4 @@
 	var/list/reagent_list = list()
 	reagent_list[reagent_id] = amount
 	parent_turf?.add_liquid_list(reagent_list, FALSE, T20C)
+	*/ /// LIQUID REFACTOR IN PROGRESS ///

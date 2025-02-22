@@ -1,3 +1,6 @@
+/* /// LIQUID REFACTOR IN PROGRESS ///
+
+
 /datum/liquid_group/pool_group
 	///list of all merger turfs, we can only spread in these turfs
 	var/list/merger_turfs = list()
@@ -46,3 +49,6 @@
 		water_rush(new_turf, source_turf)
 
 	return TRUE
+
+
+*/ /// LIQUID REFACTOR IN PROGRESS ///

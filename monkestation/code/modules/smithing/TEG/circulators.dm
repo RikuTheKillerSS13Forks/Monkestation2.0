@@ -165,6 +165,7 @@
 		.+= emissive_appearance(icon, "[icon_state]-emissive", src)
 
 /obj/machinery/atmospherics/components/binary/circulator/wrench_act_secondary(mob/living/user, obj/item/tool)
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	if(!panel_open)
 		balloon_alert(user, "open the panel!")
 		return
@@ -174,6 +175,7 @@
 	balloon_alert(user, "You drain the lubricant tank.")
 	turf.add_liquid_from_reagents(reagents)
 	reagents.remove_all(reagent_buffer)
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 /obj/machinery/atmospherics/components/binary/circulator/wrench_act(mob/living/user, obj/item/I)
 	if(!panel_open)

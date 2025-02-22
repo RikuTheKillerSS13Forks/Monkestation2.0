@@ -5,8 +5,10 @@
 	slippery = FALSE
 	var/obj/item/slime_extract/extract_path
 
+/* /// LIQUID REFACTOR IN PROGRESS ///
 /datum/reagent/proc/add_to_member(obj/effect/abstract/liquid_turf/adder)
 	return
 
 /datum/reagent/proc/remove_from_member(obj/effect/abstract/liquid_turf/remover)
 	return
+*/ /// LIQUID REFACTOR IN PROGRESS ///

@@ -43,7 +43,6 @@
 	smoothing_flags = SMOOTH_CORNERS
 	smoothing_groups = SMOOTH_GROUP_ELEVATED_PLASTEEL
 	canSmoothWith = SMOOTH_GROUP_WALLS + SMOOTH_GROUP_ELEVATED_PLASTEEL
-	liquid_height = 30
 	turf_height = 30
 
 /turf/open/floor/elevated/rust_heretic_act()
@@ -58,7 +57,6 @@
 	smoothing_flags = SMOOTH_CORNERS
 	smoothing_groups = SMOOTH_GROUP_LOWERED_PLASTEEL
 	canSmoothWith = SMOOTH_GROUP_WALLS + SMOOTH_GROUP_LOWERED_PLASTEEL
-	liquid_height = -30
 	turf_height = -30
 
 

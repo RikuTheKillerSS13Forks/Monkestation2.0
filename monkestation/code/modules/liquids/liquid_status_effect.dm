@@ -9,12 +9,15 @@
 	return TRUE
 
 /datum/status_effect/water_affected/proc/calculate_water_slow()
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	//Factor in swimming skill here?
 	var/turf/T = get_turf(owner)
 	var/slowdown_amount = T.liquids.liquid_group.group_overlay_state * 0.5
 	owner.add_or_update_variable_movespeed_modifier(/datum/movespeed_modifier/liquids, multiplicative_slowdown = slowdown_amount)
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 /datum/status_effect/water_affected/tick()
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	var/turf/owner_turf = get_turf(owner)
 	if(QDELETED(owner_turf) || QDELETED(owner_turf.liquids) || owner_turf.liquids.liquid_group.group_overlay_state == LIQUID_STATE_PUDDLE)
 		qdel(src)
@@ -27,6 +30,7 @@
 	owner_turf.liquids.liquid_group.transfer_to_atom(owner_turf.liquids, ((SUBMERGEMENT_REAGENTS_TOUCH_AMOUNT * fraction / 20)), owner)
 
 	return ..()
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 /datum/status_effect/water_affected/on_remove()
 	owner.remove_movespeed_modifier(/datum/movespeed_modifier/liquids)

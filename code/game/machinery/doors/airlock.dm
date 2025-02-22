@@ -1337,7 +1337,7 @@
 		SSexplosions.med_mov_atom += killthis
 	SEND_SIGNAL(src, COMSIG_AIRLOCK_CLOSE, forced)
 
-	// monkestation edit: liquids
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	var/turf/open/open_turf = get_turf(src)
 	if(!QDELETED(open_turf.liquids))
 		var/datum/liquid_group/turfs_group = open_turf.liquids.liquid_group
@@ -1350,7 +1350,7 @@
 					continue
 				turfs_group.check_edges(direction_turf)
 		QDEL_NULL(open_turf.liquids)
-	// monkestation end
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 	operating = TRUE
 	update_icon(ALL, AIRLOCK_CLOSING, 1)

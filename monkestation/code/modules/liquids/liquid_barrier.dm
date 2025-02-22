@@ -10,6 +10,7 @@
 	move_resist = INFINITY
 	resistance_flags = INDESTRUCTIBLE | LAVA_PROOF | FIRE_PROOF | UNACIDABLE | ACID_PROOF
 
+/* /// LIQUID REFACTOR IN PROGRESS ///
 /obj/structure/liquid_barrier/Initialize(mapload)
 	. = ..()
 	if(mapload && !isfloorturf(loc))
@@ -23,3 +24,4 @@
 /obj/structure/liquid_barrier/proc/on_liquid_creation(datum/source)
 	SIGNAL_HANDLER
 	return BLOCK_LIQUID_CREATION
+*/ /// LIQUID REFACTOR IN PROGRESS ///

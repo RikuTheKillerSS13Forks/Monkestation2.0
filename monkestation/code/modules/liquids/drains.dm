@@ -37,27 +37,33 @@
 			if(processing)
 				STOP_PROCESSING(SSobj, src)
 				processing = FALSE
+		/* /// LIQUID REFACTOR IN PROGRESS ///
 		else if (my_turf.liquids)
 			START_PROCESSING(SSobj, src)
 			processing = TRUE
+		*/ /// LIQUID REFACTOR IN PROGRESS ///
 	return TRUE
 
 /obj/structure/drain/process()
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	if(!my_turf.liquids)
 		STOP_PROCESSING(SSobj, src)
 		processing = FALSE
 		return
 	my_turf.liquids.liquid_group.remove_any(my_turf.liquids, drain_flat + (drain_percent * my_turf.liquids.liquid_group.total_reagent_volume))
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 /obj/structure/drain/Initialize()
 	. = ..()
 	if(!isturf(loc))
 		stack_trace("Drain structure initialized not on a turf")
 	my_turf = loc
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	RegisterSignal(my_turf, COMSIG_TURF_LIQUIDS_CREATION, PROC_REF(liquids_signal))
 	if(my_turf.liquids)
 		START_PROCESSING(SSobj, src)
 		processing = TRUE
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 /obj/structure/drain/proc/liquids_signal()
 	SIGNAL_HANDLER
@@ -69,7 +75,9 @@
 /obj/structure/drain/Destroy()
 	if(processing)
 		STOP_PROCESSING(SSobj, src)
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	UnregisterSignal(my_turf, COMSIG_TURF_LIQUIDS_CREATION)
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 	my_turf = null
 	return ..()
 

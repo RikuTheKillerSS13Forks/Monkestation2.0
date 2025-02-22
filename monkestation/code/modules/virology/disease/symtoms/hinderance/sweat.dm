@@ -6,9 +6,11 @@
 	severity = 2
 
 /datum/symptom/sweat/activate(mob/living/carbon/mob)
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	if(prob(30))
 		mob.emote("me",1,"is sweating profusely!")
 
 		if(istype(mob.loc,/turf/open))
 			var/turf/open/turf = mob.loc
 			turf.add_liquid_list(list(/datum/reagent/water = 20), TRUE)
+	*/ /// LIQUID REFACTOR IN PROGRESS ///

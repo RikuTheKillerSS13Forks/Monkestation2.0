@@ -121,6 +121,7 @@
 			record.crimes += new_crime
 			record.wanted_status = WANTED_ARREST
 
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	var/obj/effect/decal/cleanable/piss_stain/stain = locate() in owner_turf
 	if(!(stain in owner_turf.contents) && !owner_turf.liquids)
 		new /obj/effect/decal/cleanable/piss_stain(owner_turf)
@@ -128,6 +129,7 @@
 
 	qdel(stain)
 	owner_turf.add_liquid(pissin_reagent, piss_amount, FALSE, piss_temperature)
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 
 /obj/item/organ/internal/bladder/proc/attempt_piss_into(obj/item/reagent_containers/piss_holder)

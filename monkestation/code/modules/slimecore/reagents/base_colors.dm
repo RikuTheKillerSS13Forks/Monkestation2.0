@@ -79,11 +79,13 @@
 	color = "#ffffff"
 	extract_path = /obj/item/slime_extract/rainbow
 
+/* /// LIQUID REFACTOR IN PROGRESS ///
 /datum/reagent/slime_ooze/rainbow/add_to_member(obj/effect/abstract/liquid_turf/adder)
 	adder.rainbow_effect()
 
 /datum/reagent/slime_ooze/rainbow/remove_from_member(obj/effect/abstract/liquid_turf/remover)
 	remover.remove_rainbow_effect()
+*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 /datum/reagent/slime_ooze/oil
 	name = "Oil Slime Ooze"

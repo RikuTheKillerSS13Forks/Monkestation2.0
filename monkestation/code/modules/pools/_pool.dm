@@ -5,7 +5,6 @@
 	base_icon_state = "pool_tile"
 	icon_state = "pool_tile"
 	smoothing_flags = NONE
-	liquid_height = -30
 	turf_height = -30
 
 	///the id we use to get the connected blob of connected objects
@@ -28,6 +27,7 @@
 
 
 /turf/open/floor/lowered/iron/pool/proc/start_fill(list/reagent_list, temperature = 300)
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	if(!cached_group)
 		var/datum/liquid_group/pool_group/pool_group = new
 		src.liquids = new(src, pool_group)
@@ -40,6 +40,7 @@
 	for(var/turf/open/floor/lowered/iron/pool/listed_pool as anything in merge_group.members)
 		cached_group.merger_turfs += listed_pool
 		listed_pool.cached_group = cached_group
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 
 /turf/open/floor/lowered/iron/pool/proc/debug_pool_startup()

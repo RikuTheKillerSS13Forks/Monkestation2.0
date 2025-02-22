@@ -26,10 +26,12 @@
 ///from /datum/element/decal/Detach(): (description, cleanable, directional, mutable_appearance/pic)
 #define COMSIG_TURF_DECAL_DETACHED "turf_decal_detached"
 
+/* /// LIQUID REFACTOR IN PROGRESS ///
 ///called on liquid creation
 #define COMSIG_TURF_LIQUIDS_CREATION "turf_liquids_creation"
 	/// Blocks the liquid from being created.
 	#define BLOCK_LIQUID_CREATION (1 << 0)
+*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 #define COMSIG_TURF_MOB_FALL "turf_mob_fall"
 

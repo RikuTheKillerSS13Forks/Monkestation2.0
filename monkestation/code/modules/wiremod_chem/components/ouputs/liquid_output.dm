@@ -7,8 +7,9 @@
 
 	reagent_flags =  TRANSPARENT
 
+/* /// LIQUID REFACTOR IN PROGRESS ///
 /obj/structure/chemical_tank/liquid/after_reagent_add()
 	var/turf/turf = get_turf(src)
 	turf.add_liquid_from_reagents(reagents)
 	reagents.remove_all(100000)
-
+*/ /// LIQUID REFACTOR IN PROGRESS ///

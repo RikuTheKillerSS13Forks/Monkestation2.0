@@ -1,3 +1,5 @@
+/* /// LIQUID REFACTOR IN PROGRESS ///
+
 /***************************************************/
 /********************PROPER GROUPING**************/
 
@@ -1066,3 +1068,6 @@ GLOBAL_VAR_INIT(liquid_debug_colors, FALSE)
 	current_temperature_queue -= member
 	if(!length(current_temperature_queue))
 		temperature_shift_needs_action = FALSE
+
+
+*/ /// LIQUID REFACTOR IN PROGRESS ///

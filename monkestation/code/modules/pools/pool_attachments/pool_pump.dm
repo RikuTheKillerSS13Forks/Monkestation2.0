@@ -26,6 +26,8 @@
 	///are we turned on right now?
 	var/turned_on = FALSE
 
+/* /// LIQUID REFACTOR IN PROGRESS ///
+
 /obj/machinery/pool_pump/update_desc(updates)
 	. = ..()
 	var/list/desc_list = list()
@@ -142,6 +144,8 @@
 	. = ..()
 	desired_depth = tgui_input_number(user, "Choose a desired depth for the pump", "[src]", desired_depth, MAXIMUM_POOL_DEPTH, MINIMUM_POOL_DEPTH)
 	return SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
+
+*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 #undef MINIMUM_POOL_DEPTH
 #undef MAXIMUM_POOL_DEPTH

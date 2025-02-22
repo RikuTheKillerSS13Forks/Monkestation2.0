@@ -198,9 +198,11 @@
 
 /datum/status_effect/food/sweaty/tick()
 	. = ..()
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	if(prob(5))
 		var/turf/puddle_location = get_turf(owner)
 		puddle_location.add_liquid_list(sweat, FALSE, 300)
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 /datum/status_effect/food/health_increase
 	id = "t1_health"

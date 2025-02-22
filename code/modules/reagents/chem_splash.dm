@@ -65,7 +65,9 @@
 	else
 		holder.maximum_volume = original_max_volume
 
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	epicenter.add_liquid_from_reagents(holder)
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 	return TRUE
 
 

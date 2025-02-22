@@ -444,6 +444,7 @@
 
 	do_animate("closing")
 
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	var/turf/open/open_turf = get_turf(src)
 	if(open_turf.liquids)
 		var/datum/liquid_group/turfs_group = open_turf.liquids.liquid_group
@@ -455,6 +456,7 @@
 			if(!isopenturf(direction_turf) || !direction_turf.liquids)
 				continue
 			turfs_group.check_edges(direction_turf)
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 	layer = closingLayer
 	SLEEP_NOT_DEL(0.5 SECONDS)

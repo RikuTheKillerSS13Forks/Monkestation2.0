@@ -3,7 +3,6 @@
 	icon = 'monkestation/code/modules/blueshift/icons/turf/submarine.dmi'
 	base_icon_state = "submarine_floor"
 	icon_state = "submarine_floor"
-	liquid_height = -30
 	turf_height = -30
 
 /turf/open/floor/iron/submarine/rust_heretic_act()
@@ -14,7 +13,6 @@
 	icon = 'monkestation/code/modules/blueshift/icons/turf/submarine.dmi'
 	base_icon_state = "submarine_vents"
 	icon_state = "submarine_vents"
-	liquid_height = -30
 	turf_height = -30
 
 /turf/open/floor/iron/submarine_vents/rust_heretic_act()
@@ -25,7 +23,6 @@
 	icon = 'monkestation/code/modules/blueshift/icons/turf/submarine.dmi'
 	base_icon_state = "submarine_perf"
 	icon_state = "submarine_perf"
-	liquid_height = -30
 	turf_height = -30
 
 /turf/open/floor/iron/submarine_perf/airless

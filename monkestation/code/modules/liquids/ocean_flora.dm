@@ -88,10 +88,12 @@
 /obj/effect/spawner/liquids_spawner/Initialize(mapload)
 	. = ..()
 
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	if(!isturf(loc))
 		return
 	var/turf/T = loc
 	T.add_liquid_list(reagent_list, FALSE, temp)
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 /obj/effect/spawner/liquids_spawner/acid_puddle
 	reagent_list = list(/datum/reagent/toxin/acid = ONE_LIQUIDS_HEIGHT)

@@ -190,9 +190,12 @@
 	return reagents.total_volume < reagents.maximum_volume
 
 /obj/machinery/plumbing/floor_pump/input/should_regulator_permit(turf/affected_turf)
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	return affected_turf.liquids && affected_turf.liquids.liquid_group.expected_turf_height > height_regulator
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 /obj/machinery/plumbing/floor_pump/input/pump_turf(turf/affected_turf, seconds_per_tick, multiplier)
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	if(processes < processes_required)
 		processes++
 		return
@@ -237,6 +240,7 @@
 		for(var/turf/outputted_turf in output)
 			if(outputted_turf in removed_turfs)
 				removed_turfs -= outputted_turf
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 /obj/machinery/plumbing/floor_pump/input/on
 	icon_state = "active_input-mapping"
@@ -283,8 +287,10 @@ MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/plumbing/floor_pump/input/on/waste, 0
 	return reagents.total_volume > 0
 
 /obj/machinery/plumbing/floor_pump/output/should_regulator_permit(turf/affected_turf)
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	// 0 means keep pumping forever.
 	return !height_regulator || affected_turf.liquids.liquid_group.expected_turf_height < height_regulator
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 /obj/machinery/plumbing/floor_pump/output/process()
 	over_pressure = FALSE
@@ -295,8 +301,10 @@ MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/plumbing/floor_pump/input/on/waste, 0
 	if(!.)
 		return FALSE
 
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	if(affected_turf.liquids?.liquid_group.expected_turf_height >= max_ext_volume)
 		return FALSE
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 	var/turf/open/open_turf = affected_turf
 	var/datum/gas_mixture/gas_mix = open_turf?.return_air()
 	if(gas_mix?.return_pressure() > max_ext_kpa)
@@ -305,6 +313,7 @@ MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/plumbing/floor_pump/input/on/waste, 0
 	return TRUE
 
 /obj/machinery/plumbing/floor_pump/output/pump_turf(turf/affected_turf, seconds_per_tick, multiplier)
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	var/target_value = seconds_per_tick * (drain_flat + (reagents.total_volume * drain_percent)) * multiplier
 	if(target_value > reagents.total_volume)
 		target_value = reagents.total_volume
@@ -313,6 +322,7 @@ MAPPING_DIRECTIONAL_HELPERS(/obj/machinery/plumbing/floor_pump/input/on/waste, 0
 	reagents.trans_to(tempr, target_value, no_react = TRUE)
 	affected_turf.add_liquid_from_reagents(tempr)
 	qdel(tempr)
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 /obj/machinery/plumbing/floor_pump/output/on
 	icon_state = "active_output-mapping"

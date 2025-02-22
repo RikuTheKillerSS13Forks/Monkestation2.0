@@ -98,6 +98,7 @@
 		return
 	process_count = 0
 
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	var/turf/inside_turf = pick(turfs)
 	if(reagents.total_volume)
 		inside_turf.add_liquid_from_reagents(reagents, FALSE, reagents.chem_temp, reagents.total_volume)
@@ -107,6 +108,7 @@
 	var/water_volume = inside_turf.liquids.liquid_group.reagents.get_reagent_amount(/datum/reagent/water)
 	inside_turf.liquids.liquid_group.reagents.remove_all_type(/datum/reagent/water, water_volume * 0.1)
 	inside_turf.add_liquid(/datum/reagent/brine, water_volume * 0.1, FALSE, 300)
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 
 /obj/structure/brine_chamber/controller/proc/repack(from_destroy = FALSE)
@@ -128,6 +130,7 @@
 
 ///returns TRUE when they can give the specified amount and reagent. called by process request
 /datum/component/plumbing/brine_controller/can_give(amount, reagent, datum/ductnet/net)
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	if(amount <= 0)
 		return
 	var/obj/structure/brine_chamber/controller/host = parent
@@ -143,9 +146,11 @@
 		return TRUE
 
 	return FALSE
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 ///this is where the reagent is actually transferred and is thus the finish point of our process()
 /datum/component/plumbing/brine_controller/transfer_to(datum/component/plumbing/target, amount, reagent, datum/ductnet/net)
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	if(!target || !target.reagents)
 		return FALSE
 	var/obj/structure/brine_chamber/controller/host = parent
@@ -157,3 +162,4 @@
 		inside_turf.liquids.liquid_group.transfer_specific_reagents(target.recipient_reagents_holder, amount, reagent)
 	else
 		inside_turf.liquids.liquid_group.transfer_specific_reagents(target.recipient_reagents_holder, amount, reagents_to_check = list(/datum/reagent/brine))
+	*/ /// LIQUID REFACTOR IN PROGRESS ///

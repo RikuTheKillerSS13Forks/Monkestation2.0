@@ -47,6 +47,7 @@
 	. += span_notice("The pressure gauge shows [reagents.total_volume]/[reagents.maximum_volume].")
 
 /obj/structure/liquid_pump/process()
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	if(!isturf(loc))
 		return
 	var/turf/T = loc
@@ -68,6 +69,7 @@
 			target_siphon_amt = free_space
 		T.liquids.liquid_group.trans_to_seperate_group(reagents, target_siphon_amt)
 	return
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 /obj/structure/liquid_pump/update_icon()
 	. = ..()

@@ -111,8 +111,10 @@ GLOBAL_LIST_INIT(initalized_ocean_areas, list())
 
 	vis_contents += static_overlay
 	light_color = static_overlay.color
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	SSliquids.unvalidated_oceans |= src
 	SSliquids.ocean_turfs |= src
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 	if(rand_variants && prob(rand_chance))
 		var/random = rand(1,rand_variants)
@@ -123,8 +125,10 @@ GLOBAL_LIST_INIT(initalized_ocean_areas, list())
 /turf/open/floor/plating/ocean/Destroy()
 	. = ..()
 	UnregisterSignal(src, list(COMSIG_ATOM_ENTERED, COMSIG_TURF_MOB_FALL))
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	SSliquids.active_ocean_turfs -= src
 	SSliquids.ocean_turfs -= src
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 	for(var/turf/open/floor/plating/ocean/listed_ocean as anything in ocean_turfs)
 		listed_ocean.rebuild_adjacent()
 
@@ -199,20 +203,25 @@ GLOBAL_LIST_INIT(initalized_ocean_areas, list())
 			else
 				open_turfs.Add(direction)
 
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	if(open_turfs.len)
 		SSliquids.active_ocean_turfs |= src
 	SSliquids.unvalidated_oceans -= src
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 /turf/open/floor/plating/ocean/proc/door_opened(datum/source)
 	SIGNAL_HANDLER
 
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	var/obj/machinery/door/found_door = source
 	var/turf/turf = get_turf(found_door)
 
 	if(turf.can_atmos_pass())
 		turf.add_liquid_list(ocean_reagents, FALSE, ocean_temp)
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 /turf/open/floor/plating/ocean/proc/process_turf()
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	for(var/direction in open_turfs)
 		var/turf/directional_turf = get_step(src, direction)
 		if(isspaceturf(directional_turf) || istype(directional_turf, /turf/open/floor/plating/ocean))
@@ -229,8 +238,10 @@ GLOBAL_LIST_INIT(initalized_ocean_areas, list())
 			return
 
 		directional_turf.add_liquid_list(ocean_reagents, FALSE, ocean_temp)
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 /turf/open/floor/plating/ocean/proc/rebuild_adjacent()
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	ocean_turfs = list()
 	open_turfs = list()
 	for(var/direction in GLOB.cardinals)
@@ -244,6 +255,7 @@ GLOBAL_LIST_INIT(initalized_ocean_areas, list())
 		SSliquids.active_ocean_turfs |= src
 	else if(src in SSliquids.active_ocean_turfs)
 		SSliquids.active_ocean_turfs -= src
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 /turf/open/attackby(obj/item/C, mob/user, params)
 	. = ..()
@@ -344,8 +356,10 @@ GLOBAL_LIST_INIT(initalized_ocean_areas, list())
 
 	open_turfs.Add(get_dir(src, direction_turf))
 
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	if(!(src in SSliquids.active_ocean_turfs))
 		SSliquids.active_ocean_turfs |= src
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 /turf/open/floor/plating/ocean/proc/add_turf_direction_non_closed(datum/source)
 	SIGNAL_HANDLER
@@ -356,8 +370,10 @@ GLOBAL_LIST_INIT(initalized_ocean_areas, list())
 
 	open_turfs.Add(get_dir(src, direction_turf))
 
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	if(!(src in SSliquids.active_ocean_turfs))
 		SSliquids.active_ocean_turfs |= src
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 
 GLOBAL_LIST_INIT(scrollable_turfs, list())

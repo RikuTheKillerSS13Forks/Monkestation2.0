@@ -62,8 +62,11 @@
 
 	add_initial_reagents()
 
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	AddComponent(/datum/component/liquids_interaction, TYPE_PROC_REF(/obj/item/reagent_containers/cup/beaker, attack_on_liquids_turf))
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
+/* /// LIQUID REFACTOR IN PROGRESS ///
 /obj/item/reagent_containers/proc/attack_on_liquids_turf(obj/item/reagent_containers/my_beaker, turf/T, mob/living/user, obj/effect/abstract/liquid_turf/liquids)
 	if(!user.Adjacent(T))
 		return FALSE
@@ -92,6 +95,7 @@
 	to_chat(user, "<span class='notice'>You scoop up around [round(desired_transfer)] units of liquids with [my_beaker].</span>")
 	user.changeNext_move(CLICK_CD_MELEE)
 	return TRUE
+*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 /obj/item/reagent_containers/examine()
 	. = ..()
@@ -275,9 +279,11 @@
 
 	else
 		if(isturf(target))
+			/* /// LIQUID REFACTOR IN PROGRESS ///
 			var/turf/T = target
 			if(istype(T, /turf/open))
 				T.add_liquid_from_reagents(reagents, FALSE, reagents.chem_temp)
+			*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 			if(length(reagents.reagent_list) && thrown_by)
 				log_combat(thrown_by, target, "splashed (thrown) [english_list(reagents.reagent_list)]", "in [AREACOORD(target)]")
@@ -285,6 +291,7 @@
 				message_admins("[ADMIN_LOOKUPFLW(thrown_by)] splashed (thrown) [english_list(reagents.reagent_list)] on [target] in [ADMIN_VERBOSEJMP(target)].")
 		else
 			reagents.expose(target, TOUCH)
+			/* /// LIQUID REFACTOR IN PROGRESS ///
 			var/turf/targets_loc = target.loc
 			if(istype(targets_loc, /turf/open))
 				if(thrown_by && !target.can_atmos_pass)
@@ -295,6 +302,7 @@
 			else
 				targets_loc = get_step_towards(targets_loc, thrown_by)
 				targets_loc?.add_liquid_from_reagents(reagents) //not perfect but i can't figure out how to move something to the nearest visible turf from throw_target
+			*/ /// LIQUID REFACTOR IN PROGRESS ///
 		reagents.expose(target, TOUCH)
 		if(QDELETED(src))
 			return

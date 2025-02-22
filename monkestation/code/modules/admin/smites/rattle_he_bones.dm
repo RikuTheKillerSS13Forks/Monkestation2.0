@@ -7,8 +7,10 @@
 		for(var/obj/item/W in target)
 			target.dropItemToGround(W, TRUE)
 
+		/* /// LIQUID REFACTOR IN PROGRESS ///
 		var/turf/epicenter = get_turf(target)
 		epicenter.add_liquid(/datum/reagent/blood, 40, FALSE, 300)
+		*/ /// LIQUID REFACTOR IN PROGRESS ///
 		new /obj/effect/gibspawner/generic(target.drop_location(), target)
 		new /obj/item/stack/sheet/animalhide/human(target.loc)
 		target.set_species(/datum/species/skeleton)

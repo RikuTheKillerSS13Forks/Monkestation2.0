@@ -8,6 +8,7 @@
 	var/evaporation_multiplier = BASE_EVAPORATION_MULTIPLIER
 
 /datum/round_event/scrubber_overflow/start()
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	for(var/obj/machinery/atmospherics/components/unary/vent_scrubber/vent as anything in scrubbers)
 		if(QDELETED(vent) || vent.welded) // in case it was welded after setup() but before we got to it here
 			continue
@@ -24,6 +25,7 @@
 			vent_turf.liquids.liquid_group.always_evaporates = TRUE
 			vent_turf.liquids.liquid_group.evaporation_multiplier += evaporation_multiplier
 		CHECK_TICK
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 /datum/round_event/scrubber_overflow/threatening
 	reagents_amount = 150

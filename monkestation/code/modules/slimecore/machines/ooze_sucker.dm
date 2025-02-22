@@ -202,6 +202,7 @@ GLOBAL_LIST_EMPTY_TYPED(ooze_suckers, /obj/machinery/plumbing/ooze_sucker)
 		update_use_power(IDLE_POWER_USE)
 
 /obj/machinery/plumbing/ooze_sucker/proc/pump_turf(turf/affected_turf, seconds_per_tick, multiplier)
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	if(processes < processes_required)
 		processes++
 		return
@@ -227,6 +228,7 @@ GLOBAL_LIST_EMPTY_TYPED(ooze_suckers, /obj/machinery/plumbing/ooze_sucker)
 		return
 	targeted_group.transfer_specific_reagents(reagents, target_value, reagents_to_check = typesof(/datum/reagent/slime_ooze), remover = affected_turf.liquids,  merge = TRUE)
 	drained_last_process = TRUE
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 /obj/machinery/plumbing/ooze_sucker/CtrlClick(mob/user)
 	if(!can_interact(user) || !length(upgrade_disks))
@@ -317,11 +319,13 @@ GLOBAL_LIST_EMPTY_TYPED(ooze_suckers, /obj/machinery/plumbing/ooze_sucker)
 /obj/item/disk/sucker_upgrade/capacity/on_remove(obj/machinery/plumbing/ooze_sucker/sucker)
 	sucker.reagents.maximum_volume *= 0.5
 
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	if(sucker.reagents.total_volume > sucker.reagents.maximum_volume)
 		var/turf/turf = get_turf(sucker)
 		turf.add_liquid_from_reagents(sucker.reagents, amount = sucker.reagents.total_volume - sucker.reagents.maximum_volume)
 		if (sucker.reagents.total_volume > sucker.reagents.maximum_volume)
 			sucker.reagents.remove_all(sucker.reagents.total_volume - sucker.reagents.maximum_volume) // guh
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 #undef SUCKER_UPGRADE_DISPOSER
 #undef SUCKER_UPGRADE_BALANCER

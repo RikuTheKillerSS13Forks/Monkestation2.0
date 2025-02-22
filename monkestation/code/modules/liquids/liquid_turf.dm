@@ -1,3 +1,6 @@
+/* /// LIQUID REFACTOR IN PROGRESS ///
+
+
 /turf
 	var/obj/effect/abstract/liquid_turf/liquids
 	var/liquid_height = 0
@@ -57,3 +60,6 @@
 	liquids.liquid_group.add_reagent(liquids, reagent, amount, chem_temp)
 	//Expose turf
 	liquids.liquid_group.expose_members_turf(liquids)
+
+
+*/ /// LIQUID REFACTOR IN PROGRESS ///

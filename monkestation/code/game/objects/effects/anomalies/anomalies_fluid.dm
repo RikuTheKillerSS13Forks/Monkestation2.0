@@ -23,14 +23,19 @@
 	if(isspaceturf(src) || !isopenturf(get_turf(src)))
 		return
 
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	var/turf/spawn_point = get_turf(src)
 	spawn_point.add_liquid(pick(fluid_choices), dangerous ? DANGEROUS_FLUID_AMOUNT : NORMAL_FLUID_AMOUNT, chem_temp = rand(BODYTEMP_COLD_DAMAGE_LIMIT, BODYTEMP_HEAT_DAMAGE_LIMIT))
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 /obj/effect/anomaly/fluid/detonate()
 	if(isinspace(src) || !isopenturf(get_turf(src)))
 		return
+
+	/* /// LIQUID REFACTOR IN PROGRESS ///
 	var/turf/spawn_point = get_turf(src)
 	spawn_point.add_liquid(pick(fluid_choices), (dangerous ? DANGEROUS_FLUID_AMOUNT : NORMAL_FLUID_AMOUNT) * 5, chem_temp = rand(BODYTEMP_COLD_DAMAGE_LIMIT, BODYTEMP_HEAT_DAMAGE_LIMIT))
+	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 #undef NORMAL_FLUID_AMOUNT
 #undef DANGEROUS_FLUID_AMOUNT

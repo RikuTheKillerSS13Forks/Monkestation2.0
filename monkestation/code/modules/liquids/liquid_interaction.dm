@@ -1,3 +1,6 @@
+/* /// LIQUID REFACTOR IN PROGRESS ///
+
+
 ///This element allows for items to interact with liquids on turfs.
 /datum/component/liquids_interaction
 	///Callback interaction called when the turf has some liquids on it
@@ -30,3 +33,6 @@
 
 	if(interaction_callback.Invoke(parent, victim, caster, turf_target.liquids))
 		return COMPONENT_CANCEL_ATTACK_CHAIN
+
+
+*/ /// LIQUID REFACTOR IN PROGRESS ///

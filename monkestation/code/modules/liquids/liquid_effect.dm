@@ -1,3 +1,6 @@
+/* /// LIQUID REFACTOR IN PROGRESS ///
+
+
 /obj/effect/abstract/liquid_turf
 	name = "liquid"
 	icon = 'monkestation/icons/obj/effects/liquid.dmi'
@@ -308,3 +311,6 @@
 
 /obj/effect/abstract/fire/big_fire
 	icon_state = "fire_big"
+
+
+*/ /// LIQUID REFACTOR IN PROGRESS ///
