@@ -1,3 +1,6 @@
+// Handles the visual effects for turfs in liquid groups.
+// Don't cache turf-specific data about liquid groups here, pulling from an assoc list is faster.
+
 /obj/effect/abstract/liquid
 	name = "liquid"
 	desc = "...wait, how are you examining this?"
@@ -17,15 +20,10 @@
 	mouse_opacity = FALSE
 	plane = FLOOR_PLANE
 
-	var/datum/liquid_group/liquid_group
-
-/obj/effect/abstract/liquid/Initialize(mapload, datum/liquid_group/liquid_group)
+/obj/effect/abstract/liquid/Initialize(mapload)
 	. = ..()
-	src.liquid_group = liquid_group
-
 	QUEUE_SMOOTH(src)
 	QUEUE_SMOOTH_NEIGHBORS(src)
 
 /obj/effect/abstract/liquid/Destroy(force)
-	liquid_group = null
 	return ..()
