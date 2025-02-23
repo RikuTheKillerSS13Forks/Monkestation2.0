@@ -13,16 +13,23 @@
 /// Immediately calls liquid_group.update_edges(adjacent_turf) for all cardinally adjacent turfs, after doing sanity checks for each of them.
 #define LIQUID_UPDATE_ADJACENT_EDGES(_turf) \
 	for (var/_direction in GLOB.cardinals) { \
-		var/turf/open/_adjacent_turf = get_step(_turf, _direction); \
+		var/turf/_adjacent_turf = get_step(_turf, _direction); \
 		_adjacent_turf.liquid_group?.update_edges(_adjacent_turf); \
 	}; \
 
 /// Queues '_recessive_group' to combine with '_dominant_group' or whatever it's combining with. Also avoid queueing a combine with ourselves or into a group that is already queued to combine with us.
 #define LIQUID_QUEUE_COMBINE(_recessive_group, _dominant_group) if (_recessive_group != _dominant_group && GLOB.liquid_combine_queue[_dominant_group] != _recessive_group) { GLOB.liquid_combine_queue[_recessive_group] ||= GLOB.liquid_combine_queue[_dominant_group] || _dominant_group }
 
+/// Queues the given liquid group for a DFS split check by SSliquid_spread.
+/// This is infamously expensive. Avoid splits whenever possible. They SUCK to do.
+#define LIQUID_QUEUE_SPLIT(_liquid_group) GLOB.liquid_split_queue[_liquid_group] = TRUE
+
 // Global Lists //
-/// Contains all active liquid groups.
+/// Contains all active liquid groups. This is a simple list.
 GLOBAL_LIST_INIT(liquid_groups, list())
 /// Contains all active liquid groups waiting for SSliquid_spread to combine them.
 /// This is an associative list with a format of "liquid_combine_queue[recessive_turf] = dominant_turf"
 GLOBAL_LIST_INIT(liquid_combine_queue, list())
+/// Contains all active liquid groups waiting for SSliquid_spread to split them.
+/// This is an associative list with a format of "liquid_split_queue[liquid_group] = TRUE"
+GLOBAL_LIST_INIT(liquid_split_queue, list())

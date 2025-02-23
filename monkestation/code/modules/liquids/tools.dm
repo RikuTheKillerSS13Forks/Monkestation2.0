@@ -1,7 +1,7 @@
 /client/proc/spawn_liquid()
 	set category = "Admin.Fun"
 	set name = "Spawn Liquid"
-	set desc = "Spawns an amount of chosen liquid at your current location."
+	set desc = "Spawns a liquid of your choice in a radius around your current location."
 
 	var/choice = stripped_input(usr, "Enter the ID of the reagent you want to add.", "Spawn Liquid: Choose Reagent")
 	if (isnull(choice)) // Check if they canceled.
@@ -12,19 +12,19 @@
 			to_chat(usr, span_warning("A reagent with that ID doesn't exist!"))
 			return
 
-	var/volume = input(usr, "Enter the volume of liquid you want to add. More than [LIQUID_BASE_TURF_MAXIMUM_VOLUME] is very likely to get culled.", "Spawn Liquid: Choose Volume") as num
+	var/volume = input(usr, "Enter the volume of liquid you want to add.", "Spawn Liquid: Choose Volume") as num
 	if (!isnum(volume) || volume <= 0)
 		return
 
-	var/range = input(usr, "Enter the range in which you want to add liquid.") as num
-	if (!isnum(range) || range <= 0)
+	var/range = input(usr, "Enter the range in which you want to add liquid.", "Spawn Liquid: Choose Range") as num
+	if (!isnum(range) || range < 0)
 		return
 
-	// General maximum liquid volume allowed per turf multiplied by the surface area of the square of turfs we're spawning liquid on.
-	if (min(volume, LIQUID_BASE_TURF_MAXIMUM_VOLUME) * range * range > 100000)
+	// Volume per turf multiplied by the surface area of the square of turfs we're spawning liquid on.
+	if (volume * range * range > 100000)
 		var/balls_to_the_walls = tgui_alert(
 			user = usr,
-			message = "Are you absolutely certain you want to spawn over one hundred thousand units of liquid? At least up to one million will be okay for the server.",
+			message = "Are you absolutely certain you want to spawn roughly over one hundred thousand units of liquid? The server will live, but the players may not.",
 			title = "Spawn Liquid: Tread Carefully",
 			buttons = list("Yes", "No"),
 		)
@@ -36,28 +36,25 @@
 	for (var/turf/open/target_turf in range(range, mob))
 		target_turf.add_liquid(choice, volume)
 
-	message_admins("[ADMIN_LOOKUPFLW(usr)] spawned liquid at [get_turf(mob)] ([choice] - [range] range - [volume] volume).")
+	message_admins("[key_name_admin(usr)] spawned liquid at [get_turf(mob)] ([choice] - [range] range - [volume] volume).")
 	log_admin("[key_name(usr)] spawned liquid at [get_turf(mob)] ([choice] - [range] range - [volume] volume).")
 
 /client/proc/remove_liquid()
 	set name = "Remove Liquids"
 	set category = "Admin.Fun"
-	set desc = "Fixes air in specified radius."
+	set desc = "Removes all liquids in a radius around your current location."
 
-	/* /// LIQUID REFACTOR IN PROGRESS ///
-	var/turf/epicenter = get_turf(mob)
+	var/range = input(usr, "Enter the range in which you want to remove liquids.", "Remove Liquid: Choose Range") as num
+	if (!isnum(range) || range < 0)
+		return
 
-	var/range = input(usr, "Enter range:", "Range selection", 2) as num
+	for(var/turf/open/target_turf in range(range, mob))
+		if(target_turf.liquid_group)
+			target_turf.liquid_group.reagents.remove_all(target_turf.liquid_group.maximum_volume_per_turf)
+			target_turf.liquid_group.remove_turf(target_turf)
 
-	for(var/obj/effect/abstract/liquid_turf/liquid in range(range, epicenter))
-		liquid.liquid_group.remove_any(liquid, liquid.liquid_group.reagents_per_turf)
-		qdel(liquid)
-
-	message_admins("[key_name_admin(usr)] removed liquids with range [range] in [epicenter.loc.name]")
-	log_game("[key_name_admin(usr)] removed liquids with range [range] in [epicenter.loc.name]")
-	*/ /// LIQUID REFACTOR IN PROGRESS ///
-
-
+	message_admins("[key_name_admin(usr)] removed liquids with range [range] at [get_turf(mob)]")
+	log_game("[key_name(usr)] removed liquids with range [range] at [get_turf(mob)]")
 
 /client/proc/change_ocean()
 	set category = "Admin.Fun"

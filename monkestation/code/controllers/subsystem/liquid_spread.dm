@@ -22,8 +22,8 @@ SUBSYSTEM_DEF(liquid_spread)
 
 		GLOB.liquid_combine_queue.Cut()
 
-	while (spread_cache.len)
-		var/datum/liquid_group/liquid_group = spread_cache[spread_cache.len]
+	while (length(spread_cache))
+		var/datum/liquid_group/liquid_group = spread_cache[length(spread_cache)]
 		spread_cache.len--
 		if (!QDELETED(liquid_group))
 			liquid_group.process_spread(wait * 0.1)
@@ -48,7 +48,7 @@ SUBSYSTEM_DEF(liquid_spread)
 	dominant_group.reagents.maximum_volume += recessive_group.reagents.maximum_volume
 	recessive_group.reagents.copy_to(dominant_group.reagents, recessive_group.reagents.total_volume, preserve_data = TRUE, no_react = TRUE)
 
-	for (var/turf/open/recessive_group_turf as anything in recessive_group.turfs)
+	for (var/turf/recessive_group_turf as anything in recessive_group.turfs)
 		recessive_group_turf.liquid_group = dominant_group // Get stolen bitchass. Also prevents recessive_group.Destroy() from cleaning up liquid effects.
 
 	qdel(recessive_group)
