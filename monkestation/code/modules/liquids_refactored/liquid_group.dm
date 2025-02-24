@@ -20,14 +20,12 @@
 	var/maximum_volume_per_turf = 0
 
 /datum/liquid_group/New(turf/initial_turf)
-	if (!initial_turf)
-		CRASH("Something created a liquid group without an initial turf.")
-
 	reagents = new(0)
 	reagents.flags |= NO_REACT // We handle reactions ourselves once every 2 seconds.
 
-	maximum_volume_per_turf = LIQUID_GET_TURF_MAXIMUM_VOLUME(initial_turf)
-	add_turf(initial_turf)
+	if (initial_turf)
+		maximum_volume_per_turf = LIQUID_GET_TURF_MAXIMUM_VOLUME(initial_turf)
+		add_turf(initial_turf)
 
 	GLOB.liquid_groups += src
 
@@ -51,7 +49,7 @@
 	update_edges(target_turf) // Has to happen immediately or else spreading/receding will break, splitting will break, etc...
 	LIQUID_UPDATE_ADJACENT_EDGES(target_turf) // Same here.
 
-	reagents.maximum_volume += maximum_volume_per_turf
+	LIQUID_UPDATE_MAXIMUM_VOLUME(src)
 
 /// Removes a turf from the liquid group. Does barely any sanity checks.
 /// Only use this when you intend to remove turfs without destroying the whole group.
@@ -73,7 +71,7 @@
 
 	LIQUID_UPDATE_ADJACENT_EDGES(target_turf) // Has to happen immediately or else spreading/receding will break, splitting will break, etc...
 
-	reagents.maximum_volume -= maximum_volume_per_turf
+	LIQUID_UPDATE_MAXIMUM_VOLUME(src)
 
 	if (reagents.total_volume > reagents.maximum_volume) // Total volume should never exceed maximum volume.
 		reagents.remove_all(reagents.total_volume - reagents.maximum_volume) // So we obliterate the excess.
@@ -81,13 +79,11 @@
 /// Removes all turfs from the liquid group.
 /datum/liquid_group/proc/remove_all_turfs()
 	for (var/turf/target_turf as anything in turfs)
-		if (target_turf.liquid_group == src) // In case of SSliquid_spread.combine_liquid_groups()
-			target_turf.liquid_group = null
-			QDEL_NULL(target_turf.liquid_effect)
+		QDEL_NULL(target_turf.liquid_effect)
 
-	turfs.Cut()
-	edge_turfs.Cut()
-	edge_turf_spread_directions.Cut()
+	turfs = list()
+	edge_turfs = list()
+	edge_turf_spread_directions = list()
 
 /// Updates edge_turfs for the given turf.
 /datum/liquid_group/proc/update_edges(turf/target_turf)
@@ -131,11 +127,11 @@
 			return
 
 	// Okay, this could cause a split, but we're not going to give up that easily.
-	// Instead of immediately queuing a full DFS, we're going to do a localized DFS first.
+	// Instead of immediately queuing a full BFT, we're going to do a localized BFT first.
 	// This is to check if all turfs in this liquid group adjacent to us remain connected to each other.
-	// Because if they don't, then we're going to have to resort to a full DFS. But we're gonna try to stave it off.
+	// Because if they don't, then we're going to have to resort to a full BFT. But we're gonna try to stave it off.
 
-	var/list/adjacent_liquid_turfs = list() // Associative list of all turfs in this liquid group that are adjacent to us, used for the DFS checks. (adjacent_liquid_turfs[turf] = has_not_been_visited)
+	var/list/adjacent_liquid_turfs = list() // Associative list of all turfs in this liquid group that are adjacent to us, used for the BFT checks. (adjacent_liquid_turfs[turf] = has_not_been_visited)
 
 	for (var/direction in GLOB.cardinals) // First the cardinals, for the upcoming check.
 		var/turf/adjacent_turf = get_step(target_turf, direction)
@@ -150,24 +146,24 @@
 		if (turfs[adjacent_turf])
 			adjacent_liquid_turfs[adjacent_turf] = TRUE // TRUE = has not been visited
 
-	var/list/dfs_stack = list(adjacent_liquid_turfs[1]) // List of turfs to propagate from on the next DFS iteration.
-	var/list/total_adjacents_visited = 0
+	var/list/turf_stack = list(adjacent_liquid_turfs[1]) // List of turfs to propagate from on the next BFT (Breadth-First Traversal) iteration.
+	var/total_adjacents_visited = 0
 
-	while (length(dfs_stack))
-		var/turf/current_turf = dfs_stack[length(dfs_stack)]
-		dfs_stack.len--
+	while (length(turf_stack))
+		var/turf/current_turf = turf_stack[length(turf_stack)]
+		turf_stack.len--
 
 		for (var/direction in GLOB.cardinals)
 			var/turf/adjacent_turf = get_step(current_turf, direction)
 			if (adjacent_liquid_turfs[adjacent_turf]) // Serves a dual purpose, making sure the turf is an adjacent liquid turf and that it hasn't been visited.
 				adjacent_liquid_turfs[adjacent_turf] = FALSE // FALSE = has been visited
-				dfs_stack += adjacent_turf
+				turf_stack += adjacent_turf
 				total_adjacents_visited++
 
 		if (total_adjacents_visited >= length(adjacent_liquid_turfs))
 			return
 
-	LIQUID_QUEUE_SPLIT(src) // Welp, we have to eat the full cost of a group-wide DFS.
+	LIQUID_QUEUE_SPLIT(src) // Welp, we have to eat the full cost of a group-wide BFT.
 
 /// Called by SSliquid_processing to handle self-processing for liquid groups.
 /datum/liquid_group/process(seconds_per_tick)

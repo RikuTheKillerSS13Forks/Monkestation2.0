@@ -6,6 +6,8 @@
 /// This is the actual value, after adjustments. Must be consistent for the entire lifespan of the turf.
 #define LIQUID_GET_TURF_MAXIMUM_VOLUME(turf) (max(0, LIQUID_BASE_TURF_MAXIMUM_VOLUME - initial(turf.turf_height) * 10))
 
+#define LIQUID_UPDATE_MAXIMUM_VOLUME(_liquid_group) _liquid_group.reagents.maximum_volume = length(_liquid_group.turfs) * _liquid_group.maximum_volume_per_turf
+
 /// Whether the type of the given turf can hold liquid at all. Does not assume it's an open turf.
 /// Try not to make this the world's most expensive macro, it could get pretty hot. (and does when spawning large numbers of liquids)
 #define LIQUID_CAN_ENTER_TURF_TYPE(turf) (isopenturf(turf) && !isspaceturf(turf) && !isopenspaceturf(turf))
