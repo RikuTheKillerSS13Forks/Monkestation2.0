@@ -127,11 +127,11 @@
 			return
 
 	// Okay, this could cause a split, but we're not going to give up that easily.
-	// Instead of immediately queuing a full BFT, we're going to do a localized BFT first.
+	// Instead of immediately queuing a full DFT, we're going to do a localized DFT first.
 	// This is to check if all turfs in this liquid group adjacent to us remain connected to each other.
-	// Because if they don't, then we're going to have to resort to a full BFT. But we're gonna try to stave it off.
+	// Because if they don't, then we're going to have to resort to a full DFT. But we're gonna try to stave it off.
 
-	var/list/adjacent_liquid_turfs = list() // Associative list of all turfs in this liquid group that are adjacent to us, used for the BFT checks. (adjacent_liquid_turfs[turf] = has_not_been_visited)
+	var/list/adjacent_liquid_turfs = list() // Associative list of all turfs in this liquid group that are adjacent to us, used for the DFT checks. (adjacent_liquid_turfs[turf] = has_not_been_visited)
 
 	for (var/direction in GLOB.cardinals) // First the cardinals, for the upcoming check.
 		var/turf/adjacent_turf = get_step(target_turf, direction)
@@ -146,7 +146,7 @@
 		if (turfs[adjacent_turf])
 			adjacent_liquid_turfs[adjacent_turf] = TRUE // TRUE = has not been visited
 
-	var/list/turf_stack = list(adjacent_liquid_turfs[1]) // List of turfs to propagate from on the next BFT (Breadth-First Traversal) iteration.
+	var/list/turf_stack = list(adjacent_liquid_turfs[1]) // List of turfs to propagate from on the next DFT (Depth-First Traversal) iteration.
 	var/total_adjacents_visited = 0
 
 	while (length(turf_stack))
@@ -163,7 +163,7 @@
 		if (total_adjacents_visited >= length(adjacent_liquid_turfs))
 			return
 
-	LIQUID_QUEUE_SPLIT(src) // Welp, we have to eat the full cost of a group-wide BFT.
+	LIQUID_QUEUE_SPLIT(src) // Welp, we have to eat the full cost of a group-wide DFT.
 
 /// Called by SSliquid_processing to handle self-processing for liquid groups.
 /datum/liquid_group/process(seconds_per_tick)

@@ -70,28 +70,35 @@ SUBSYSTEM_DEF(liquid_spread)
 	recessive_group.turfs = list() // Clear it early so that recessive_group.Destroy() doesn't delete liquid effects.
 	qdel(recessive_group)
 
-/// Does a full BFT (Breadth-First Traversal) for a liquid group and splits it into several if needed.
+/// Does a full DFT (Depth-First Traversal) for a liquid group and splits it into several if needed.
+/// A full DFT is incredibly expensive, costing about 100ms (estimate from my 250ms or so) on live for all of Box station in one group. (all doors open)
+/// In reality they only take about 10ms on live even in the worst case, but this remains extremely hot anyway.
+/// I am literally incapable of optimizing this further even after hours of profiling and testing shit.
 /datum/controller/subsystem/liquid_spread/proc/split_liquid_group(datum/liquid_group/splitting_group)
 	var/list/splitting_group_turf_cache = splitting_group.turfs.Copy() // Associative list of turfs we have left to find. Has to be a copy in case we abort the split. (turf = TRUE)
 	var/list/new_group_turf_lists = list() // A list containing associative lists of turfs for the new groups after the split. (turf = TRUE)
 
 	while (length(splitting_group_turf_cache))
-		var/list/turf_stack = list(pick(splitting_group_turf_cache)) // List of turfs to propagate from on the next BFT iteration.
-		var/list/visited_turfs = list() // Associative list of turfs that we have visited. (turf = TRUE)
+		var/turf/starting_turf = pick(splitting_group_turf_cache)
+		splitting_group_turf_cache -= starting_turf
 
-		while (length(turf_stack))
-			var/turf/current_turf = turf_stack[turf_stack.len]
+		var/list/turf_stack = list(starting_turf) // List of turfs to propagate from on the next DFT iteration.
+		var/list/visited_turfs = list(starting_turf = TRUE) // Associative list of turfs that we have visited.
+
+		while (length(turf_stack)) // Ever wanted a loop that could theoretically run 20000 times in one tick? Then it's your lucky day.
+			var/turf/current_turf = turf_stack[length(turf_stack)]
 			turf_stack.len--
 
-			for (var/direction in GLOB.cardinals)
-				var/turf/adjacent_turf = get_step(current_turf, direction)
-				if (splitting_group_turf_cache[adjacent_turf])
-					splitting_group_turf_cache -= adjacent_turf
-					visited_turfs[adjacent_turf] = TRUE
+			for (var/direction in GLOB.cardinals) // And here's one that could run 80000 times in one tick. (PROFILE ANY CHANGES)
+				var/turf/adjacent_turf = get_step(current_turf, direction) // Using get_step() 4 times is faster than caching a turf list with a locate() macro.
+
+				if (splitting_group_turf_cache[adjacent_turf]) // Serves a dual purpose of checking if the turf is in the splitting group and if it's been visited.
+					splitting_group_turf_cache -= adjacent_turf // Removing from the list is faster than setting the index to false.
+					visited_turfs[adjacent_turf] = TRUE // Having to reconstruct this into an assoc list later outweighs the benefits of making it a normal list.
 					turf_stack += adjacent_turf
 
-		if (!length(new_group_turf_lists) && !length(splitting_group_turf_cache)) // Check if we can avoid an actual split and get by with an expensive check instead.
-			return
+		if (!length(new_group_turf_lists) && !length(splitting_group_turf_cache))
+			return // We found all turfs on the first attempt. The group remains intact.
 
 		new_group_turf_lists += list(visited_turfs) // Nope, there's gonna be more than one group after this. It's confirmed, WE NEED TO SPLIT!!
 
