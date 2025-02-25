@@ -2,15 +2,19 @@
 /// Adjusted by height and possibly other factors.
 #define LIQUID_BASE_TURF_MAXIMUM_VOLUME 1000
 
+/// The amount of reagents per turf a liquid group needs before spreading.
+#define LIQUID_SPREAD_VOLUME_THRESHOLD 2
+
 /// Gets the amount of liquid the given turf can contain.
 /// This is the actual value, after adjustments. Must be consistent for the entire lifespan of the turf.
 #define LIQUID_GET_TURF_MAXIMUM_VOLUME(turf) (max(0, LIQUID_BASE_TURF_MAXIMUM_VOLUME - initial(turf.turf_height) * 10))
 
+#define LIQUID_GET_VOLUME_PER_TURF(_liquid_group) (_liquid_group.reagents.total_volume / length(_liquid_group.turfs))
+
 #define LIQUID_UPDATE_MAXIMUM_VOLUME(_liquid_group) _liquid_group.reagents.maximum_volume = length(_liquid_group.turfs) * _liquid_group.maximum_volume_per_turf
 
-/// Whether the type of the given turf can hold liquid at all. Does not assume it's an open turf.
-/// Try not to make this the world's most expensive macro, it could get pretty hot. (and does when spawning large numbers of liquids)
-#define LIQUID_CAN_ENTER_TURF_TYPE(turf) (isopenturf(turf) && !isspaceturf(turf) && !isopenspaceturf(turf))
+/// Whether the type of the given turf can hold liquid at all.
+#define LIQUID_CAN_ENTER_TURF_TYPE(turf) (isopenturf(turf) && !isspaceturf(turf))
 
 /// Immediately calls liquid_group.update_edges(adjacent_turf) for all cardinally adjacent turfs, after doing sanity checks for each of them.
 #define LIQUID_UPDATE_ADJACENT_EDGES(_turf) \

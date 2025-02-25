@@ -62,7 +62,7 @@ SUBSYSTEM_DEF(liquid_spread)
 	dominant_group.edge_turf_spread_directions += recessive_group.edge_turf_spread_directions
 
 	LIQUID_UPDATE_MAXIMUM_VOLUME(dominant_group)
-	recessive_group.reagents.copy_to(dominant_group.reagents, recessive_group.reagents.total_volume, no_react = TRUE)
+	recessive_group.copy_reagents_to(dominant_group)
 
 	for (var/turf/recessive_group_turf as anything in recessive_group.turfs)
 		recessive_group_turf.liquid_group = dominant_group // Get stolen bitchass.
@@ -83,7 +83,8 @@ SUBSYSTEM_DEF(liquid_spread)
 		splitting_group_turf_cache -= starting_turf
 
 		var/list/turf_stack = list(starting_turf) // List of turfs to propagate from on the next DFT iteration.
-		var/list/visited_turfs = list(starting_turf = TRUE) // Associative list of turfs that we have visited.
+		var/list/visited_turfs = list() // Associative list of turfs that we have visited. (turf = TRUE)
+		visited_turfs[starting_turf] = TRUE // Putting list(starting_turf = TRUE) as the initial value of visited_turfs just makes ("starting_turf" = 1), god I love DM.
 
 		while (length(turf_stack)) // Ever wanted a loop that could theoretically run 20000 times in one tick? Then it's your lucky day.
 			var/turf/current_turf = turf_stack[length(turf_stack)]
@@ -110,7 +111,7 @@ SUBSYSTEM_DEF(liquid_spread)
 		new_group.maximum_volume_per_turf = splitting_group.maximum_volume_per_turf
 		LIQUID_UPDATE_MAXIMUM_VOLUME(new_group)
 
-		splitting_group.reagents.copy_to(new_group, splitting_group.reagents.total_volume * (length(new_group_turfs) / length(splitting_group.turfs)), no_react = TRUE)
+		splitting_group.copy_reagents_to(new_group, splitting_group.reagents.total_volume * (length(new_group_turfs) / length(splitting_group.turfs)))
 
 		for (var/turf/old_edge_turf as anything in splitting_group.edge_turfs) // Transferring edge turfs is important, recalculating all of them would be a performance NIGHTMARE.
 			if (new_group_turfs[old_edge_turf])

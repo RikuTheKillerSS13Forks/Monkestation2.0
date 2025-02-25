@@ -20,20 +20,7 @@
 	if (!isnum(range) || range < 0)
 		return
 
-	// Volume per turf multiplied by the surface area of the square of turfs we're spawning liquid on.
-	if (volume * range * range > 100000)
-		var/balls_to_the_walls = tgui_alert(
-			user = usr,
-			message = "Are you absolutely certain you want to spawn roughly over one hundred thousand units of liquid? The server will live, but the players may not.",
-			title = "Spawn Liquid: Tread Carefully",
-			buttons = list("Yes", "No"),
-		)
-		if (!balls_to_the_walls)
-			to_chat(usr, span_green("You decide against flooding everything. Maybe that's for the best?"))
-			return
-		to_chat(usr, span_warning("Welp, that's going to be a tsunami. Not going to stop you, though."))
-
-	for (var/turf/open/target_turf in range(range, mob))
+	for (var/turf/target_turf in range(range, mob))
 		target_turf.add_liquid(choice, volume)
 
 	message_admins("[key_name_admin(usr)] spawned liquid at [get_turf(mob)] ([choice] - [range] range - [volume] volume).")
@@ -48,10 +35,8 @@
 	if (!isnum(range) || range < 0)
 		return
 
-	for(var/turf/open/target_turf in range(range, mob))
-		if(target_turf.liquid_group)
-			target_turf.liquid_group.reagents.remove_all(target_turf.liquid_group.maximum_volume_per_turf)
-			target_turf.liquid_group.remove_turf(target_turf)
+	for(var/turf/target_turf in range(range, mob))
+		target_turf.remove_all_liquid()
 
 	message_admins("[key_name_admin(usr)] removed liquids with range [range] at [get_turf(mob)]")
 	log_game("[key_name(usr)] removed liquids with range [range] at [get_turf(mob)]")

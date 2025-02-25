@@ -197,6 +197,7 @@
 	if(update)
 		immediate_calculate_adjacent_turfs()
 	if(remove)
+		clear_liquid() // monkestation addition: This just in, liquids are just air. Totally.
 		SSair.remove_from_active(src)
 	else
 		SSair.add_to_active(src)

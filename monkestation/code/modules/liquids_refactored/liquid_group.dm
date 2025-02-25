@@ -38,6 +38,8 @@
 
 /// Adds a turf to the liquid group. Does barely any sanity checks.
 /datum/liquid_group/proc/add_turf(turf/target_turf)
+	if (!LIQUID_CAN_ENTER_TURF_TYPE(target_turf))
+		return
 	if (target_turf.liquid_group)
 		CRASH("A liquid group tried to add a turf that is already in a liquid group.")
 
@@ -127,27 +129,29 @@
 			return
 
 	// Okay, this could cause a split, but we're not going to give up that easily.
-	// Instead of immediately queuing a full DFT, we're going to do a localized DFT first.
-	// This is to check if all turfs in this liquid group adjacent to us remain connected to each other.
+	// Instead of immediately queuing a full DFT, we're going to do a localized DFS first.
+	// This is to check if all turfs in this liquid group cardinally adjacent to us remain connected to each other.
 	// Because if they don't, then we're going to have to resort to a full DFT. But we're gonna try to stave it off.
 
-	var/list/adjacent_liquid_turfs = list() // Associative list of all turfs in this liquid group that are adjacent to us, used for the DFT checks. (adjacent_liquid_turfs[turf] = has_not_been_visited)
+	var/list/cardinal_liquid_turfs = list() // Associative list of all turfs in this liquid group that are cardinally adjacent to us, used for the DFT checks. (adjacent_liquid_turfs[turf] = has_not_been_visited)
 
 	for (var/direction in GLOB.cardinals) // First the cardinals, for the upcoming check.
 		var/turf/adjacent_turf = get_step(target_turf, direction)
 		if (turfs[adjacent_turf])
-			adjacent_liquid_turfs[adjacent_turf] = TRUE // TRUE = has not been visited
+			cardinal_liquid_turfs[adjacent_turf] = TRUE // TRUE = has not been visited
 
-	if (length(adjacent_liquid_turfs) <= 1) // If we only have one adjacent cardinal, then removing us can't cause a split. (nothing is depending on us for a connection)
+	if (length(cardinal_liquid_turfs) <= 1) // If we only have one adjacent cardinal, then removing us can't cause a split. (nothing is depending on us for a connection)
 		return
+
+	var/list/diagonal_liquid_turfs = list() // Associative list of all turfs in this liquid group that are diagonally adjacent to us, used for the DFT checks. (adjacent_liquid_turfs[turf] = has_not_been_visited)
 
 	for (var/direction in GLOB.diagonals) // And now the diagonals get to join in.
 		var/turf/adjacent_turf = get_step(target_turf, direction)
 		if (turfs[adjacent_turf])
-			adjacent_liquid_turfs[adjacent_turf] = TRUE // TRUE = has not been visited
+			diagonal_liquid_turfs[adjacent_turf] = TRUE // TRUE = has not been visited
 
-	var/list/turf_stack = list(adjacent_liquid_turfs[1]) // List of turfs to propagate from on the next DFT (Depth-First Traversal) iteration.
-	var/total_adjacents_visited = 0
+	var/list/turf_stack = list(cardinal_liquid_turfs[1]) // List of turfs to propagate from on the next DFS (Depth-First Search) iteration. Start from a cardinal.
+	var/total_cardinals_visited = 0
 
 	while (length(turf_stack))
 		var/turf/current_turf = turf_stack[length(turf_stack)]
@@ -155,13 +159,17 @@
 
 		for (var/direction in GLOB.cardinals)
 			var/turf/adjacent_turf = get_step(current_turf, direction)
-			if (adjacent_liquid_turfs[adjacent_turf]) // Serves a dual purpose, making sure the turf is an adjacent liquid turf and that it hasn't been visited.
-				adjacent_liquid_turfs[adjacent_turf] = FALSE // FALSE = has been visited
-				turf_stack += adjacent_turf
-				total_adjacents_visited++
 
-		if (total_adjacents_visited >= length(adjacent_liquid_turfs))
-			return
+			if (cardinal_liquid_turfs[adjacent_turf]) // Serves a dual purpose, making sure the turf is an adjacent liquid turf and that it hasn't been visited.
+				cardinal_liquid_turfs[adjacent_turf] = FALSE // FALSE = has been visited
+				turf_stack += adjacent_turf
+				total_cardinals_visited++
+
+				if (total_cardinals_visited >= length(cardinal_liquid_turfs))
+					return // All cardinals visited, removing us can't cause a split.
+			else if (diagonal_liquid_turfs[adjacent_turf])
+				diagonal_liquid_turfs[adjacent_turf] = FALSE
+				turf_stack += adjacent_turf
 
 	LIQUID_QUEUE_SPLIT(src) // Welp, we have to eat the full cost of a group-wide DFT.
 
@@ -169,9 +177,28 @@
 /datum/liquid_group/process(seconds_per_tick)
 	return
 
-/// Called by SSliquid_spread to handle spreading liquid groups.
-/// This proc is pretty hot. I optimized it really well, profile shit if you change it.
+/// Called by SSliquid_spread to handle spreading liquid groups. The loops can get pretty hot. (Profile shit if you change anything in them.)
 /datum/liquid_group/proc/process_spread(seconds_per_tick)
+	if (reagents.total_volume / length(turfs) >= LIQUID_SPREAD_VOLUME_THRESHOLD)
+		spread()
+	else if (reagents.total_volume / (length(turfs) - length(edge_turfs)) < LIQUID_SPREAD_VOLUME_THRESHOLD)
+		recede()
+
+/// Spreads the liquid group out by one turf at its edges.
+/datum/liquid_group/proc/spread()
 	for (var/turf/edge_turf as anything in edge_turf_spread_directions)
 		for (var/direction in edge_turf_spread_directions[edge_turf])
-			add_turf(get_step(edge_turf, direction))
+			var/turf/adjacent_turf = get_step(edge_turf, direction)
+
+			if (isspaceturf(adjacent_turf))
+				reagents.remove_all(reagents.total_volume / (length(turfs) + 1)) // The +1 is because we're accounting for the space turf as well.
+			else
+				add_turf(adjacent_turf)
+
+/// Recedes the liquid group back by one turf at its edges.
+/datum/liquid_group/proc/recede()
+	for (var/turf/edge_turf as anything in edge_turfs)
+		remove_turf(edge_turf)
+
+/datum/liquid_group/proc/copy_reagents_to(datum/liquid_group/other_liquid_group, amount = reagents.total_volume, no_react = TRUE)
+	reagents.copy_to(other_liquid_group.reagents, amount, no_react = no_react)
