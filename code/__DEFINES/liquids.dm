@@ -35,6 +35,7 @@
 //Percieved heat capacity for calculations with atmos sharing
 #define REAGENT_HEAT_CAPACITY		5
 
+/*
 #define LIQUID_STATE_PUDDLE			1
 #define LIQUID_STATE_ANKLES			2
 #define LIQUID_STATE_WAIST			3
@@ -42,6 +43,7 @@
 #define LIQUID_STATE_FULLTILE		5
 #define TOTAL_LIQUID_STATES			5
 #define LYING_DOWN_SUBMERGEMENT_STATE_BONUS			2
+*/
 
 #define LIQUID_STATE_FOR_HEAT_EXCHANGERS LIQUID_STATE_WAIST
 

@@ -28,7 +28,7 @@
 	if (copy_air)
 		copy_to_turf.clear_liquid()
 		if (liquid_group)
-			copy_to_turf.liquid_group = new(copy_to_turf)
+			new /datum/liquid_group(copy_to_turf)
 			liquid_group.copy_reagents_to(copy_to_turf.liquid_group, LIQUID_GET_VOLUME_PER_TURF(liquid_group))
 
 /// Tries to add the given amount of liquid to the turf and returns the amount added, if any.

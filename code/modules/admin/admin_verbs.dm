@@ -149,7 +149,8 @@ GLOBAL_LIST_INIT(admin_verbs_fun, list(
 	/client/proc/move_hotspots, //monkestation addition
 	/client/proc/object_say,
 	/client/proc/polymorph_all,
-	/client/proc/remove_liquid, //monkestation addition
+	/client/proc/remove_all_liquids, //monkestation addition
+	/client/proc/remove_liquids, //monkestation addition
 	/client/proc/remove_mob_ability,
 	/client/proc/reset_ooc,
 	/client/proc/run_weather,

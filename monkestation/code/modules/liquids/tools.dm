@@ -26,7 +26,7 @@
 	message_admins("[key_name_admin(usr)] spawned liquid at [get_turf(mob)] ([choice] - [range] range - [volume] volume).")
 	log_admin("[key_name(usr)] spawned liquid at [get_turf(mob)] ([choice] - [range] range - [volume] volume).")
 
-/client/proc/remove_liquid()
+/client/proc/remove_liquids()
 	set name = "Remove Liquids"
 	set category = "Admin.Fun"
 	set desc = "Removes all liquids in a radius around your current location."
@@ -40,6 +40,14 @@
 
 	message_admins("[key_name_admin(usr)] removed liquids with range [range] at [get_turf(mob)]")
 	log_game("[key_name(usr)] removed liquids with range [range] at [get_turf(mob)]")
+
+/client/proc/remove_all_liquids()
+	set name = "Remove All Liquids"
+	set category = "Admin.Fun"
+	set desc = "Removes all liquids on the map."
+
+	for (var/datum/liquid_group/liquid_group as anything in GLOB.liquid_groups)
+		qdel(liquid_group) // Yeah. You can just delete a whole group. And it runs remove_all_turfs() meaning it's blazing fast.
 
 /client/proc/change_ocean()
 	set category = "Admin.Fun"

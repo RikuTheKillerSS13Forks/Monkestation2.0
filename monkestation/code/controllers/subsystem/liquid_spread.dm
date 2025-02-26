@@ -21,11 +21,20 @@ SUBSYSTEM_DEF(liquid_spread)
 	/// The format is "split_cache[splitting_group] = TRUE"
 	var/list/split_cache = list()
 
+	/// List of liquid groups to call process_late_spread() on, persists across resumed fire() calls.
+	/// Required to keep liquid group spreading from going out of sync between groups.
+	/// Kinda dangerous, as qdeleted liquid groups will not be deleted from this.
+	var/list/late_spread_cache = list()
+
 /datum/controller/subsystem/liquid_spread/fire(resumed = FALSE)
+	if (!length(GLOB.liquid_groups)) // Someone can implement can_fire later if they want to. This does the job just fine for now.
+		return
+
 	if (!resumed)
 		spread_cache = GLOB.liquid_groups.Copy()
 		combine_cache = GLOB.liquid_combine_queue.Copy()
 		split_cache = GLOB.liquid_split_queue.Copy()
+		late_spread_cache = GLOB.liquid_groups.Copy()
 
 		GLOB.liquid_combine_queue = list()
 		GLOB.liquid_split_queue = list()
@@ -38,7 +47,7 @@ SUBSYSTEM_DEF(liquid_spread)
 		if (MC_TICK_CHECK)
 			return
 
-	for (var/datum/liquid_group/recessive_group as anything in combine_cache)
+	for (var/datum/liquid_group/recessive_group as anything in combine_cache) // Has to be front-to-back or else shit breaks. And I mean REALLY breaks. This is due to the order in which combine_cache is built.
 		var/datum/liquid_group/dominant_group = combine_cache[recessive_group]
 		combine_cache -= recessive_group
 		if (!QDELETED(recessive_group) && !QDELETED(dominant_group))
@@ -54,6 +63,14 @@ SUBSYSTEM_DEF(liquid_spread)
 		if (MC_TICK_CHECK)
 			return
 
+	while (length(late_spread_cache))
+		var/datum/liquid_group/liquid_group = late_spread_cache[length(late_spread_cache)]
+		late_spread_cache.len--
+		if (!QDELETED(liquid_group))
+			liquid_group.process_late_spread(wait * 0.1)
+		if (MC_TICK_CHECK)
+			return
+
 /// As the name implies, combines two separate liquid groups into one.
 /// More importantly, don't call this outside of SSliquid_spread. I will find you.
 /datum/controller/subsystem/liquid_spread/proc/combine_liquid_groups(datum/liquid_group/dominant_group, datum/liquid_group/recessive_group)
@@ -65,7 +82,7 @@ SUBSYSTEM_DEF(liquid_spread)
 	recessive_group.copy_reagents_to(dominant_group)
 
 	for (var/turf/recessive_group_turf as anything in recessive_group.turfs)
-		recessive_group_turf.liquid_group = dominant_group // Get stolen bitchass.
+		recessive_group_turf.liquid_group = dominant_group // Get stolen, bitchass.
 
 	recessive_group.turfs = list() // Clear it early so that recessive_group.Destroy() doesn't delete liquid effects.
 	qdel(recessive_group)
@@ -119,7 +136,7 @@ SUBSYSTEM_DEF(liquid_spread)
 				new_group.edge_turf_spread_directions[old_edge_turf] = splitting_group.edge_turf_spread_directions[old_edge_turf]
 
 		for (var/turf/new_group_turf as anything in new_group_turfs)
-			new_group_turf.liquid_group = new_group // Get stolen bitchass.
+			new_group_turf.liquid_group = new_group // Get stolen, bitchass.
 
 	splitting_group.turfs = list() // Clear it early so that splitting_group.Destroy() doesn't delete liquid effects.
 	qdel(splitting_group)
