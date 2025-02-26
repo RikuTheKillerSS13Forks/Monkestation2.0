@@ -5,12 +5,17 @@
 /// The amount of reagents per turf a liquid group needs before spreading.
 #define LIQUID_SPREAD_VOLUME_THRESHOLD 10
 
+/// How quickly liquids evaporate, in units per second.
+/// This is then multiplied by the number of turfs in a liquid group.
+#define LIQUID_BASE_EVAPORATION_RATE 0.1
+
 /// Gets the amount of liquid the given turf can contain.
 /// This is the actual value, after adjustments. Must be consistent for the entire lifespan of the turf.
 #define LIQUID_GET_TURF_MAXIMUM_VOLUME(_turf) (max(0, LIQUID_BASE_TURF_MAXIMUM_VOLUME - initial(_turf.turf_height) * 10))
 
 #define LIQUID_GET_VOLUME_PER_TURF(_liquid_group) (_liquid_group.reagents.total_volume / length(_liquid_group.turfs))
 
+/// Updates the maximum volume of the liquid group based on maximum_volume_per_turf and length(turfs)
 #define LIQUID_UPDATE_MAXIMUM_VOLUME(_liquid_group) _liquid_group.reagents.maximum_volume = length(_liquid_group.turfs) * _liquid_group.maximum_volume_per_turf
 
 /// Whether the type of the given turf can hold liquid at all.
@@ -21,6 +26,12 @@
 	for (var/turf/_adjacent_turf in orange(1, _turf)) { \
 		_adjacent_turf?.liquid_group?.update_edges(_adjacent_turf); \
 	}; \
+
+/// Transfers a liquid turf from one liquid group to another.
+/// Only handles turf-specific data and does not update color.
+#define LIQUID_TRANSFER_TURF(_turf, _from_group, _to_group) \
+	_turf.liquid_group = _to_group; \
+	_turf.liquid_effect.liquid_group = _to_group; \
 
 /// Queues '_recessive_group' to combine with '_dominant_group' or whatever it's combining with. Also avoid queueing a combine with ourselves or into a group that is already queued to combine with us.
 #define LIQUID_QUEUE_COMBINE(_recessive_group, _dominant_group) if (_recessive_group != _dominant_group && GLOB.liquid_combine_queue[_dominant_group] != _recessive_group) { GLOB.liquid_combine_queue[_recessive_group] ||= GLOB.liquid_combine_queue[_dominant_group] || _dominant_group }

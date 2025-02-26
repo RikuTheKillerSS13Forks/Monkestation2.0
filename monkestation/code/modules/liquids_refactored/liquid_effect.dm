@@ -20,8 +20,11 @@
 	mouse_opacity = FALSE
 	plane = FLOOR_PLANE
 
+	var/datum/liquid_group/liquid_group
+
 /obj/effect/abstract/liquid/Initialize(mapload, datum/liquid_group/liquid_group)
 	. = ..()
+	src.liquid_group = liquid_group
 
 	if (liquid_group.liquid_state == LIQUID_STATE_PUDDLE)
 		QUEUE_SMOOTH(src)
@@ -29,6 +32,12 @@
 	else
 		LIQUID_EFFECT_MAKE_FULLTILE(src)
 		QUEUE_SMOOTH_NEIGHBORS(src) // There could be another liquid group that's a puddle.
+
+	color = liquid_group.liquid_color
+
+/obj/effect/abstract/liquid/Destroy(force)
+	liquid_group = null
+	return ..()
 
 /obj/effect/abstract/liquid/bitmask_smooth()
 	if (LIQUID_EFFECT_IS_PUDDLE(src))

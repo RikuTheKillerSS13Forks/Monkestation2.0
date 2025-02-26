@@ -30,6 +30,10 @@
 		COMSIG_REAGENTS_REM_REAGENT,
 	)
 
+	/// Used for seeing if the reagent holder has changed contents.
+	/// Set back to FALSE in update_reagent_state() if it's TRUE.
+	var/have_reagents_updated = FALSE
+
 	/// How much maximum volume this liquid group gets per turf.
 	/// This is a cached value of LIQUID_GET_TURF_MAXIMUM_VOLUME(initial_turf)
 	var/maximum_volume_per_turf = 0
@@ -37,9 +41,14 @@
 	/// Current liquid state (height level), refer to liquid_defines.dm for details.
 	var/liquid_state = LIQUID_STATE_PUDDLE
 
+	/// The precomputed color of the entire liquid group. Updates when the reagents do.
+	var/liquid_color = "#FFFFFF"
+
 /datum/liquid_group/New(turf/initial_turf) // I'm going to trust YOU to not create empty liquid groups. It's useful in some cases, as long as you're filling out the new one with turfs manually.
 	reagents = new(0)
 	reagents.flags |= NO_REACT // We handle reactions ourselves once every 2 seconds.
+
+	RegisterSignals(reagents, reagent_signals, PROC_REF(on_reagents_updated))
 
 	if (initial_turf)
 		maximum_volume_per_turf = LIQUID_GET_TURF_MAXIMUM_VOLUME(initial_turf)
@@ -110,6 +119,7 @@
 /datum/liquid_group/proc/remove_all_turfs()
 	for (var/turf/target_turf as anything in turfs)
 		QDEL_NULL(target_turf.liquid_effect)
+		target_turf.liquid_group = null
 
 	turfs = list()
 	edge_turfs = list()
@@ -205,17 +215,17 @@
 	LIQUID_QUEUE_SPLIT(src) // Welp, we have to eat the full cost of a group-wide DFT.
 
 /// Called by SSliquid_processing to handle self-processing for liquid groups.
-/datum/liquid_group/process(seconds_per_tick)
-	return
+/datum/liquid_group/proc/process_liquid(seconds_per_tick, delta_time)
+	reagents.remove_all(length(turfs) * LIQUID_BASE_EVAPORATION_RATE * delta_time) // Evaporation rate is based on surface area, i.e. how many turfs are in the liquid group.
 
 /// Called by SSliquid_spread to handle spreading liquid groups. The loops can get pretty hot. (Profile shit if you change anything in them.)
 /datum/liquid_group/proc/process_spread(seconds_per_tick)
-	if (!length(turfs) || !length(edge_turfs)) // The actual divisions by zero seem to be caused by every turf being an edge turf, but I'm making this bulletproof anyway.
+	if (!check_should_exist())
 		return
 	if (reagents.total_volume / length(turfs) >= LIQUID_SPREAD_VOLUME_THRESHOLD)
 		spread()
-	else if (reagents.total_volume / (length(turfs) - length(edge_turfs)) < LIQUID_SPREAD_VOLUME_THRESHOLD) // Checks if we would have enough liquid volume to spread after receding, if not, then we recede.
-		recede()
+	else if ((reagents.total_volume + LIQUID_SPREAD_VOLUME_THRESHOLD) / max(1, length(turfs) - get_evaporation_turf_count()) <= LIQUID_SPREAD_VOLUME_THRESHOLD)
+		evaporate_edges() // Make sure we don't have enough liquid volume to spread after this. And not so little we recede a second time. (that's what the plus threshold is for, it also means liquids only fully disappear at 0)
 
 /// Spreads the liquid group out by one turf at its edges.
 /datum/liquid_group/proc/spread()
@@ -227,6 +237,23 @@
 				queued_space_spreads++
 			else
 				add_turf(adjacent_turf)
+
+/// Returns the number of turfs that will be evaporated if evaporate_edges() is run right now.
+/datum/liquid_group/proc/get_evaporation_turf_count()
+	return ceil(length(edge_turfs) * 0.5) // Ceil here because we want to always evaporate at least 1 turf.
+
+/// Returns the number of turfs that won't be evaporated if evaporate_edges() is run right now.
+/// Exists because evaporate_edges() actually works backwards from a copy of edge_turfs.
+/datum/liquid_group/proc/get_inverse_evaporation_turf_count()
+	return floor(length(edge_turfs) * 0.5) // Floor here because get_evaporation_turf_count() uses ceil.
+
+/// Evaporates half of the liquid group's edges.
+/datum/liquid_group/proc/evaporate_edges()
+	var/list/turfs_to_evaporate = edge_turfs.Copy()
+	for (var/i in 1 to get_inverse_evaporation_turf_count())
+		turfs_to_evaporate -= pick(turfs_to_evaporate) // Work backwards, gives equal chances to all turfs without producing duplicates.
+	for (var/turf/turf_to_evaporate in turfs_to_evaporate)
+		remove_turf(turf_to_evaporate)
 
 /// Recedes the liquid group back by one turf at its edges.
 /datum/liquid_group/proc/recede()
@@ -249,9 +276,9 @@
 /// Done because otherwise the reagent amounts used in such operations are dependent on *undefined ordering* and thats bad.
 /datum/liquid_group/proc/process_late_spread(seconds_per_tick)
 	process_pseudo_spreads()
-	check_should_exist()
-	if (!QDELING(src))
+	if (check_should_exist())
 		update_liquid_state()
+		update_reagent_state()
 
 /datum/liquid_group/proc/process_pseudo_spreads()
 	if (!queued_space_spreads && !length(queued_multiz_spreads))
@@ -289,6 +316,23 @@
 			QUEUE_SMOOTH(edge_turf)
 			QUEUE_SMOOTH_NEIGHBORS(edge_turf) // Look. It's not pretty. It's shit. But I can't cache diagonal edge turfs. THE GAME WONT LET ME. IT HARD CRASHES WHEN I TRY. WHAT THE FUCK.
 
+/// Called whenever the reagent list of the reagent holder changes.
+/datum/liquid_group/proc/on_reagents_updated()
+	SIGNAL_HANDLER
+	have_reagents_updated = TRUE
+
+/// Updates things directly reliant on the reagent holder.
+/datum/liquid_group/proc/update_reagent_state()
+	if (!have_reagents_updated)
+		return
+	have_reagents_updated = FALSE
+
+	var/new_liquid_color = mix_color_from_reagents(reagents.reagent_list)
+	if (new_liquid_color != liquid_color)
+		liquid_color = new_liquid_color
+		for (var/turf/target_turf as anything in turfs)
+			target_turf.liquid_effect.color = liquid_color
+
 /datum/liquid_group/proc/copy_reagents_to(datum/liquid_group/other_liquid_group, amount = reagents.total_volume, no_react = TRUE)
 	if (!other_liquid_group)
 		return 0
@@ -304,6 +348,11 @@
 	if (. > 0)
 		reagents.remove_all(.)
 
+/// Checks whether the liquid group should exist.
+/// Returns whether it should and deletes it automatically if not.
 /datum/liquid_group/proc/check_should_exist()
-	if (!length(turfs) || reagents.total_volume <= 0)
+	if (QDELING(src))
+		return FALSE
+	. = length(turfs) && reagents.total_volume > 0
+	if (!.)
 		qdel(src)
