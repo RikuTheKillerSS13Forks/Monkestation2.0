@@ -140,6 +140,9 @@ SUBSYSTEM_DEF(liquid_spread)
 		for (var/turf/old_edge_turf as anything in splitting_group.edge_turfs) // Transferring edge turfs is important, recalculating all of them would be a performance NIGHTMARE.
 			if (new_group_turfs[old_edge_turf])
 				new_group.edge_turfs[old_edge_turf] = TRUE
+
+		for (var/turf/old_edge_turf as anything in splitting_group.edge_turf_spread_directions)
+			if (new_group_turfs[old_edge_turf])
 				new_group.edge_turf_spread_directions[old_edge_turf] = splitting_group.edge_turf_spread_directions[old_edge_turf]
 
 		for (var/turf/new_group_turf as anything in new_group_turfs)

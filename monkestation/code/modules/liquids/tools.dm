@@ -12,7 +12,7 @@
 			to_chat(usr, span_warning("A reagent with that ID doesn't exist!"))
 			return
 
-	var/volume = input(usr, "Enter the volume of liquid you want to add. (0-[LIQUID_BASE_TURF_MAXIMUM_VOLUME])", "Spawn Liquid: Choose Volume") as num
+	var/volume = input(usr, "Enter the volume of liquid you want to add. More than [LIQUID_BASE_TURF_MAXIMUM_VOLUME]u may get culled.", "Spawn Liquid: Choose Volume") as num
 	if (!isnum(volume) || volume <= 0)
 		return
 

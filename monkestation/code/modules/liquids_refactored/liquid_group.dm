@@ -222,10 +222,10 @@
 /datum/liquid_group/proc/process_spread(seconds_per_tick)
 	if (!check_should_exist())
 		return
-	if (reagents.total_volume / length(turfs) >= LIQUID_SPREAD_VOLUME_THRESHOLD)
+	if (LIQUID_GET_VOLUME_PER_TURF(src) >= LIQUID_SPREAD_VOLUME_THRESHOLD)
 		spread()
-	else if ((reagents.total_volume + LIQUID_SPREAD_VOLUME_THRESHOLD) / max(1, length(turfs) - get_evaporation_turf_count()) <= LIQUID_SPREAD_VOLUME_THRESHOLD)
-		evaporate_edges() // Make sure we don't have enough liquid volume to spread after this. And not so little we recede a second time. (that's what the plus threshold is for, it also means liquids only fully disappear at 0)
+	else if (reagents.total_volume <= LIQUID_SPREAD_VOLUME_THRESHOLD * (length(turfs) - get_evaporation_turf_count()))
+		evaporate_edges() // Make sure we don't have enough liquid volume to spread after this. And use multiplication to avoid a division-by-zero at 1 turf.
 
 /// Spreads the liquid group out by one turf at its edges.
 /datum/liquid_group/proc/spread()
