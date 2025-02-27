@@ -41,7 +41,7 @@
 	/// Current liquid state (height level), refer to liquid_defines.dm for details.
 	var/liquid_state = LIQUID_STATE_PUDDLE
 
-	/// The precomputed color of the entire liquid group. Updates when the reagents do.
+	/// The precomputed color of the entire liquid group. Does not update immediately.
 	var/liquid_color = "#FFFFFF"
 
 /datum/liquid_group/New(turf/initial_turf) // I'm going to trust YOU to not create empty liquid groups. It's useful in some cases, as long as you're filling out the new one with turfs manually.
