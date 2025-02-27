@@ -68,14 +68,15 @@
 
 	return ..()
 
-/// Adds a turf to the liquid group. Does barely any sanity checks.
-/datum/liquid_group/proc/add_turf(turf/target_turf)
+/// Adds a turf to the liquid group.
+/// Returns whether adding the turf was successful.
+/datum/liquid_group/proc/add_turf(turf/target_turf, cause_currents = FALSE)
+	if (try_spread_multiz(target_turf)) // Needed because a turf could get replaced by openspace.
+		return FALSE
 	if (!LIQUID_CAN_ENTER_TURF_TYPE(target_turf))
-		return
+		return FALSE
 	if (target_turf.liquid_group)
 		CRASH("A liquid group tried to add a turf that is already in a liquid group.")
-	if (try_spread_multiz(target_turf)) // Has to be before actually adding the turf. (NEVER LET LIQUID SPREAD ON OPENSPACE IT OPENS PANDORA'S BOX)
-		return
 
 	turfs[target_turf] = TRUE
 
@@ -86,6 +87,8 @@
 	LIQUID_UPDATE_ADJACENT_EDGES(target_turf) // Same here.
 
 	LIQUID_UPDATE_MAXIMUM_VOLUME(src)
+
+	return TRUE
 
 /// Removes a turf from the liquid group. Does barely any sanity checks.
 /// Only use this when you intend to remove turfs without destroying the whole group.
@@ -223,20 +226,35 @@
 	if (!check_should_exist())
 		return
 	if (LIQUID_GET_VOLUME_PER_TURF(src) >= LIQUID_SPREAD_VOLUME_THRESHOLD)
-		spread()
+		spread(seconds_per_tick)
 	else if (reagents.total_volume <= LIQUID_SPREAD_VOLUME_THRESHOLD * (length(turfs) - get_evaporation_turf_count()))
 		evaporate_edges() // Make sure we don't have enough liquid volume to spread after this. And use multiplication to avoid a division-by-zero at 1 turf.
 
 /// Spreads the liquid group out by one turf at its edges.
-/datum/liquid_group/proc/spread()
+/datum/liquid_group/proc/spread(seconds_per_tick)
+	var/cause_currents = LIQUID_GET_VOLUME_PER_TURF(src) >= LIQUID_CURRENTS_VOLUME_THRESHOLD
+	var/currents_glide_size = DELAY_TO_GLIDE_SIZE(seconds_per_tick SECONDS)
+
 	for (var/turf/edge_turf as anything in edge_turf_spread_directions)
 		for (var/direction in edge_turf_spread_directions[edge_turf])
 			var/turf/adjacent_turf = get_step(edge_turf, direction)
 
 			if (isspaceturf(adjacent_turf))
 				queued_space_spreads++
-			else
-				add_turf(adjacent_turf)
+				continue
+			if (try_spread_multiz(adjacent_turf, edge_turf, direction, cause_currents, currents_glide_size)) // Has to be before actually adding the turf. (NEVER LET LIQUID SPREAD ON OPENSPACE IT OPENS PANDORA'S BOX)
+				continue
+			if (!add_turf(adjacent_turf))
+				continue
+
+			if (cause_currents)
+				new /obj/effect/temp_visual/liquid_splash(adjacent_turf, liquid_color)
+				currents_knockback(edge_turf, adjacent_turf, direction, currents_glide_size)
+
+/datum/liquid_group/proc/currents_knockback(turf/from_turf, turf/to_turf, direction, glide_size)
+	for (var/atom/movable/movable in from_turf)
+		if (!movable.anchored && movable.move_resist <= MOVE_FORCE_STRONG)
+			movable.Move(to_turf, direction, glide_size)
 
 /// Returns the number of turfs that will be evaporated if evaporate_edges() is run right now.
 /datum/liquid_group/proc/get_evaporation_turf_count()
@@ -260,16 +278,24 @@
 	for (var/turf/edge_turf as anything in edge_turfs)
 		remove_turf(edge_turf)
 
-/// Tries to spread us down depending on gravity and returns TRUE if we did so.
-/datum/liquid_group/proc/try_spread_multiz(turf/target_turf)
-	var/gravity = target_turf.has_gravity(target_turf)
-	if (gravity < STANDARD_GRAVITY || !target_turf.zPassOut(DOWN))
+/// Tries to spread us down depending on gravity and returns TRUE if the turf is suitable for multiz spreading. (this is not if it succeeded)
+/// From turf, direction, etc. are optional unless you're using currents.
+/// PUT ALL THE FUCKING LOGIC IN THIS INTO LATE SPREAD TOMORROW
+/datum/liquid_group/proc/try_spread_multiz(turf/target_turf, turf/from_turf, direction, cause_currents = FALSE, currents_glide_size)
+	. = isopenspaceturf(target_turf) // zOutDown is useless because basically every single object that blocks openspace from allowing downward movement is a grate or similar that should allow liquids through.
+
+	if (target_turf.has_gravity(target_turf) < STANDARD_GRAVITY)
 		return
 
 	var/turf/multiz_turf = GET_TURF_BELOW(target_turf)
-	if (multiz_turf?.zPassIn(DOWN))
-		queued_multiz_spreads += multiz_turf
-		return TRUE
+	if (!multiz_turf?.zPassIn(DOWN)) // zPassIn is okay because this kind of movement is only ever blocked by stuff like metal foam, which we don't want to spread onto.
+		return
+
+	if (cause_currents && multiz_turf.liquid_group?.get_remaining_volume() >= LIQUID_CURRENTS_VOLUME_THRESHOLD)
+		new /obj/effect/temp_visual/liquid_splash(multiz_turf, liquid_color)
+		currents_knockback(from_turf, target_turf, direction, currents_glide_size)
+
+	queued_multiz_spreads += multiz_turf
 
 /// Called by SSliquid_spread to handle operations that occur *after* normal spread operations are over.
 /// This is stuff like pseudo-spreads where a liquid group spreads over an edge into another z level or into space.
@@ -347,6 +373,9 @@
 
 	if (. > 0)
 		reagents.remove_all(.)
+
+/datum/liquid_group/proc/get_remaining_volume()
+	return max(0, reagents.maximum_volume - reagents.total_volume)
 
 /// Checks whether the liquid group should exist.
 /// Returns whether it should and deletes it automatically if not.

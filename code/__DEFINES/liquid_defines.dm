@@ -5,6 +5,9 @@
 /// The amount of reagents per turf a liquid group needs before spreading.
 #define LIQUID_SPREAD_VOLUME_THRESHOLD 10
 
+/// The amount of reagents per turf a liquid group needs before causing currents to form when spreading.
+#define LIQUID_CURRENTS_VOLUME_THRESHOLD LIQUID_VOLUME_PER_STATE * LIQUID_STATE_ANKLES
+
 /// How quickly liquids evaporate, in units per second.
 /// This is then multiplied by the number of turfs in a liquid group.
 #define LIQUID_BASE_EVAPORATION_RATE 0.1

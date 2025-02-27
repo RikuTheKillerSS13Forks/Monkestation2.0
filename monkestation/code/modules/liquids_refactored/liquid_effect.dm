@@ -1,5 +1,5 @@
 // Handles the visual effects for turfs in liquid groups.
-// Don't cache turf-specific data about liquid groups here, pulling from an assoc list is faster.
+// Don't cache turf-specific data about liquid groups here, pulling from an assoc list is faster.'
 
 /obj/effect/abstract/liquid
 	name = "liquid"
@@ -42,3 +42,13 @@
 /obj/effect/abstract/liquid/bitmask_smooth()
 	if (LIQUID_EFFECT_IS_PUDDLE(src))
 		return ..()
+
+/obj/effect/temp_visual/liquid_splash
+	icon = 'monkestation/icons/obj/effects/splash.dmi'
+	icon_state = "splash"
+	layer = FLY_LAYER
+	randomdir = FALSE
+
+/obj/effect/temp_visual/liquid_splash/Initialize(mapload, color = "#FFFFFF")
+	. = ..()
+	src.color = color
