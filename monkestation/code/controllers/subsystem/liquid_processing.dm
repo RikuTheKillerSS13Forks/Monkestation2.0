@@ -18,9 +18,16 @@ SUBSYSTEM_DEF(liquid_processing)
 
 	var/delta_time = DELTA_WORLD_TIME(src)
 	while (length(process_cache))
-		var/datum/liquid_group/liquid_group = process_cache[length(process_cache)]
+		var/datum/liquid_group/group = process_cache[length(process_cache)]
 		process_cache.len--
-		if (!QDELETED(liquid_group))
-			liquid_group.process_liquid(wait * 0.1, delta_time)
+		if (QDELETED(group))
+			return
+
+		// ACTUAL LIQUID PROCESSING START //
+
+		group.reagents.remove_all(length(group.turfs) * LIQUID_BASE_EVAPORATION_RATE * delta_time) // Evaporation rate is based on surface area, i.e. how many turfs are in the liquid group.
+
+		// ACTUAL LIQUID PROCESSING END //
+
 		if (MC_TICK_CHECK)
 			return

@@ -16,7 +16,7 @@
 /// This is the actual value, after adjustments. Must be consistent for the entire lifespan of the turf.
 #define LIQUID_GET_TURF_MAXIMUM_VOLUME(_turf) (max(0, LIQUID_BASE_TURF_MAXIMUM_VOLUME - initial(_turf.turf_height) * 10))
 
-#define LIQUID_GET_VOLUME_PER_TURF(_liquid_group) (_liquid_group.reagents.total_volume / length(_liquid_group.turfs))
+#define LIQUID_GET_VOLUME_PER_TURF(_liquid_group) (length(_liquid_group.turfs) ? _liquid_group.reagents.total_volume / length(_liquid_group.turfs) : 0)
 
 /// Updates the maximum volume of the liquid group based on maximum_volume_per_turf and length(turfs)
 #define LIQUID_UPDATE_MAXIMUM_VOLUME(_liquid_group) _liquid_group.reagents.maximum_volume = length(_liquid_group.turfs) * _liquid_group.maximum_volume_per_turf

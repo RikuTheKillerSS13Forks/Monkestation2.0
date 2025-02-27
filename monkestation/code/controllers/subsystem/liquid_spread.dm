@@ -5,7 +5,7 @@ SUBSYSTEM_DEF(liquid_spread)
 	runlevels = RUNLEVEL_GAME | RUNLEVEL_POSTGAME
 	wait = 0.2 SECONDS
 
-	/// List of liquid groups to call process_spread() on, persists across resumed fire() calls.
+	/// List of liquid groups for process_spread() to process, persists across resumed fire() calls.
 	/// Required to keep liquid group spreading from going out of sync between groups.
 	/// Kinda dangerous, as qdeleted liquid groups will not be deleted from this.
 	var/list/spread_cache = list()
@@ -22,11 +22,6 @@ SUBSYSTEM_DEF(liquid_spread)
 	/// The format is "split_cache[splitting_group] = TRUE"
 	var/list/split_cache = list()
 
-	/// List of liquid groups to call process_late_spread() on, persists across resumed fire() calls.
-	/// Required to keep liquid group spreading from going out of sync between groups.
-	/// Kinda dangerous, as qdeleted liquid groups will not be deleted from this.
-	var/list/late_spread_cache = list()
-
 /datum/controller/subsystem/liquid_spread/fire(resumed = FALSE)
 	if (!length(GLOB.liquid_groups)) // Someone can implement can_fire later if they want to. This does the job just fine for now.
 		return
@@ -35,16 +30,13 @@ SUBSYSTEM_DEF(liquid_spread)
 		spread_cache = GLOB.liquid_groups.Copy()
 		combine_cache = GLOB.liquid_combine_queue.Copy()
 		split_cache = GLOB.liquid_split_queue.Copy()
-		late_spread_cache = GLOB.liquid_groups.Copy()
+		//late_spread_cache = GLOB.liquid_groups.Copy()
 
 		GLOB.liquid_combine_queue = list()
 		GLOB.liquid_split_queue = list()
 
-	while (length(spread_cache))
-		var/datum/liquid_group/liquid_group = spread_cache[length(spread_cache)]
-		spread_cache.len--
-		if (!QDELETED(liquid_group))
-			liquid_group.process_spread(wait * 0.1)
+	if (length(spread_cache))
+		process_spread(wait * 0.1)
 		if (MC_TICK_CHECK)
 			return
 
@@ -64,11 +56,36 @@ SUBSYSTEM_DEF(liquid_spread)
 		if (MC_TICK_CHECK)
 			return
 
-	while (length(late_spread_cache))
-		var/datum/liquid_group/liquid_group = late_spread_cache[length(late_spread_cache)]
-		late_spread_cache.len--
-		if (!QDELETED(liquid_group))
-			liquid_group.process_late_spread(wait * 0.1)
+/datum/controller/subsystem/liquid_spread/proc/process_spread(seconds_per_tick)
+	while (length(spread_cache))
+		var/datum/liquid_group/group = spread_cache[length(spread_cache)]
+		spread_cache.len--
+		if (QDELETED(group))
+			continue
+
+		// ACTUAL SPREAD PROCESSING START //
+
+		if (!length(group.turfs) || group.reagents.total_volume <= 0) // Basically group.check_should_exist() but inlined.
+			qdel(group)
+			continue
+
+		var/did_something = FALSE
+
+		if (LIQUID_GET_VOLUME_PER_TURF(group) >= LIQUID_SPREAD_VOLUME_THRESHOLD)
+			if (length(group.edge_turf_spread_directions)) // Micro-optimization. (spread proc overhead)
+				group.spread(seconds_per_tick)
+				did_something = TRUE
+		else if (group.reagents.total_volume <= LIQUID_SPREAD_VOLUME_THRESHOLD * (length(group.turfs) - group.get_evaporation_turf_count()))
+			group.evaporate_edges() // Make sure we don't have enough liquid volume to spread after this. And use multiplication to avoid a division-by-zero at 1 turf.
+			did_something = TRUE
+
+		if ((!did_something || group.check_should_exist()) && group.have_reagents_updated)
+			group.update_reagent_state()
+			if (group.last_liquid_state_turf_count != length(group.turfs)) // Micro-optimization. (update_liquid_state proc overhead)
+				group.update_liquid_state()
+
+		// ACTUAL SPREAD PROCESSING END //
+
 		if (MC_TICK_CHECK)
 			return
 
@@ -78,6 +95,7 @@ SUBSYSTEM_DEF(liquid_spread)
 	dominant_group.turfs += recessive_group.turfs
 	dominant_group.edge_turfs += recessive_group.edge_turfs
 	dominant_group.edge_turf_spread_directions += recessive_group.edge_turf_spread_directions
+	dominant_group.next_spread_count += recessive_group.next_spread_count
 
 	LIQUID_UPDATE_MAXIMUM_VOLUME(dominant_group)
 	recessive_group.copy_reagents_to(dominant_group)
@@ -143,6 +161,7 @@ SUBSYSTEM_DEF(liquid_spread)
 
 		for (var/turf/old_edge_turf as anything in splitting_group.edge_turf_spread_directions)
 			if (new_group_turfs[old_edge_turf])
+				new_group.next_spread_count += length(splitting_group.edge_turf_spread_directions[old_edge_turf])
 				new_group.edge_turf_spread_directions[old_edge_turf] = splitting_group.edge_turf_spread_directions[old_edge_turf]
 
 		for (var/turf/new_group_turf as anything in new_group_turfs)

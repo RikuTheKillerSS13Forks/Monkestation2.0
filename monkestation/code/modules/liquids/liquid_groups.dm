@@ -982,7 +982,7 @@ GLOBAL_VAR_INIT(liquid_debug_colors, FALSE)
 			return FALSE
 		source_turf.liquids.liquid_group.transfer_reagents_to_secondary_group(source_turf.liquids, Z_turf_below.liquids)
 
-		var/obj/splashy = new /obj/effect/temp_visual/liquid_splash(Z_turf_below)
+		var/obj/splashy = new /obj/effect/temp_visual/liquid_currents(Z_turf_below)
 		if(!QDELETED(Z_turf_below.liquids?.liquid_group))
 			splashy.color = Z_turf_below.liquids.liquid_group.group_color
 		return FALSE
@@ -998,7 +998,7 @@ GLOBAL_VAR_INIT(liquid_debug_colors, FALSE)
 		new_turf.liquids.alpha = group_alpha
 		check_edges(new_turf)
 
-		var/obj/splashy = new /obj/effect/temp_visual/liquid_splash(new_turf)
+		var/obj/splashy = new /obj/effect/temp_visual/liquid_currents(new_turf)
 		if(!QDELETED(new_turf.liquids?.liquid_group))
 			splashy.color = new_turf.liquids.liquid_group.group_color
 

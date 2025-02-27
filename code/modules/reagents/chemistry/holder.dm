@@ -323,7 +323,8 @@
 			remove_reagent(reagent.type, reagent.volume * part)
 
 		//finish_reacting() //A just in case - update total is in here - should be unneeded, make sure to test this
-		handle_reactions()
+		if (!(flags & NO_REACT)) // monkestation edit: micro-optimization for liquids
+			handle_reactions()
 		return amount
 
 /// Removes all reagent of X type. @strict set to 1 determines whether the childs of the type are included.

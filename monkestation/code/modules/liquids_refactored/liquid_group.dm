@@ -12,13 +12,9 @@
 	/// From tests I've ran, this is currently the fastest way to handle liquid spread by far.
 	var/list/edge_turf_spread_directions = list()
 
-	/// If we hit a space turf while spreading, increment this.
-	/// Used in process_late_spread() for consistent reagent amounts.
-	var/queued_space_spreads = 0
-
-	/// List of turfs we're trying to multi-z spread to.
-	/// Used in process_late_spread() for consistent reagent amounts.
-	var/queued_multiz_spreads = list()
+	/// The total number of spreads we're going to try on the next spread() call.
+	/// You absolutely have to keep this in sync with edge_turf_spread_directions, else shit breaks.
+	var/next_spread_count = 0
 
 	/// Holder for all reagents in this liquid group.
 	var/datum/reagents/reagents
@@ -37,6 +33,9 @@
 	/// How much maximum volume this liquid group gets per turf.
 	/// This is a cached value of LIQUID_GET_TURF_MAXIMUM_VOLUME(initial_turf)
 	var/maximum_volume_per_turf = 0
+
+	/// Cached value of length(turfs) that is set whenever update_liquid_state() is called.
+	var/last_liquid_state_turf_count = 0
 
 	/// Current liquid state (height level), refer to liquid_defines.dm for details.
 	var/liquid_state = LIQUID_STATE_PUDDLE
@@ -70,8 +69,10 @@
 
 /// Adds a turf to the liquid group.
 /// Returns whether adding the turf was successful.
-/datum/liquid_group/proc/add_turf(turf/target_turf, cause_currents = FALSE)
-	if (try_spread_multiz(target_turf)) // Needed because a turf could get replaced by openspace.
+/datum/liquid_group/proc/add_turf(turf/target_turf)
+	if (isopenspaceturf(target_turf)) // Needed because a turf could get replaced by openspace.
+		var/turf/multiz_turf = try_spread_multiz(target_turf)
+		transfer_reagents_to(multiz_turf?.liquid_group, LIQUID_GET_VOLUME_PER_TURF(src))
 		return FALSE
 	if (!LIQUID_CAN_ENTER_TURF_TYPE(target_turf))
 		return FALSE
@@ -101,7 +102,10 @@
 
 	turfs -= target_turf
 	edge_turfs -= target_turf
-	edge_turf_spread_directions -= target_turf
+
+	if (edge_turf_spread_directions[target_turf])
+		next_spread_count -= length(edge_turf_spread_directions[target_turf])
+		edge_turf_spread_directions -= target_turf
 
 	target_turf.liquid_group = null
 
@@ -127,6 +131,7 @@
 	turfs = list()
 	edge_turfs = list()
 	edge_turf_spread_directions = list()
+	next_spread_count = 0
 
 	if (!QDELING(src))
 		qdel(src)
@@ -137,6 +142,8 @@
 	var/list/spread_directions = list() // Only used for marking edge turfs that can spread and where they can spread.
 	var/is_edge_turf = FALSE // Exists because splitting uses edge turfs as well. (and needs non-spreading edge turfs marked as well!)
 
+	next_spread_count -= length(edge_turf_spread_directions[target_turf])
+
 	for (var/direction in GLOB.cardinals)
 		var/turf/adjacent_turf = get_step(target_turf, direction)
 
@@ -146,6 +153,7 @@
 			is_edge_turf = TRUE
 		else if (!adjacent_turf.liquid_group)
 			spread_directions += direction
+			next_spread_count++
 			is_edge_turf = TRUE
 		else // We don't set this as an edge when combining. This is because combination does not update edges and happens instantly after this. (so act as if we already combined)
 			LIQUID_QUEUE_COMBINE(src, adjacent_turf.liquid_group) // Combines us with them (we are recessive), not the other way around.
@@ -217,44 +225,118 @@
 
 	LIQUID_QUEUE_SPLIT(src) // Welp, we have to eat the full cost of a group-wide DFT.
 
-/// Called by SSliquid_processing to handle self-processing for liquid groups.
-/datum/liquid_group/proc/process_liquid(seconds_per_tick, delta_time)
-	reagents.remove_all(length(turfs) * LIQUID_BASE_EVAPORATION_RATE * delta_time) // Evaporation rate is based on surface area, i.e. how many turfs are in the liquid group.
-
-/// Called by SSliquid_spread to handle spreading liquid groups. The loops can get pretty hot. (Profile shit if you change anything in them.)
-/datum/liquid_group/proc/process_spread(seconds_per_tick)
-	if (!check_should_exist())
-		return
-	if (LIQUID_GET_VOLUME_PER_TURF(src) >= LIQUID_SPREAD_VOLUME_THRESHOLD)
-		spread(seconds_per_tick)
-	else if (reagents.total_volume <= LIQUID_SPREAD_VOLUME_THRESHOLD * (length(turfs) - get_evaporation_turf_count()))
-		evaporate_edges() // Make sure we don't have enough liquid volume to spread after this. And use multiplication to avoid a division-by-zero at 1 turf.
-
 /// Spreads the liquid group out by one turf at its edges.
 /datum/liquid_group/proc/spread(seconds_per_tick)
-	var/cause_currents = LIQUID_GET_VOLUME_PER_TURF(src) >= LIQUID_CURRENTS_VOLUME_THRESHOLD
+	// Estimation of how much we'll have after we're done spreading.
+	// Not fully accurate since spreads can fail, mainly inter-group ones.
+	var/liquid_per_turf = reagents.total_volume / (length(turfs) + next_spread_count)
+
+	// The number of times we tried to spread into space.
+	// Done this way because remove_all() costs a good bit of CPU.
+	var/total_space_spreads = 0
+
+	// Associative list of other liquid groups to the turfs in those liquid groups we've spread to. (liquid group = inter-group turfs we've spread to)
+	// Done this way to avoid duplicating liquid splash effects and reagent transfer costs.
+	var/list/inter_group_transfers = list()
+
+	// Whether we cause a liquid splash effect and push objects back when spreading.
+	var/cause_currents = liquid_per_turf >= LIQUID_CURRENTS_VOLUME_THRESHOLD
 	var/currents_glide_size = DELAY_TO_GLIDE_SIZE(seconds_per_tick SECONDS)
+
+	// Associative list of edge turfs to what directions they'll push things towards.
+	var/currents_directions = cause_currents ? get_currents_directions() : list()
 
 	for (var/turf/edge_turf as anything in edge_turf_spread_directions)
 		for (var/direction in edge_turf_spread_directions[edge_turf])
 			var/turf/adjacent_turf = get_step(edge_turf, direction)
 
 			if (isspaceturf(adjacent_turf))
-				queued_space_spreads++
-				continue
-			if (try_spread_multiz(adjacent_turf, edge_turf, direction, cause_currents, currents_glide_size)) // Has to be before actually adding the turf. (NEVER LET LIQUID SPREAD ON OPENSPACE IT OPENS PANDORA'S BOX)
-				continue
-			if (!add_turf(adjacent_turf))
-				continue
+				total_space_spreads++
+			else if (isopenspaceturf(adjacent_turf)) // NEVER LET LIQUID ACTUALLY SPREAD ON OPENSPACE IT OPENS PANDORA'S BOX
+				var/turf/multiz_turf = try_spread_multiz(adjacent_turf)
+				if (multiz_turf)
+					if (inter_group_transfers[multiz_turf.liquid_group])
+						inter_group_transfers[multiz_turf.liquid_group] |= multiz_turf // No duplicates please.
+					else
+						inter_group_transfers[multiz_turf.liquid_group] = list(multiz_turf)
+				continue // Multi-z handles liquid splashes later down the line.
+			else if (!add_turf(adjacent_turf))
+				continue // Mission failed, we'll get em next time.
 
 			if (cause_currents)
-				new /obj/effect/temp_visual/liquid_splash(adjacent_turf, liquid_color)
-				currents_knockback(edge_turf, adjacent_turf, direction, currents_glide_size)
+				new /obj/effect/temp_visual/liquid_currents(adjacent_turf, liquid_color)
 
-/datum/liquid_group/proc/currents_knockback(turf/from_turf, turf/to_turf, direction, glide_size)
-	for (var/atom/movable/movable in from_turf)
-		if (!movable.anchored && movable.move_resist <= MOVE_FORCE_STRONG)
-			movable.Move(to_turf, direction, glide_size)
+		if (cause_currents)
+			var/knockback_direction = currents_directions[edge_turf]
+			var/turf/knockback_turf = get_step(edge_turf, knockback_direction)
+			for (var/atom/movable/movable in edge_turf)
+				if (!movable.anchored && movable.move_resist <= MOVE_FORCE_STRONG)
+					movable.Move(knockback_turf, knockback_direction, currents_glide_size)
+				if (!isliving(movable))
+					continue
+
+				var/mob/living/victim = movable
+				if (victim.AmountParalyzed() <= 1 SECOND)
+					victim.SetParalyzed(2 SECONDS)
+					to_chat(victim, span_danger("You're knocked down by the currents!"))
+
+	for (var/datum/liquid_group/other_group in inter_group_transfers)
+		var/list/other_group_turfs = inter_group_transfers[other_group]
+		transfer_reagents_to(other_group, liquid_per_turf * length(other_group_turfs))
+
+		if (!cause_currents || locate(/obj/effect/temp_visual/liquid_currents) in other_group_turfs[1]) // Don't duplicate effects, it looks wack and costs performance. Also forcefully keeps the check in sync for the group.
+			continue
+
+		for (var/turf/other_group_turf as anything in other_group_turfs)
+			new /obj/effect/temp_visual/liquid_currents(other_group_turf, liquid_color)
+
+	if (total_space_spreads)
+		reagents.remove_all(total_space_spreads * liquid_per_turf)
+
+/// Tries to spread us downward from the target_turf, assumes it's openspace.
+/// Returns the turf below if we were able to do that, it will have a liquid group.
+/datum/liquid_group/proc/try_spread_multiz(turf/target_turf)
+	var/turf/multiz_turf = GET_TURF_BELOW(target_turf)
+
+	if (multiz_turf?.zPassIn(DOWN) && target_turf.has_gravity() >= STANDARD_GRAVITY)
+		if (!multiz_turf.liquid_group)
+			new /datum/liquid_group(multiz_turf)
+		return multiz_turf
+
+/// Returns an associative list of edge turfs to their spread directions as a combined bitflag.
+/// By combined bitflag I mean list(NORTH, SOUTH, EAST) becomes EAST because NORTH and SOUTH cancel out.
+/// This works with diagonals too, list(NORTH, EAST) becomes NORTHEAST when passed through this proc.
+/datum/liquid_group/proc/get_currents_directions()
+	var/list/currents_directions = list()
+
+	for (var/turf/edge_turf as anything in edge_turf_spread_directions)
+		var/x = 0
+		var/y = 0
+
+		for (var/direction in edge_turf_spread_directions[edge_turf])
+			switch (direction) // Tally up all the x and y offsets, we know there are no duplicate directions.
+				if (NORTH)
+					y++
+				if (SOUTH)
+					y--
+				if (EAST)
+					x++
+				if (WEST)
+					x--
+
+		var/direction = NONE // NORTHEAST for example is just NORTH | EAST so this is fine.
+		if (y > 0)
+			direction |= NORTH
+		else if (y < 0)
+			direction |= SOUTH
+		if (x > 0)
+			direction |= EAST
+		else if (x < 0)
+			direction |= WEST
+
+		currents_directions[edge_turf] = direction
+
+	return currents_directions
 
 /// Returns the number of turfs that will be evaporated if evaporate_edges() is run right now.
 /datum/liquid_group/proc/get_evaporation_turf_count()
@@ -278,54 +360,9 @@
 	for (var/turf/edge_turf as anything in edge_turfs)
 		remove_turf(edge_turf)
 
-/// Tries to spread us down depending on gravity and returns TRUE if the turf is suitable for multiz spreading. (this is not if it succeeded)
-/// From turf, direction, etc. are optional unless you're using currents.
-/// PUT ALL THE FUCKING LOGIC IN THIS INTO LATE SPREAD TOMORROW
-/datum/liquid_group/proc/try_spread_multiz(turf/target_turf, turf/from_turf, direction, cause_currents = FALSE, currents_glide_size)
-	. = isopenspaceturf(target_turf) // zOutDown is useless because basically every single object that blocks openspace from allowing downward movement is a grate or similar that should allow liquids through.
-
-	if (target_turf.has_gravity(target_turf) < STANDARD_GRAVITY)
-		return
-
-	var/turf/multiz_turf = GET_TURF_BELOW(target_turf)
-	if (!multiz_turf?.zPassIn(DOWN)) // zPassIn is okay because this kind of movement is only ever blocked by stuff like metal foam, which we don't want to spread onto.
-		return
-
-	if (cause_currents && multiz_turf.liquid_group?.get_remaining_volume() >= LIQUID_CURRENTS_VOLUME_THRESHOLD)
-		new /obj/effect/temp_visual/liquid_splash(multiz_turf, liquid_color)
-		currents_knockback(from_turf, target_turf, direction, currents_glide_size)
-
-	queued_multiz_spreads += multiz_turf
-
-/// Called by SSliquid_spread to handle operations that occur *after* normal spread operations are over.
-/// This is stuff like pseudo-spreads where a liquid group spreads over an edge into another z level or into space.
-/// Done because otherwise the reagent amounts used in such operations are dependent on *undefined ordering* and thats bad.
-/datum/liquid_group/proc/process_late_spread(seconds_per_tick)
-	process_pseudo_spreads()
-	if (check_should_exist())
-		update_liquid_state()
-		update_reagent_state()
-
-/datum/liquid_group/proc/process_pseudo_spreads()
-	if (!queued_space_spreads && !length(queued_multiz_spreads))
-		return
-
-	// This is an estimate, we have no idea if the multiz turfs can actually contain all the liquid.
-	// But actually figuring how much they can is a multi-step process that I'm just not willing to do.
-	// So we're just going to count all of them as if we had actually spread to them, it's good enough.
-	var/liquid_per_turf = reagents.total_volume / (length(turfs) + queued_space_spreads + length(queued_multiz_spreads))
-
-	if (queued_space_spreads)
-		reagents.remove_all(liquid_per_turf * queued_space_spreads)
-
-	for (var/turf/multiz_turf as anything in queued_multiz_spreads)
-		if (!QDELETED(multiz_turf))
-			transfer_reagents_to(multiz_turf.liquid_group || new /datum/liquid_group(multiz_turf), liquid_per_turf)
-
-	queued_space_spreads = 0
-	queued_multiz_spreads = list()
-
 /datum/liquid_group/proc/update_liquid_state()
+	last_liquid_state_turf_count = length(turfs)
+
 	var/cached_liquid_state = liquid_state
 	liquid_state = floor(LIQUID_GET_VOLUME_PER_TURF(src) / LIQUID_VOLUME_PER_STATE)
 
@@ -348,9 +385,9 @@
 	have_reagents_updated = TRUE
 
 /// Updates things directly reliant on the reagent holder.
+/// Ideally don't call this outside of process_spread() it can stop update_liquid_state() from being called.
+/// You're free to call both at once though, keep in mind the cost of doing that depending on what you're doing.
 /datum/liquid_group/proc/update_reagent_state()
-	if (!have_reagents_updated)
-		return
 	have_reagents_updated = FALSE
 
 	var/new_liquid_color = mix_color_from_reagents(reagents.reagent_list)
@@ -374,14 +411,10 @@
 	if (. > 0)
 		reagents.remove_all(.)
 
-/datum/liquid_group/proc/get_remaining_volume()
-	return max(0, reagents.maximum_volume - reagents.total_volume)
-
 /// Checks whether the liquid group should exist.
 /// Returns whether it should and deletes it automatically if not.
+/// Keep this optimized as fuck because it's called for all liquid groups.
 /datum/liquid_group/proc/check_should_exist()
-	if (QDELING(src))
-		return FALSE
-	. = length(turfs) && reagents.total_volume > 0
-	if (!.)
-		qdel(src)
+	if (!QDELING(src) && length(turfs) && reagents.total_volume > 0)
+		return TRUE
+	qdel(src)

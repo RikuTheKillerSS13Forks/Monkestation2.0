@@ -43,12 +43,12 @@
 	if (LIQUID_EFFECT_IS_PUDDLE(src))
 		return ..()
 
-/obj/effect/temp_visual/liquid_splash
+/obj/effect/temp_visual/liquid_currents
 	icon = 'monkestation/icons/obj/effects/splash.dmi'
 	icon_state = "splash"
 	layer = FLY_LAYER
 	randomdir = FALSE
 
-/obj/effect/temp_visual/liquid_splash/Initialize(mapload, color = "#FFFFFF")
+/obj/effect/temp_visual/liquid_currents/Initialize(mapload, color = "#FFFFFF")
 	. = ..()
 	src.color = color

@@ -290,7 +290,7 @@
 	// Otherwise, just show the total volume
 	examine_list += span_notice("There is [replacetext(liquid_state_template, "$", "liquid")] here.")
 
-/obj/effect/temp_visual/liquid_splash
+/obj/effect/temp_visual/liquid_currents
 	icon = 'monkestation/icons/obj/effects/splash.dmi'
 	icon_state = "splash"
 	layer = FLY_LAYER

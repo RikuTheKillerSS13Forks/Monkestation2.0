@@ -42,7 +42,7 @@
 		new_turf.liquids.alpha = group_alpha
 		check_edges(new_turf)
 
-		var/obj/splashy = new /obj/effect/temp_visual/liquid_splash(new_turf)
+		var/obj/splashy = new /obj/effect/temp_visual/liquid_currents(new_turf)
 		if(new_turf.liquids.liquid_group)
 			splashy.color = new_turf.liquids.liquid_group.group_color
 
