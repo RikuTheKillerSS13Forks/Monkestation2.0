@@ -1,15 +1,15 @@
-SUBSYSTEM_DEF(liquid_processing)
-	name = "Liquid Processing"
+SUBSYSTEM_DEF(liquid_exposure)
+	name = "Liquid Exposure"
 	priority = FIRE_PRIORITY_LIQUIDS
-	flags = SS_POST_FIRE_TIMING | SS_NO_INIT
+	flags = SS_KEEP_TIMING | SS_NO_INIT
 	runlevels = RUNLEVEL_GAME | RUNLEVEL_POSTGAME
-	wait = 2 SECONDS
+	wait = 1 SECOND
 
 	/// List of liquid groups to call process_liquid() on, persists across resumed fire() calls.
 	/// Kinda dangerous, as qdeleted liquid groups will not be deleted from this.
 	var/list/exposure_cache = list()
 
-/datum/controller/subsystem/liquid_processing/fire(resumed)
+/datum/controller/subsystem/liquid_exposure/fire(resumed)
 	if (!length(GLOB.liquid_groups)) // Someone can implement can_fire later if they want to. This does the job just fine for now.
 		return
 
