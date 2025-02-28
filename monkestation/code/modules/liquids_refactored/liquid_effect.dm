@@ -1,5 +1,12 @@
 // Handles the visual effects for turfs in liquid groups.
-// Don't cache turf-specific data about liquid groups here, pulling from an assoc list is faster.'
+// Don't cache turf-specific data about liquid groups here, pulling from an assoc list is faster.
+
+/// Stuff that can't be immersed in liquid groups.
+GLOBAL_LIST_INIT(liquid_immersion_blacklist, typecacheof(list(
+	/obj/effect,
+	/obj/projectile,
+	/mob/dead,
+)))
 
 /obj/effect/abstract/liquid
 	name = "liquid"
@@ -67,12 +74,12 @@
 
 /obj/effect/abstract/liquid/proc/on_entered(turf/source, atom/movable/exposed, atom/old_loc, list/old_locs)
 	SIGNAL_HANDLER
-	if (exposed == src || liquid_group.turfs[old_loc])
+	if (QDELETED(exposed) || exposed == src || GLOB.liquid_immersion_blacklist[exposed.type] || liquid_group.turfs[old_loc])
 		return
 
 /obj/effect/abstract/liquid/proc/on_exited(turf/source, atom/movable/exposed, direction)
 	SIGNAL_HANDLER
-	if (exposed == src || liquid_group.turfs[exposed.loc])
+	if (QDELETED(exposed) || exposed == src || GLOB.liquid_immersion_blacklist[exposed.type] || liquid_group.turfs[exposed.loc])
 		return
 
 /obj/effect/temp_visual/liquid_currents
