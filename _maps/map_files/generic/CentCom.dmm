@@ -15045,7 +15045,7 @@
 /area/centcom/central_command_areas/hall)
 "aOC" = (
 /obj/structure/table/reinforced,
-/obj/item/toy/plush/space_lizard_plushie{
+/obj/item/toy/plush/lizard_plushie/space/green{
 	name = "Escapes-on-Pods"
 	},
 /turf/open/floor/iron/smooth_large,
@@ -22597,7 +22597,7 @@
 /area/centcom/central_command_areas/evacuation)
 "iiK" = (
 /obj/structure/table/reinforced,
-/obj/item/tank/jetpack/oxygen/harness{
+/obj/item/tank/jetpack/harness{
 	pixel_y = 10;
 	pixel_x = -2
 	},
