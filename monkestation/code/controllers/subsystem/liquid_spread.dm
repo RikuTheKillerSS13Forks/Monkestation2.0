@@ -101,7 +101,8 @@ SUBSYSTEM_DEF(liquid_spread)
 	recessive_group.copy_reagents_to(dominant_group)
 
 	for (var/turf/recessive_group_turf as anything in recessive_group.turfs)
-		LIQUID_TRANSFER_TURF(recessive_group_turf, recessive_group, dominant_group)
+		recessive_group_turf.liquid_group = dominant_group
+		recessive_group_turf.liquid_effect.liquid_group = dominant_group
 
 	// If you don't check whether they're equal, shit will just flash white for some reason.
 	// And I don't want to do a string check 2 quadrillion times, so this is what you get.
@@ -165,7 +166,8 @@ SUBSYSTEM_DEF(liquid_spread)
 				new_group.edge_turf_spread_directions[old_edge_turf] = splitting_group.edge_turf_spread_directions[old_edge_turf]
 
 		for (var/turf/new_group_turf as anything in new_group_turfs)
-			LIQUID_TRANSFER_TURF(new_group_turf, splitting_group, new_group)
+			new_group_turf.liquid_group = new_group
+			new_group_turf.liquid_effect.liquid_group = new_group
 
 	splitting_group.turfs = list() // Clear it early so that splitting_group.Destroy() doesn't delete liquid effects.
 	qdel(splitting_group)

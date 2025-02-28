@@ -30,12 +30,6 @@
 		_adjacent_turf?.liquid_group?.update_edges(_adjacent_turf); \
 	}; \
 
-/// Transfers a liquid turf from one liquid group to another.
-/// Only handles turf-specific data and does not update color.
-#define LIQUID_TRANSFER_TURF(_turf, _from_group, _to_group) \
-	_turf.liquid_group = _to_group; \
-	_turf.liquid_effect.liquid_group = _to_group; \
-
 /// Queues '_recessive_group' to combine with '_dominant_group' or whatever it's combining with. Also avoid queueing a combine with ourselves or into a group that is already queued to combine with us.
 #define LIQUID_QUEUE_COMBINE(_recessive_group, _dominant_group) if (_recessive_group != _dominant_group && GLOB.liquid_combine_queue[_dominant_group] != _recessive_group) { GLOB.liquid_combine_queue[_recessive_group] ||= GLOB.liquid_combine_queue[_dominant_group] || _dominant_group }
 
