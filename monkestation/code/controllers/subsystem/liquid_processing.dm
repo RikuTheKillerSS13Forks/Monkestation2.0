@@ -1,7 +1,7 @@
 SUBSYSTEM_DEF(liquid_processing)
 	name = "Liquid Processing"
-	priority = FIRE_PRIORITY_LIQUIDS
-	flags = SS_POST_FIRE_TIMING | SS_NO_INIT
+	priority = FIRE_PRIORITY_LIQUID_PROCESSING
+	flags = SS_BACKGROUND | SS_POST_FIRE_TIMING | SS_NO_INIT
 	runlevels = RUNLEVEL_GAME | RUNLEVEL_POSTGAME
 	wait = 2 SECONDS
 
@@ -26,6 +26,12 @@ SUBSYSTEM_DEF(liquid_processing)
 		// ACTUAL LIQUID PROCESSING START //
 
 		group.reagents.remove_all(length(group.turfs) * LIQUID_BASE_EVAPORATION_RATE * delta_time) // Evaporation rate is based on surface area, i.e. how many turfs are in the liquid group.
+
+		if (group.handle_reactions_next_process)
+			group.handle_reactions_next_process = FALSE
+			group.reagents.flags &= ~NO_REACT
+			group.reagents.handle_reactions()
+			group.reagents.flags |= NO_REACT
 
 		// ACTUAL LIQUID PROCESSING END //
 

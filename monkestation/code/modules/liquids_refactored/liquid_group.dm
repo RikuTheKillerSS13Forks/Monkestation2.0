@@ -20,15 +20,31 @@
 	var/datum/reagents/reagents
 
 	var/static/list/reagent_signals = list(
-		COMSIG_REAGENTS_NEW_REAGENT,
 		COMSIG_REAGENTS_ADD_REAGENT,
-		COMSIG_REAGENTS_DEL_REAGENT,
 		COMSIG_REAGENTS_REM_REAGENT,
+		COMSIG_REAGENTS_NEW_REAGENT,
+		COMSIG_REAGENTS_DEL_REAGENT,
 	)
 
-	/// Used for seeing if the reagent holder has changed contents.
+	/// List of all reagents with 'turf_exposure = TRUE' in the reagents of this liquid group.
+	/// Cached here because otherwise SSliquid_exposure has to rebuild it every fucking tick.
+	var/list/turf_exposing_reagents = list()
+
+	/// Cached value of reagents.chem_temp from the last time reagent state was updated.
+	/// Updated to the value of reagents.chem_temp if it differs by at least 1 degree in update_reagent_state()
+	var/last_reagents_temperature = 0
+
+	/// Used for seeing if the reagent holder has changed contents. (volume and/or types)
 	/// Set back to FALSE in update_reagent_state() if it's TRUE.
 	var/have_reagents_updated = FALSE
+
+	/// Variant of have_reagents_updated for when a reagent is newly added/removed.
+	/// Set back to FALSE in update_reagent_state() if it's TRUE.
+	var/have_reagent_types_updated = FALSE
+
+	/// Whether SSliquid_processing should call handle_reactions() on the next process.
+	/// Set back to FALSE in SSliquid_processing.fire() if it's TRUE.
+	var/handle_reactions_next_process = FALSE
 
 	/// How much maximum volume this liquid group gets per turf.
 	/// This is a cached value of LIQUID_GET_TURF_MAXIMUM_VOLUME(initial_turf)
@@ -43,11 +59,18 @@
 	/// The precomputed color of the entire liquid group. Does not update immediately.
 	var/liquid_color = "#FFFFFF"
 
+	var/list/exposed_atoms = list()
+	var/list/exposed_objs = list()
+	var/list/exposed_mobs = list()
+
 /datum/liquid_group/New(turf/initial_turf) // I'm going to trust YOU to not create empty liquid groups. It's useful in some cases, as long as you're filling out the new one with turfs manually.
 	reagents = new(0)
 	reagents.flags |= NO_REACT // We handle reactions ourselves once every 2 seconds.
 
-	RegisterSignals(reagents, reagent_signals, PROC_REF(on_reagents_updated))
+	RegisterSignal(reagents, COMSIG_REAGENTS_ADD_REAGENT, PROC_REF(on_reagent_added))
+	RegisterSignal(reagents, COMSIG_REAGENTS_REM_REAGENT, PROC_REF(on_reagent_removed))
+	RegisterSignal(reagents, COMSIG_REAGENTS_NEW_REAGENT, PROC_REF(on_reagent_type_added))
+	RegisterSignal(reagents, COMSIG_REAGENTS_DEL_REAGENT, PROC_REF(on_reagent_type_removed))
 
 	if (initial_turf)
 		maximum_volume_per_turf = LIQUID_GET_TURF_MAXIMUM_VOLUME(initial_turf)
@@ -63,6 +86,7 @@
 	remove_all_turfs()
 
 	UnregisterSignal(reagents, reagent_signals)
+
 	QDEL_NULL(reagents)
 
 	return ..()
@@ -272,7 +296,7 @@
 		if (cause_currents)
 			var/knockback_direction = currents_directions[edge_turf]
 			var/turf/knockback_turf = get_step(edge_turf, knockback_direction)
-			for (var/atom/movable/movable in edge_turf)
+			for (var/atom/movable/movable as anything in edge_turf)
 				if (!movable.anchored && movable.move_resist <= MOVE_FORCE_STRONG)
 					movable.Move(knockback_turf, knockback_direction, currents_glide_size)
 				if (!isliving(movable))
@@ -382,15 +406,36 @@
 			QUEUE_SMOOTH(edge_turf)
 			QUEUE_SMOOTH_NEIGHBORS(edge_turf) // Look. It's not pretty. It's shit. But I can't cache diagonal edge turfs. THE GAME WONT LET ME. IT HARD CRASHES WHEN I TRY. WHAT THE FUCK.
 
-/// Called whenever the reagent list of the reagent holder changes.
-/datum/liquid_group/proc/on_reagents_updated()
+/datum/liquid_group/proc/on_reagent_added()
 	SIGNAL_HANDLER
 	have_reagents_updated = TRUE
+	handle_reactions_next_process = TRUE
+
+/datum/liquid_group/proc/on_reagent_removed() // For some edge cases, 'handle_reactions_next_process' should be set to TRUE here, but it's way too costly.
+	SIGNAL_HANDLER
+	have_reagents_updated = TRUE
+
+/datum/liquid_group/proc/on_reagent_type_added()
+	SIGNAL_HANDLER
+	have_reagents_updated = TRUE
+	have_reagent_types_updated = TRUE
+	handle_reactions_next_process = TRUE
+
+/datum/liquid_group/proc/on_reagent_type_removed() // For some edge cases, 'handle_reactions_next_process' should be set to TRUE here, but it's way too costly.
+	SIGNAL_HANDLER
+	have_reagents_updated = TRUE
+	have_reagent_types_updated = TRUE
 
 /// Updates things directly reliant on the reagent holder.
 /// Ideally don't call this outside of process_spread() it can stop update_liquid_state() from being called.
 /// You're free to call both at once though, keep in mind the cost of doing that depending on what you're doing.
 /datum/liquid_group/proc/update_reagent_state()
+	if (LIQUID_TEMPERATURE_NEEDS_REAGENT_UPDATE(src))
+		last_reagents_temperature = reagents.chem_temp
+		handle_reactions_next_process = TRUE
+
+	if (!have_reagents_updated)
+		return
 	have_reagents_updated = FALSE
 
 	var/new_liquid_color = mix_color_from_reagents(reagents.reagent_list)
@@ -398,6 +443,15 @@
 		liquid_color = new_liquid_color
 		for (var/turf/target_turf as anything in turfs)
 			target_turf.liquid_effect.color = liquid_color
+
+	if (!have_reagent_types_updated)
+		return
+	have_reagent_types_updated = FALSE
+
+	turf_exposing_reagents = list()
+	for (var/datum/reagent/reagent as anything in reagents.reagent_list)
+		if (reagent.turf_exposure)
+			turf_exposing_reagents += reagent
 
 /datum/liquid_group/proc/copy_reagents_to(datum/liquid_group/other_liquid_group, amount = reagents.total_volume, no_react = TRUE)
 	if (!other_liquid_group)
@@ -416,7 +470,7 @@
 
 /// Checks whether the liquid group should exist.
 /// Returns whether it should and deletes it automatically if not.
-/// Keep this optimized as fuck because it's called for all liquid groups.
+/// You generally don't need to call this, SSliquid_spread will handle it.
 /datum/liquid_group/proc/check_should_exist()
 	if (!QDELING(src) && length(turfs) && reagents.total_volume > 0)
 		return TRUE

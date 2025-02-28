@@ -208,6 +208,7 @@
 #define FIRE_PRIORITY_AMBIENCE 10
 #define FIRE_PRIORITY_GLOWSHROOMS 10 // monkestation addition: glowshroom processing subsystem
 #define FIRE_PRIORITY_MEMORY_STATS 10 // monkestation addition: memory stats subsystem. uses a low priority as it takes a moment to fully profile memory.
+#define FIRE_PRIORITY_LIQUID_PROCESSING 10 // monkestation addition: liquid processing can get expensive due to reactions, but it can easily tolerate long periods of time without firing since it uses delta time
 #define FIRE_PRIORITY_GARBAGE 15
 #define FIRE_PRIORITY_DATABASE 16
 #define FIRE_PRIORITY_WET_FLOORS 20
@@ -235,7 +236,7 @@
 #define FIRE_PRIORITY_PARALLAX 65
 #define FIRE_PRIORITY_INSTRUMENTS 80
 #define FIRE_PRIORITY_FLUIDS 80
-#define FIRE_PRIORITY_LIQUIDS 80 // monkestation addition: liquids
+#define FIRE_PRIORITY_LIQUID_SPREAD 80 // monkestation addition: liquid spread is incredibly cheap most of the time and it's very obvious if it stops working
 #define FIRE_PRIORITY_STAMINA 95
 #define FIRE_PRIORITY_MOBS 100
 #define FIRE_PRIORITY_ASSETS 105

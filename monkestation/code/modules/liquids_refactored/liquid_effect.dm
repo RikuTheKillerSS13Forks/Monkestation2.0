@@ -22,6 +22,17 @@
 
 	var/datum/liquid_group/liquid_group
 
+	var/static/list/turf_enter_signals = list(
+		COMSIG_ATOM_AFTER_SUCCESSFUL_INITIALIZED_ON,
+		COMSIG_ATOM_ENTERED,
+	)
+
+	var/static/list/turf_signals = list(
+		COMSIG_ATOM_AFTER_SUCCESSFUL_INITIALIZED_ON,
+		COMSIG_ATOM_ENTERED,
+		COMSIG_ATOM_EXITED,
+	)
+
 /obj/effect/abstract/liquid/Initialize(mapload, datum/liquid_group/liquid_group)
 	. = ..()
 	src.liquid_group = liquid_group
@@ -35,13 +46,34 @@
 
 	color = liquid_group.liquid_color
 
+	RegisterSignals(loc, turf_enter_signals, PROC_REF(on_entered))
+	RegisterSignal(loc, COMSIG_ATOM_EXITED, PROC_REF(on_exited))
+
+	for (var/atom/movable/existing_atom as anything in loc)
+		on_entered(loc, existing_atom)
+
 /obj/effect/abstract/liquid/Destroy(force)
+	UnregisterSignal(loc, turf_signals)
+
+	for (var/atom/movable/existing_atom as anything in loc)
+		on_exited(loc, existing_atom)
+
 	liquid_group = null
 	return ..()
 
 /obj/effect/abstract/liquid/bitmask_smooth()
 	if (LIQUID_EFFECT_IS_PUDDLE(src))
 		return ..()
+
+/obj/effect/abstract/liquid/proc/on_entered(turf/source, atom/movable/exposed, atom/old_loc, list/old_locs)
+	SIGNAL_HANDLER
+	if (exposed == src || liquid_group.turfs[old_loc])
+		return
+
+/obj/effect/abstract/liquid/proc/on_exited(turf/source, atom/movable/exposed, direction)
+	SIGNAL_HANDLER
+	if (exposed == src || liquid_group.turfs[exposed.loc])
+		return
 
 /obj/effect/temp_visual/liquid_currents
 	icon = 'monkestation/icons/obj/effects/splash.dmi'

@@ -1,6 +1,9 @@
+// This subsystem is meant to handle anything related or tied to liquids spreading.
+// Keep in mind that means practically anything that needs to keep up pace with that. (like liquid states and reagent colors)
+
 SUBSYSTEM_DEF(liquid_spread)
 	name = "Liquid Spread"
-	priority = FIRE_PRIORITY_LIQUIDS
+	priority = FIRE_PRIORITY_LIQUID_SPREAD
 	flags = SS_KEEP_TIMING | SS_NO_INIT
 	runlevels = RUNLEVEL_GAME | RUNLEVEL_POSTGAME
 	wait = 0.2 SECONDS
@@ -69,7 +72,7 @@ SUBSYSTEM_DEF(liquid_spread)
 			qdel(group)
 			continue
 
-		var/did_something = FALSE
+		var/did_something = FALSE // Used for optimizing out check_should_exist() after spread processing if we did nothing
 
 		if (LIQUID_GET_VOLUME_PER_TURF(group) >= LIQUID_SPREAD_VOLUME_THRESHOLD)
 			if (length(group.edge_turf_spread_directions)) // Micro-optimization. (spread proc overhead)
@@ -79,7 +82,7 @@ SUBSYSTEM_DEF(liquid_spread)
 			group.evaporate_edges() // Make sure we don't have enough liquid volume to spread after this. And use multiplication to avoid a division-by-zero at 1 turf.
 			did_something = TRUE
 
-		if ((!did_something || group.check_should_exist()) && group.have_reagents_updated)
+		if ((!did_something || group.check_should_exist()) && (group.have_reagents_updated || LIQUID_TEMPERATURE_NEEDS_REAGENT_UPDATE(group)))
 			group.update_reagent_state()
 			if (group.last_liquid_state_turf_count != length(group.turfs)) // Micro-optimization. (update_liquid_state proc overhead)
 				group.update_liquid_state()

@@ -21,6 +21,9 @@
 /// This is then multiplied by the number of turfs in a liquid group.
 #define LIQUID_BASE_EVAPORATION_RATE 0.1
 
+/// Checks if reagents.chem_temp has changed enough for a liquid group to handle reactions.
+#define LIQUID_TEMPERATURE_NEEDS_REAGENT_UPDATE(_liquid_group) (abs(_liquid_group.reagents.chem_temp - _liquid_group.last_reagents_temperature) >= 1)
+
 /// Gets the amount of liquid the given turf can contain.
 /// This is the actual value, after adjustments. Must be consistent for the entire lifespan of the turf.
 #define LIQUID_GET_TURF_MAXIMUM_VOLUME(_turf) (max(0, LIQUID_BASE_TURF_MAXIMUM_VOLUME - initial(_turf.turf_height) * 10))
