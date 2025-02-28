@@ -133,8 +133,14 @@
 	UNSETEMPTY(atmos_adjacent_turfs)
 	src.atmos_adjacent_turfs = atmos_adjacent_turfs
 	update_adjacent_pollutants() //SKYRAT EDIT ADDITION //Atmos adjacency could unlock/block adjacent pollutants, this is dirty flags anyway so its fine having it here
-	liquid_group?.update_edges(src) // monkestation addition, this is what makes liquids stupid fucking fast
-	LIQUID_UPDATE_ADJACENT_EDGES(src) // ditto
+
+	// MONKESTATION ADDITION START: LIQUIDS
+	if (liquid_group) // Your other option is registering yet another signal onto every single turf a liquid group has in it. That's not an option because of the memory cost.
+		liquid_group.update_edges(src)
+		liquid_group.check_split(src)
+	LIQUID_UPDATE_ADJACENT_EDGES(src)
+	// MONKESTATION ADDITION END: LIQUIDS
+
 	SEND_SIGNAL(src, COMSIG_TURF_CALCULATED_ADJACENT_ATMOS)
 
 /**

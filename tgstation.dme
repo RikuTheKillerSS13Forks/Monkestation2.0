@@ -5945,6 +5945,7 @@
 #include "monkestation\code\controllers\subsystem\glowshrooms.dm"
 #include "monkestation\code\controllers\subsystem\init_profiler.dm"
 #include "monkestation\code\controllers\subsystem\job.dm"
+#include "monkestation\code\controllers\subsystem\liquid_exposure.dm"
 #include "monkestation\code\controllers\subsystem\liquid_processing.dm"
 #include "monkestation\code\controllers\subsystem\liquid_spread.dm"
 #include "monkestation\code\controllers\subsystem\memory_stats.dm"

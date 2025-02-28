@@ -136,7 +136,7 @@ SUBSYSTEM_DEF(liquid_spread)
 			for (var/direction in GLOB.cardinals) // And here's one that could run 80000 times in one tick. (PROFILE ANY CHANGES)
 				var/turf/adjacent_turf = get_step(current_turf, direction) // Using get_step() 4 times is faster than caching a turf list with a locate() macro.
 
-				if (splitting_group_turf_cache[adjacent_turf]) // Serves a dual purpose of checking if the turf is in the splitting group and if it's been visited.
+				if (splitting_group_turf_cache[adjacent_turf] && TURFS_CAN_SHARE(current_turf, adjacent_turf)) // The first part serves a dual purpose of checking if the turf is in the splitting group and if it's been visited.
 					splitting_group_turf_cache -= adjacent_turf // Removing from the list is faster than setting the index to false.
 					visited_turfs[adjacent_turf] = TRUE // Having to reconstruct this into an assoc list later outweighs the benefits of making it a normal list.
 					turf_stack += adjacent_turf

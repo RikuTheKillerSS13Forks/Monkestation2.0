@@ -212,6 +212,9 @@
 		for (var/direction in GLOB.cardinals)
 			var/turf/adjacent_turf = get_step(current_turf, direction)
 
+			if (!TURFS_CAN_SHARE(current_turf, adjacent_turf))
+				continue
+
 			if (cardinal_liquid_turfs[adjacent_turf]) // Serves a dual purpose, making sure the turf is an adjacent liquid turf and that it hasn't been visited.
 				cardinal_liquid_turfs[adjacent_turf] = FALSE // FALSE = has been visited
 				turf_stack += adjacent_turf
