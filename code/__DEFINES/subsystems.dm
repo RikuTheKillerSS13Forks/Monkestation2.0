@@ -214,6 +214,7 @@
 #define FIRE_PRIORITY_AIR 20
 #define FIRE_PRIORITY_NPC 20
 #define FIRE_PRIORITY_HYPERSPACE_DRIFT 20
+#define FIRE_PRIORITY_LIQUID_EXPOSURE 20 // monkestation addition: liquid exposure can be very expensive yet it's not very worth sacrificing overtime for (about as worth as atmos)
 #define FIRE_PRIORITY_NPC_MOVEMENT 21
 #define FIRE_PRIORITY_NPC_ACTIONS 22
 #define FIRE_PRIORITY_PATHFINDING 23
@@ -234,7 +235,7 @@
 #define FIRE_PRIORITY_PARALLAX 65
 #define FIRE_PRIORITY_INSTRUMENTS 80
 #define FIRE_PRIORITY_FLUIDS 80
-#define FIRE_PRIORITY_LIQUIDS 80 // monkestation addition
+#define FIRE_PRIORITY_LIQUIDS 80 // monkestation addition: liquids
 #define FIRE_PRIORITY_STAMINA 95
 #define FIRE_PRIORITY_MOBS 100
 #define FIRE_PRIORITY_ASSETS 105

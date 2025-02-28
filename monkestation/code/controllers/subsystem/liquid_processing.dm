@@ -21,7 +21,7 @@ SUBSYSTEM_DEF(liquid_processing)
 		var/datum/liquid_group/group = process_cache[length(process_cache)]
 		process_cache.len--
 		if (QDELETED(group))
-			return
+			continue
 
 		// ACTUAL LIQUID PROCESSING START //
 

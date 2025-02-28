@@ -8,6 +8,15 @@
 /// The amount of reagents per turf a liquid group needs before causing currents to form when spreading.
 #define LIQUID_CURRENTS_VOLUME_THRESHOLD LIQUID_VOLUME_PER_STATE * LIQUID_STATE_ANKLES
 
+/// The amount of reagents per turf a liquid group needs before being able to expose turfs and mobs to reagents.
+#define LIQUID_EXPOSURE_VOLUME_THRESHOLD (LIQUID_SPREAD_VOLUME_THRESHOLD * 0.5)
+
+/// How much volume a liquid group exposes turfs to when above LIQUID_EXPOSURE_VOLUME_THRESHOLD
+#define LIQUID_EXPOSURE_TURF_VOLUME LIQUID_EXPOSURE_VOLUME_THRESHOLD
+
+/// Multiplier for how much of the liquid per turf is counted for mob exposure when a liquid group is above LIQUID_EXPOSURE_VOLUME_THRESHOLD
+#define LIQUID_EXPOSURE_MOB_MULTIPLIER 0.1
+
 /// How quickly liquids evaporate, in units per second.
 /// This is then multiplied by the number of turfs in a liquid group.
 #define LIQUID_BASE_EVAPORATION_RATE 0.1

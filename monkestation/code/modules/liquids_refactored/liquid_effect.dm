@@ -31,7 +31,7 @@
 		QUEUE_SMOOTH_NEIGHBORS(src)
 	else
 		LIQUID_EFFECT_MAKE_FULLTILE(src)
-		QUEUE_SMOOTH_NEIGHBORS(src) // There could be another liquid group that's a puddle.
+		QUEUE_SMOOTH_NEIGHBORS(src) // There could be another liquid group nearby that's a puddle.
 
 	color = liquid_group.liquid_color
 
