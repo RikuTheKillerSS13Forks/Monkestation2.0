@@ -23,9 +23,14 @@ SUBSYSTEM_DEF(liquid_exposure)
 	while (length(exposure_group_cache))
 		var/datum/liquid_group/group = exposure_group_cache[length(exposure_group_cache)]
 
+		if (QDELETED(group) || !length(group.turfs))
+			exposure_atom_cache = list()
+			exposure_group_cache.len--
+			continue
+
 		var/exposure_volume_threshold = LIQUID_EXPOSURE_VOLUME_THRESHOLD * length(group.turfs)
 
-		if (QDELETED(group) || group.reagents.total_volume < exposure_volume_threshold)
+		if (group.reagents.total_volume < exposure_volume_threshold)
 			exposure_atom_cache = list()
 			exposure_group_cache.len--
 			continue
@@ -49,8 +54,8 @@ SUBSYSTEM_DEF(liquid_exposure)
 			var/atom/movable/atom = exposure_atom_cache[length(exposure_atom_cache)]
 			exposure_atom_cache.len--
 
-			atom.expose_reagents(reagents, source = group.reagents, methods = TOUCH)
-
+			if (!QDELETED(atom))
+				atom.expose_reagents(reagents, source = group.reagents, methods = TOUCH)
 			if (MC_TICK_CHECK)
 				return
 

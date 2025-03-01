@@ -76,14 +76,14 @@ GLOBAL_LIST_INIT(liquid_immersion_blacklist, typecacheof(list(
 	if (QDELETED(exposed) || exposed == src || GLOB.liquid_immersion_blacklist[exposed.type] || liquid_group.turfs[old_loc])
 		return
 
-	liquid_group.exposed_atoms += exposed
+	liquid_group.add_atom(exposed)
 
 /obj/effect/abstract/liquid/proc/on_exited(turf/source, atom/movable/exposed, direction)
 	SIGNAL_HANDLER
 	if (QDELETED(exposed) || exposed == src || GLOB.liquid_immersion_blacklist[exposed.type] || liquid_group.turfs[exposed.loc])
 		return
 
-	liquid_group.exposed_atoms -= exposed
+	liquid_group.remove_atom(exposed)
 
 /obj/effect/temp_visual/liquid_currents
 	icon = 'monkestation/icons/obj/effects/splash.dmi'

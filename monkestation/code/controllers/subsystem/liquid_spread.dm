@@ -114,6 +114,10 @@ SUBSYSTEM_DEF(liquid_spread)
 		for (var/turf/recessive_group_turf as anything in recessive_group.turfs)
 			recessive_group_turf.liquid_effect.color = dominant_group.liquid_color
 
+	for (var/atom/recessive_group_atom as anything in recessive_group.exposed_atoms)
+		recessive_group.UnregisterSignal(recessive_group_atom, COMSIG_QDELETING)
+		dominant_group.RegisterSignal(recessive_group_atom, COMSIG_QDELETING, TYPE_PROC_REF(/datum/liquid_group, remove_atom))
+
 	recessive_group.turfs = list() // Clear it early so that recessive_group.Destroy() doesn't delete liquid effects.
 	qdel(recessive_group)
 
@@ -174,8 +178,12 @@ SUBSYSTEM_DEF(liquid_spread)
 			new_group_turf.liquid_effect.liquid_group = new_group
 
 		for (var/atom/movable/old_exposed_atom as anything in splitting_group.exposed_atoms)
-			if (new_group_turfs[old_exposed_atom.loc])
-				new_group.exposed_atoms += old_exposed_atom
+			if (!new_group_turfs[old_exposed_atom.loc])
+				continue
+
+			new_group.exposed_atoms += old_exposed_atom
+			splitting_group.UnregisterSignal(old_exposed_atom, COMSIG_QDELETING)
+			new_group.RegisterSignal(old_exposed_atom, COMSIG_QDELETING, TYPE_PROC_REF(/datum/liquid_group, remove_atom))
 
 	splitting_group.turfs = list() // Clear it early so that splitting_group.Destroy() doesn't delete liquid effects.
 	qdel(splitting_group)
