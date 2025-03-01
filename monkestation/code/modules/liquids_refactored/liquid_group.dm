@@ -456,9 +456,3 @@
 	if (!QDELING(src) && length(turfs) && reagents.total_volume > 0)
 		return TRUE
 	qdel(src)
-
-/datum/liquid_group/proc/add_atom(atom/movable/exposed)
-	exposed_atoms += exposed
-
-/datum/liquid_group/proc/remove_atom(atom/movable/exposed)
-	exposed_atoms -= exposed
