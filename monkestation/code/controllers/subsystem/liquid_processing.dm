@@ -9,14 +9,20 @@ SUBSYSTEM_DEF(liquid_processing)
 	/// Kinda dangerous, as qdeleted liquid groups will not be deleted from this.
 	var/list/process_cache = list()
 
+	/// The last time fire() was called with 'resumed = FALSE'
+	var/fire_start_time = 0
+
 /datum/controller/subsystem/liquid_processing/fire(resumed)
 	if (!length(GLOB.liquid_groups)) // Someone can implement can_fire later if they want to. This does the job just fine for now.
 		return
 
 	if (!resumed)
 		process_cache = GLOB.liquid_groups.Copy()
+		fire_start_time = world.time
 
-	var/delta_time = DELTA_WORLD_TIME(src)
+	var/delta_time = (fire_start_time - last_fire) * 0.1 // This way delta time stays consistent across paused runs.
+	var/evaporation_rate = LIQUID_BASE_EVAPORATION_RATE * delta_time
+
 	while (length(process_cache))
 		var/datum/liquid_group/group = process_cache[length(process_cache)]
 		process_cache.len--
@@ -25,7 +31,7 @@ SUBSYSTEM_DEF(liquid_processing)
 
 		// ACTUAL LIQUID PROCESSING START //
 
-		group.reagents.remove_all(length(group.turfs) * LIQUID_BASE_EVAPORATION_RATE * delta_time) // Evaporation rate is based on surface area, i.e. how many turfs are in the liquid group.
+		group.reagents.remove_all(length(group.turfs) * evaporation_rate) // Evaporation rate is based on surface area, i.e. how many turfs are in the liquid group.
 
 		if (group.handle_reactions_next_process)
 			group.handle_reactions_next_process = FALSE

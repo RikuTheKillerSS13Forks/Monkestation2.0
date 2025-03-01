@@ -99,6 +99,7 @@ SUBSYSTEM_DEF(liquid_spread)
 	dominant_group.edge_turfs += recessive_group.edge_turfs
 	dominant_group.edge_turf_spread_directions += recessive_group.edge_turf_spread_directions
 	dominant_group.next_spread_count += recessive_group.next_spread_count
+	dominant_group.exposed_atoms += recessive_group.exposed_atoms
 
 	LIQUID_UPDATE_MAXIMUM_VOLUME(dominant_group)
 	recessive_group.copy_reagents_to(dominant_group)
@@ -171,6 +172,10 @@ SUBSYSTEM_DEF(liquid_spread)
 		for (var/turf/new_group_turf as anything in new_group_turfs)
 			new_group_turf.liquid_group = new_group
 			new_group_turf.liquid_effect.liquid_group = new_group
+
+		for (var/atom/movable/old_exposed_atom as anything in splitting_group.exposed_atoms)
+			if (new_group_turfs[old_exposed_atom.loc])
+				new_group.exposed_atoms += old_exposed_atom
 
 	splitting_group.turfs = list() // Clear it early so that splitting_group.Destroy() doesn't delete liquid effects.
 	qdel(splitting_group)

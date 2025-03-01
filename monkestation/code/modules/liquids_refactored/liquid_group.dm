@@ -26,10 +26,6 @@
 		COMSIG_REAGENTS_DEL_REAGENT,
 	)
 
-	/// List of all reagents with 'turf_exposure = TRUE' in the reagents of this liquid group.
-	/// Cached here because otherwise SSliquid_exposure has to rebuild it every fucking tick.
-	var/list/turf_exposing_reagents = list()
-
 	/// Cached value of reagents.chem_temp from the last time reagent state was updated.
 	/// Updated to the value of reagents.chem_temp if it differs by at least 1 degree in update_reagent_state()
 	var/last_reagents_temperature = 0
@@ -37,10 +33,6 @@
 	/// Used for seeing if the reagent holder has changed contents. (volume and/or types)
 	/// Set back to FALSE in update_reagent_state() if it's TRUE.
 	var/have_reagents_updated = FALSE
-
-	/// Variant of have_reagents_updated for when a reagent is newly added/removed.
-	/// Set back to FALSE in update_reagent_state() if it's TRUE.
-	var/have_reagent_types_updated = FALSE
 
 	/// Whether SSliquid_processing should call handle_reactions() on the next process.
 	/// Set back to FALSE in SSliquid_processing.fire() if it's TRUE.
@@ -59,9 +51,8 @@
 	/// The precomputed color of the entire liquid group. Does not update immediately.
 	var/liquid_color = "#FFFFFF"
 
+	/// Simple list of all movable atoms exposed to this liquid group.
 	var/list/exposed_atoms = list()
-	var/list/exposed_objs = list()
-	var/list/exposed_mobs = list()
 
 /datum/liquid_group/New(turf/initial_turf) // I'm going to trust YOU to not create empty liquid groups. It's useful in some cases, as long as you're filling out the new one with turfs manually.
 	reagents = new(0)
@@ -156,6 +147,7 @@
 	edge_turfs = list()
 	edge_turf_spread_directions = list()
 	next_spread_count = 0
+	exposed_atoms = list()
 
 	if (!QDELING(src))
 		qdel(src)
@@ -415,16 +407,14 @@
 	SIGNAL_HANDLER
 	have_reagents_updated = TRUE
 
-/datum/liquid_group/proc/on_reagent_type_added()
+/datum/liquid_group/proc/on_reagent_type_added(datum/source, datum/reagent/reagent)
 	SIGNAL_HANDLER
 	have_reagents_updated = TRUE
-	have_reagent_types_updated = TRUE
 	handle_reactions_next_process = TRUE
 
-/datum/liquid_group/proc/on_reagent_type_removed() // For some edge cases, 'handle_reactions_next_process' should be set to TRUE here, but it's way too costly.
+/datum/liquid_group/proc/on_reagent_type_removed(datum/source, datum/reagent/reagent) // For some edge cases, 'handle_reactions_next_process' should be set to TRUE here, but it's way too costly.
 	SIGNAL_HANDLER
 	have_reagents_updated = TRUE
-	have_reagent_types_updated = TRUE
 
 /// Updates things directly reliant on the reagent holder.
 /// Ideally don't call this outside of process_spread() it can stop update_liquid_state() from being called.
@@ -443,15 +433,6 @@
 		liquid_color = new_liquid_color
 		for (var/turf/target_turf as anything in turfs)
 			target_turf.liquid_effect.color = liquid_color
-
-	if (!have_reagent_types_updated)
-		return
-	have_reagent_types_updated = FALSE
-
-	turf_exposing_reagents = list()
-	for (var/datum/reagent/reagent as anything in reagents.reagent_list)
-		if (reagent.turf_exposure)
-			turf_exposing_reagents += reagent
 
 /datum/liquid_group/proc/copy_reagents_to(datum/liquid_group/other_liquid_group, amount = reagents.total_volume, no_react = TRUE)
 	if (!other_liquid_group)
@@ -475,3 +456,9 @@
 	if (!QDELING(src) && length(turfs) && reagents.total_volume > 0)
 		return TRUE
 	qdel(src)
+
+/datum/liquid_group/proc/add_atom(atom/movable/exposed)
+	exposed_atoms += exposed
+
+/datum/liquid_group/proc/remove_atom(atom/movable/exposed)
+	exposed_atoms -= exposed
