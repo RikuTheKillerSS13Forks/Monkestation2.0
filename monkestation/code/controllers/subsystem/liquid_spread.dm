@@ -33,21 +33,24 @@ SUBSYSTEM_DEF(liquid_spread)
 		spread_cache = GLOB.liquid_groups.Copy()
 		combine_cache = GLOB.liquid_combine_queue.Copy()
 		split_cache = GLOB.liquid_split_queue.Copy()
-		//late_spread_cache = GLOB.liquid_groups.Copy()
 
 		GLOB.liquid_combine_queue = list()
 		GLOB.liquid_split_queue = list()
 
 	if (length(spread_cache))
 		process_spread(wait * 0.1)
-		if (MC_TICK_CHECK)
-			return
 
-	for (var/datum/liquid_group/recessive_group as anything in combine_cache) // Has to be front-to-back or else shit breaks. And I mean REALLY breaks. This is due to the order in which combine_cache is built.
-		var/datum/liquid_group/dominant_group = combine_cache[recessive_group]
-		combine_cache -= recessive_group
-		if (!QDELETED(recessive_group) && !QDELETED(dominant_group))
-			combine_liquid_groups(dominant_group, recessive_group)
+	while (length(combine_cache))
+		var/turf/turf_to_check = combine_cache[length(combine_cache)]
+		combine_cache -= turf_to_check
+		if (QDELETED(turf_to_check) || !turf_to_check.liquid_group)
+			continue
+
+		for (var/direction in GLOB.cardinals)
+			var/turf/adjacent_turf = get_step(turf_to_check, direction)
+			if (adjacent_turf.liquid_group && adjacent_turf.liquid_group != turf_to_check.liquid_group && TURFS_CAN_SHARE(turf_to_check, adjacent_turf))
+				combine_liquid_groups(turf_to_check.liquid_group, adjacent_turf.liquid_group)
+
 		if (MC_TICK_CHECK)
 			return
 

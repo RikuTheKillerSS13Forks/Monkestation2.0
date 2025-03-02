@@ -39,8 +39,8 @@
 		_adjacent_turf?.liquid_group?.update_edges(_adjacent_turf); \
 	}; \
 
-/// Queues '_recessive_group' to combine with '_dominant_group' or whatever it's combining with. Also avoid queueing a combine with ourselves or into a group that is already queued to combine with us.
-#define LIQUID_QUEUE_COMBINE(_recessive_group, _dominant_group) if (_recessive_group != _dominant_group && GLOB.liquid_combine_queue[_dominant_group] != _recessive_group) { GLOB.liquid_combine_queue[_recessive_group] ||= GLOB.liquid_combine_queue[_dominant_group] || _dominant_group }
+/// Queues the given turf for a combination check by SSliquid_spread.
+#define LIQUID_QUEUE_COMBINE(_turf) GLOB.liquid_combine_queue[_turf] = TRUE
 
 /// Queues the given liquid group for a DFS split check by SSliquid_spread.
 /// This is infamously expensive. Avoid splits whenever possible. They SUCK to do.

@@ -172,7 +172,7 @@
 			next_spread_count++
 			is_edge_turf = TRUE
 		else // We don't set this as an edge when combining. This is because combination does not update edges and happens instantly after this. (so act as if we already combined)
-			LIQUID_QUEUE_COMBINE(src, adjacent_turf.liquid_group) // Combines us with them (we are recessive), not the other way around.
+			LIQUID_QUEUE_COMBINE(target_turf)
 
 	if (length(spread_directions))
 		edge_turf_spread_directions[target_turf] = spread_directions
