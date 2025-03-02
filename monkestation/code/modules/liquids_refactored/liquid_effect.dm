@@ -94,3 +94,17 @@ GLOBAL_LIST_INIT(liquid_immersion_blacklist, typecacheof(list(
 /obj/effect/temp_visual/liquid_currents/Initialize(mapload, color = "#FFFFFF")
 	. = ..()
 	src.color = color
+
+/obj/effect/abstract/liquid_immersion
+	name = "liquid immersion"
+	desc = "How the fuck are you examining this?"
+
+	icon = 'monkestation/icons/obj/effects/liquid_overlays.dmi'
+	icon_state = "stage1_bottom"
+
+	plane = FLOAT_PLANE
+	layer = WATER_VISUAL_OVERLAY_LAYER
+
+	blend_mode = BLEND_INSET_OVERLAY
+	appearance_flags = RESET_COLOR | RESET_TRANSFORM
+	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
