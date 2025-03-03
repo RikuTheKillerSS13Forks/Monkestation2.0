@@ -108,3 +108,7 @@ GLOBAL_LIST_INIT(liquid_immersion_blacklist, typecacheof(list(
 	blend_mode = BLEND_INSET_OVERLAY
 	appearance_flags = RESET_COLOR | RESET_TRANSFORM
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
+
+/obj/effect/abstract/liquid_immersion/Initialize(mapload, liquid_state)
+	. = ..()
+	icon_state = "stage[liquid_state]_bottom"

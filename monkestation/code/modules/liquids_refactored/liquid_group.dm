@@ -51,7 +51,8 @@
 	/// The precomputed color of the entire liquid group. Does not update immediately.
 	var/liquid_color = "#FFFFFF"
 
-	/// Simple list of all movable atoms exposed to this liquid group.
+	/// Associative list of all movable atoms exposed to this liquid group.
+	/// The values are the liquid immersion overlays for the atoms.
 	var/list/exposed_atoms = list()
 
 /datum/liquid_group/New(turf/initial_turf) // I'm going to trust YOU to not create empty liquid groups. It's useful in some cases, as long as you're filling out the new one with turfs manually.
@@ -142,6 +143,9 @@
 	for (var/turf/target_turf as anything in turfs)
 		QDEL_NULL(target_turf.liquid_effect)
 		target_turf.liquid_group = null
+
+	for (var/atom/movable/exposed_atom in exposed_atoms)
+		qdel(exposed_atoms[exposed_atom])
 
 	turfs = list()
 	edge_turfs = list()
@@ -383,7 +387,7 @@
 	last_liquid_state_turf_count = length(turfs)
 
 	var/cached_liquid_state = liquid_state
-	liquid_state = floor(LIQUID_GET_VOLUME_PER_TURF(src) / LIQUID_VOLUME_PER_STATE)
+	liquid_state = clamp(floor(LIQUID_GET_VOLUME_PER_TURF(src) / LIQUID_VOLUME_PER_STATE), LIQUID_STATE_PUDDLE, LIQUID_STATE_FULLTILE)
 
 	if (cached_liquid_state == liquid_state)
 		return
@@ -397,6 +401,11 @@
 		for (var/turf/edge_turf as anything in edge_turfs)
 			QUEUE_SMOOTH(edge_turf)
 			QUEUE_SMOOTH_NEIGHBORS(edge_turf) // Look. It's not pretty. It's shit. But I can't cache diagonal edge turfs. THE GAME WONT LET ME. IT HARD CRASHES WHEN I TRY. WHAT THE FUCK.
+
+	var/effect_icon_state = "stage[liquid_state]_bottom"
+	for (var/atom/movable/exposed_atom in exposed_atoms)
+		var/obj/effect/abstract/liquid_immersion/effect = exposed_atoms[exposed_atom]
+		effect.icon_state = effect_icon_state
 
 /datum/liquid_group/proc/on_reagent_added()
 	SIGNAL_HANDLER
@@ -458,11 +467,17 @@
 	qdel(src)
 
 /datum/liquid_group/proc/add_atom(atom/movable/exposed)
-	exposed_atoms += exposed
 	RegisterSignal(exposed, COMSIG_QDELETING, PROC_REF(remove_atom))
-	exposed.vis_contents += new /obj/effect/abstract/liquid_immersion()
+
+	exposed_atoms[exposed] = new /obj/effect/abstract/liquid_immersion(null, liquid_state)
+	exposed.vis_contents += exposed_atoms[exposed]
+
 	ADD_KEEP_TOGETHER(exposed, "liquid immersion")
 
 /datum/liquid_group/proc/remove_atom(atom/movable/exposed)
-	exposed_atoms -= exposed
 	UnregisterSignal(exposed, COMSIG_QDELETING)
+
+	qdel(exposed_atoms[exposed])
+	exposed_atoms -= exposed
+
+	REMOVE_KEEP_TOGETHER(exposed, "liquid immersion")

@@ -85,9 +85,11 @@ SUBSYSTEM_DEF(liquid_spread)
 			group.evaporate_edges() // Make sure we don't have enough liquid volume to spread after this. And use multiplication to avoid a division-by-zero at 1 turf.
 			did_something = TRUE
 
-		if ((!did_something || group.check_should_exist()) && (group.have_reagents_updated || LIQUID_TEMPERATURE_NEEDS_REAGENT_UPDATE(group)))
-			group.update_reagent_state()
-			if (group.last_liquid_state_turf_count != length(group.turfs)) // Micro-optimization. (update_liquid_state proc overhead)
+		if (!did_something || group.check_should_exist())
+			if (group.have_reagents_updated || LIQUID_TEMPERATURE_NEEDS_REAGENT_UPDATE(group)) // Micro-optimization. (update_reagent_state proc overhead)
+				group.update_reagent_state()
+				group.update_liquid_state()
+			else if (group.last_liquid_state_turf_count != length(group.turfs)) // Micro-optimization. (update_liquid_state proc overhead)
 				group.update_liquid_state()
 
 		// ACTUAL SPREAD PROCESSING END //
@@ -122,6 +124,7 @@ SUBSYSTEM_DEF(liquid_spread)
 		dominant_group.RegisterSignal(recessive_group_atom, COMSIG_QDELETING, TYPE_PROC_REF(/datum/liquid_group, remove_atom))
 
 	recessive_group.turfs = list() // Clear it early so that recessive_group.Destroy() doesn't delete liquid effects.
+	recessive_group.exposed_atoms = list() // Ditto, but for liquid immersion effects.
 	qdel(recessive_group)
 
 /// Does a full DFT (Depth-First Traversal) for a liquid group and splits it into several if needed.
@@ -184,9 +187,10 @@ SUBSYSTEM_DEF(liquid_spread)
 			if (!new_group_turfs[old_exposed_atom.loc])
 				continue
 
-			new_group.exposed_atoms += old_exposed_atom
+			new_group.exposed_atoms[old_exposed_atom] = splitting_group.exposed_atoms[old_exposed_atom]
 			splitting_group.UnregisterSignal(old_exposed_atom, COMSIG_QDELETING)
 			new_group.RegisterSignal(old_exposed_atom, COMSIG_QDELETING, TYPE_PROC_REF(/datum/liquid_group, remove_atom))
 
 	splitting_group.turfs = list() // Clear it early so that splitting_group.Destroy() doesn't delete liquid effects.
+	splitting_group.exposed_atoms = list() // Ditto, but for liquid immersion effects.
 	qdel(splitting_group)
