@@ -144,7 +144,7 @@
 		QDEL_NULL(target_turf.liquid_effect)
 		target_turf.liquid_group = null
 
-	for (var/atom/movable/exposed_atom in exposed_atoms)
+	for (var/atom/movable/exposed_atom as anything in exposed_atoms)
 		qdel(exposed_atoms[exposed_atom])
 
 	turfs = list()
@@ -402,8 +402,8 @@
 			QUEUE_SMOOTH(edge_turf)
 			QUEUE_SMOOTH_NEIGHBORS(edge_turf) // Look. It's not pretty. It's shit. But I can't cache diagonal edge turfs. THE GAME WONT LET ME. IT HARD CRASHES WHEN I TRY. WHAT THE FUCK.
 
-	var/effect_icon_state = "stage[liquid_state]_bottom"
-	for (var/atom/movable/exposed_atom in exposed_atoms)
+	var/effect_icon_state = LIQUID_IMMERSION_ICON_STATE(liquid_state)
+	for (var/atom/movable/exposed_atom as anything in exposed_atoms)
 		var/obj/effect/abstract/liquid_immersion/effect = exposed_atoms[exposed_atom]
 		effect.icon_state = effect_icon_state
 
@@ -438,10 +438,15 @@
 	have_reagents_updated = FALSE
 
 	var/new_liquid_color = mix_color_from_reagents(reagents.reagent_list)
-	if (new_liquid_color != liquid_color)
-		liquid_color = new_liquid_color
-		for (var/turf/target_turf as anything in turfs)
-			target_turf.liquid_effect.color = liquid_color
+	if (new_liquid_color == liquid_color)
+		return
+
+	liquid_color = new_liquid_color
+	for (var/turf/target_turf as anything in turfs)
+		target_turf.liquid_effect.color = liquid_color
+	for (var/atom/movable/exposed_atom as anything in exposed_atoms)
+		var/obj/effect/abstract/liquid_immersion/immersion_effect = exposed_atoms[exposed_atom]
+		immersion_effect.color = liquid_color
 
 /datum/liquid_group/proc/copy_reagents_to(datum/liquid_group/other_liquid_group, amount = reagents.total_volume, no_react = TRUE)
 	if (!other_liquid_group)
@@ -469,7 +474,7 @@
 /datum/liquid_group/proc/add_atom(atom/movable/exposed)
 	RegisterSignal(exposed, COMSIG_QDELETING, PROC_REF(remove_atom))
 
-	exposed_atoms[exposed] = new /obj/effect/abstract/liquid_immersion(null, liquid_state)
+	exposed_atoms[exposed] = new /obj/effect/abstract/liquid_immersion(null, liquid_state, liquid_color)
 	exposed.vis_contents += exposed_atoms[exposed]
 
 	ADD_KEEP_TOGETHER(exposed, "liquid immersion")

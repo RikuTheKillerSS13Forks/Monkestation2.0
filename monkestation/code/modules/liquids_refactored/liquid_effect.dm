@@ -73,14 +73,14 @@ GLOBAL_LIST_INIT(liquid_immersion_blacklist, typecacheof(list(
 
 /obj/effect/abstract/liquid/proc/on_entered(turf/source, atom/movable/exposed, atom/old_loc, list/old_locs)
 	SIGNAL_HANDLER
-	if (QDELETED(exposed) || exposed == src || GLOB.liquid_immersion_blacklist[exposed.type] || liquid_group.turfs[old_loc])
+	if (QDELETED(exposed) || exposed == src || GLOB.liquid_immersion_blacklist[exposed.type] || liquid_group.exposed_atoms[exposed])
 		return
 
 	liquid_group.add_atom(exposed)
 
 /obj/effect/abstract/liquid/proc/on_exited(turf/source, atom/movable/exposed, direction)
 	SIGNAL_HANDLER
-	if (QDELETED(exposed) || exposed == src || GLOB.liquid_immersion_blacklist[exposed.type] || liquid_group.turfs[exposed.loc])
+	if (QDELETED(exposed) || exposed == src || GLOB.liquid_immersion_blacklist[exposed.type] || (exposed.loc != src && liquid_group.turfs[exposed.loc]))
 		return
 
 	liquid_group.remove_atom(exposed)
@@ -100,7 +100,8 @@ GLOBAL_LIST_INIT(liquid_immersion_blacklist, typecacheof(list(
 	desc = "How the fuck are you examining this?"
 
 	icon = 'monkestation/icons/obj/effects/liquid_overlays.dmi'
-	icon_state = "stage1_bottom"
+	icon_state = null
+	alpha = 175
 
 	plane = FLOAT_PLANE
 	layer = WATER_VISUAL_OVERLAY_LAYER
@@ -109,6 +110,7 @@ GLOBAL_LIST_INIT(liquid_immersion_blacklist, typecacheof(list(
 	appearance_flags = RESET_COLOR | RESET_TRANSFORM
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 
-/obj/effect/abstract/liquid_immersion/Initialize(mapload, liquid_state)
+/obj/effect/abstract/liquid_immersion/Initialize(mapload, liquid_state, liquid_color)
 	. = ..()
-	icon_state = "stage[liquid_state]_bottom"
+	icon_state = LIQUID_IMMERSION_ICON_STATE(liquid_state)
+	color = liquid_color

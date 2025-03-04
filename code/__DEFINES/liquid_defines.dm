@@ -21,6 +21,9 @@
 /// Checks if reagents.chem_temp has changed enough for a liquid group to handle reactions.
 #define LIQUID_TEMPERATURE_NEEDS_REAGENT_UPDATE(_liquid_group) (abs(_liquid_group.reagents.chem_temp - _liquid_group.last_reagents_temperature) >= 1)
 
+/// Converts the given liquid state into a corresponding icon state for the liquid immersion overlay.
+#define LIQUID_IMMERSION_ICON_STATE(liquid_state) "stage[liquid_state]_bottom"
+
 /// Gets the amount of liquid the given turf can contain.
 /// This is the actual value, after adjustments. Must be consistent for the entire lifespan of the turf.
 #define LIQUID_GET_TURF_MAXIMUM_VOLUME(_turf) (max(0, LIQUID_BASE_TURF_MAXIMUM_VOLUME - initial(_turf.turf_height) * 10))
