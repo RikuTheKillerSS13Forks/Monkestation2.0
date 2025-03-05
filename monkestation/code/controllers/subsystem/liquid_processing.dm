@@ -26,7 +26,7 @@ SUBSYSTEM_DEF(liquid_processing)
 	while (length(process_cache))
 		var/datum/liquid_group/group = process_cache[length(process_cache)]
 		process_cache.len--
-		if (QDELETED(group))
+		if (QDELETED(group) || !length(group.turfs))
 			continue
 
 		// ACTUAL LIQUID PROCESSING START //
@@ -39,7 +39,36 @@ SUBSYSTEM_DEF(liquid_processing)
 			group.reagents.handle_reactions()
 			group.reagents.flags |= NO_REACT
 
+		group.update_reagent_state()
+
+		var/sample_count = 1 + length(group.turfs) / 50 // For every 50 turfs in the group, take another air sample.
+		var/needs_equalization = FALSE // Only do this expensive ass atmos fuckery if it's actually necessary.
+
+		for (var/i in 1 to sample_count)
+			var/turf/open/air_turf = pick(group.turfs)
+			if (air_turf.air && abs(group.reagents.chem_temp - air_turf.air.temperature) >= 5) // Only if the difference between the liquid group temp and air temp is bigger than 5 kelvin do we care.
+				needs_equalization = TRUE
+				break
+
+		if (needs_equalization)
+			equalize_temperature(group)
+
 		// ACTUAL LIQUID PROCESSING END //
 
 		if (MC_TICK_CHECK)
 			return
+
+/datum/controller/subsystem/liquid_processing/proc/equalize_temperature(datum/liquid_group/group)
+	var/total_energy = group.reagents.chem_temp * group.heat_capacity
+	var/total_heat_capacity = group.heat_capacity
+
+	for (var/turf/open/air_turf as anything in group.turfs)
+		if (air_turf.air)
+			total_energy += air_turf.air.temperature * air_turf.air.heat_capacity()
+			total_heat_capacity += air_turf.air.heat_capacity()
+
+	var/final_temperature = total_energy / total_heat_capacity // conservation of energy nerd shit
+
+	group.reagents.chem_temp = final_temperature
+	for (var/turf/open/air_turf as anything in group.turfs)
+		air_turf.air?.temperature = final_temperature

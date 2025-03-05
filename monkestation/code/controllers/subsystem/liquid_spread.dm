@@ -85,10 +85,9 @@ SUBSYSTEM_DEF(liquid_spread)
 			group.evaporate_edges() // Make sure we don't have enough liquid volume to spread after this. And use multiplication to avoid a division-by-zero at 1 turf.
 			did_something = TRUE
 
-		if (!did_something || group.check_should_exist())
+		if (!did_something || group.check_should_exist()) // We want to update state even if we did fuckall. SSliquid_processing is too slow for this. (and instant costs seven kidneys)
 			if (group.have_reagents_updated || LIQUID_TEMPERATURE_NEEDS_REAGENT_UPDATE(group)) // Micro-optimization. (update_reagent_state proc overhead)
 				group.update_reagent_state()
-				group.update_liquid_state()
 			else if (group.last_liquid_state_turf_count != length(group.turfs)) // Micro-optimization. (update_liquid_state proc overhead)
 				group.update_liquid_state()
 
@@ -105,6 +104,7 @@ SUBSYSTEM_DEF(liquid_spread)
 	dominant_group.edge_turf_spread_directions += recessive_group.edge_turf_spread_directions
 	dominant_group.next_spread_count += recessive_group.next_spread_count
 	dominant_group.exposed_atoms += recessive_group.exposed_atoms
+	dominant_group.heat_capacity += recessive_group.heat_capacity
 
 	LIQUID_UPDATE_MAXIMUM_VOLUME(dominant_group)
 	recessive_group.copy_reagents_to(dominant_group)
@@ -168,7 +168,10 @@ SUBSYSTEM_DEF(liquid_spread)
 		new_group.maximum_volume_per_turf = splitting_group.maximum_volume_per_turf
 		LIQUID_UPDATE_MAXIMUM_VOLUME(new_group)
 
-		splitting_group.copy_reagents_to(new_group, splitting_group.reagents.total_volume * (length(new_group_turfs) / length(splitting_group.turfs)))
+		var/turf_ratio = length(new_group_turfs) / length(splitting_group.turfs)
+
+		new_group.heat_capacity = splitting_group.heat_capacity * turf_ratio
+		splitting_group.copy_reagents_to(new_group, splitting_group.reagents.total_volume * turf_ratio)
 
 		for (var/turf/old_edge_turf as anything in splitting_group.edge_turfs) // Transferring edge turfs is important, recalculating all of them would be a performance NIGHTMARE.
 			if (new_group_turfs[old_edge_turf])

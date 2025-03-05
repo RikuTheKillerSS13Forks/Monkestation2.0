@@ -26,6 +26,10 @@
 		COMSIG_REAGENTS_DEL_REAGENT,
 	)
 
+	/// Cached value of reagents.heat_capacity()
+	/// Updated whenever update_reagent_state() is called
+	var/heat_capacity = 0
+
 	/// Cached value of reagents.chem_temp from the last time reagent state was updated.
 	/// Updated to the value of reagents.chem_temp if it differs by at least 1 degree in update_reagent_state()
 	var/last_reagents_temperature = 0
@@ -105,6 +109,9 @@
 
 	LIQUID_UPDATE_MAXIMUM_VOLUME(src)
 
+	if (!reagents.my_atom)
+		reagents.my_atom = target_turf
+
 	return TRUE
 
 /// Removes a turf from the liquid group. Does barely any sanity checks.
@@ -134,6 +141,9 @@
 
 	if (reagents.total_volume > reagents.maximum_volume) // Total volume should never exceed maximum volume.
 		reagents.remove_all(reagents.total_volume - reagents.maximum_volume) // So we obliterate the excess.
+
+	if (reagents.my_atom == target_turf)
+		reagents.my_atom = length(turfs) ? pick(turfs) : null
 
 /// Removes all turfs from the liquid group. Very very fast.
 /// Not perfect and will break smoothing for adjacent liquid groups.
@@ -402,7 +412,7 @@
 			QUEUE_SMOOTH(edge_turf)
 			QUEUE_SMOOTH_NEIGHBORS(edge_turf) // Look. It's not pretty. It's shit. But I can't cache diagonal edge turfs. THE GAME WONT LET ME. IT HARD CRASHES WHEN I TRY. WHAT THE FUCK.
 
-	var/effect_icon_state = LIQUID_IMMERSION_ICON_STATE(liquid_state)
+	var/effect_icon_state = LIQUID_IMMERSION_ICON_STATE(liquid_state) // Cache the string operation for obvious reasons.
 	for (var/atom/movable/exposed_atom as anything in exposed_atoms)
 		var/obj/effect/abstract/liquid_immersion/effect = exposed_atoms[exposed_atom]
 		effect.icon_state = effect_icon_state
@@ -426,9 +436,10 @@
 	have_reagents_updated = TRUE
 
 /// Updates things directly reliant on the reagent holder.
-/// Ideally don't call this outside of process_spread() it can stop update_liquid_state() from being called.
-/// You're free to call both at once though, keep in mind the cost of doing that depending on what you're doing.
+/// Will call update_liquid_state() as well so be aware of that.
 /datum/liquid_group/proc/update_reagent_state()
+	update_liquid_state() // These two always have to get called together.
+
 	if (LIQUID_TEMPERATURE_NEEDS_REAGENT_UPDATE(src))
 		last_reagents_temperature = reagents.chem_temp
 		handle_reactions_next_process = TRUE
@@ -436,6 +447,8 @@
 	if (!have_reagents_updated)
 		return
 	have_reagents_updated = FALSE
+
+	heat_capacity = reagents.heat_capacity()
 
 	var/new_liquid_color = mix_color_from_reagents(reagents.reagent_list)
 	if (new_liquid_color == liquid_color)
