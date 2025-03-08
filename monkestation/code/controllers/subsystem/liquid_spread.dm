@@ -37,9 +37,6 @@ SUBSYSTEM_DEF(liquid_spread)
 		GLOB.liquid_combine_queue = list()
 		GLOB.liquid_split_queue = list()
 
-	if (length(spread_cache))
-		process_spread(wait * 0.1)
-
 	while (length(combine_cache))
 		var/turf/turf_to_check = combine_cache[length(combine_cache)]
 		combine_cache -= turf_to_check
@@ -48,7 +45,7 @@ SUBSYSTEM_DEF(liquid_spread)
 
 		for (var/direction in GLOB.cardinals)
 			var/turf/adjacent_turf = get_step(turf_to_check, direction)
-			if (adjacent_turf.liquid_group && adjacent_turf.liquid_group != turf_to_check.liquid_group && TURFS_CAN_SHARE(turf_to_check, adjacent_turf))
+			if (adjacent_turf.liquid_group && adjacent_turf.liquid_group != turf_to_check.liquid_group && length(adjacent_turf.liquid_group.turfs) && TURFS_CAN_SHARE(turf_to_check, adjacent_turf))
 				combine_liquid_groups(turf_to_check.liquid_group, adjacent_turf.liquid_group)
 
 		if (MC_TICK_CHECK)
@@ -61,6 +58,9 @@ SUBSYSTEM_DEF(liquid_spread)
 			split_liquid_group(splitting_group)
 		if (MC_TICK_CHECK)
 			return
+
+	if (length(spread_cache)) // Process this last, since process_spread handles color and liquid state updates. (and those need a change after combining liquid groups)
+		process_spread(wait * 0.1)
 
 /datum/controller/subsystem/liquid_spread/proc/process_spread(seconds_per_tick)
 	while (length(spread_cache))
@@ -112,12 +112,6 @@ SUBSYSTEM_DEF(liquid_spread)
 	for (var/turf/recessive_group_turf as anything in recessive_group.turfs)
 		recessive_group_turf.liquid_group = dominant_group
 		recessive_group_turf.liquid_effect.liquid_group = dominant_group
-
-	// If you don't check whether they're equal, shit will just flash white for some reason.
-	// And I don't want to do a string check 2 quadrillion times, so this is what you get.
-	if (recessive_group.liquid_color != dominant_group.liquid_color)
-		for (var/turf/recessive_group_turf as anything in recessive_group.turfs)
-			recessive_group_turf.liquid_effect.color = dominant_group.liquid_color
 
 	for (var/atom/recessive_group_atom as anything in recessive_group.exposed_atoms)
 		recessive_group.UnregisterSignal(recessive_group_atom, COMSIG_QDELETING)
