@@ -1067,7 +1067,7 @@
 		to_chat(user, span_notice("You begin to dump out the tray's nutrient mix."))
 		if(do_after(user, 4 SECONDS, target = src))
 			playsound(user.loc, 'sound/effects/slosh.ogg', 50, TRUE, -1)
-			/* /// LIQUID REFACTOR IN PROGRESS ///
+
 			//dump everything on the floor
 			var/turf/user_loc = user.loc
 			if(istype(user_loc, /turf/open))
@@ -1075,7 +1075,7 @@
 			else
 				user_loc = get_step_towards(user_loc, src)
 				user_loc.add_liquid_from_reagents(reagents)
-			*/ /// LIQUID REFACTOR IN PROGRESS ///
+
 			adjust_plant_nutriments(100) //PURGE
 	else
 		to_chat(user, span_warning("The tray's nutrient mix is already empty!"))

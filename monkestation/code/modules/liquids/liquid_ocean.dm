@@ -217,7 +217,7 @@ GLOBAL_LIST_INIT(initalized_ocean_areas, list())
 	var/turf/turf = get_turf(found_door)
 
 	if(turf.can_atmos_pass())
-		turf.add_liquid_list(ocean_reagents, FALSE, ocean_temp)
+		turf.add_liquid_from_list(ocean_reagents, FALSE, ocean_temp)
 	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 /turf/open/floor/plating/ocean/proc/process_turf()
@@ -237,7 +237,7 @@ GLOBAL_LIST_INIT(initalized_ocean_areas, list())
 				SSliquids.active_ocean_turfs -= src
 			return
 
-		directional_turf.add_liquid_list(ocean_reagents, FALSE, ocean_temp)
+		directional_turf.add_liquid_from_list(ocean_reagents, FALSE, ocean_temp)
 	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 /turf/open/floor/plating/ocean/proc/rebuild_adjacent()

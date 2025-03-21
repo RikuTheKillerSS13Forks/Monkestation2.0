@@ -52,14 +52,12 @@
 
 ///Checks whether or not we should clean.
 /obj/item/mop/proc/should_clean(datum/cleaning_source, atom/atom_to_clean, mob/living/cleaner)
-	/* /// LIQUID REFACTOR IN PROGRESS ///
 	var/turf/turf_to_clean = atom_to_clean
 
 	// Disable normal cleaning if there are liquids.
-	if(isturf(atom_to_clean) && turf_to_clean.liquids)
+	if(isturf(atom_to_clean) && turf_to_clean.liquid_group)
 		to_chat(cleaner, span_warning("It would be quite difficult to clean this with a pool of liquids on top!"))
 		return DO_NOT_CLEAN
-	*/  /// LIQUID REFACTOR IN PROGRESS ///
 
 	if(clean_blacklist[atom_to_clean.type])
 		return DO_NOT_CLEAN

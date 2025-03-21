@@ -92,7 +92,7 @@
 	if(!isturf(loc))
 		return
 	var/turf/T = loc
-	T.add_liquid_list(reagent_list, FALSE, temp)
+	T.add_liquid_from_list(reagent_list, FALSE, temp)
 	*/ /// LIQUID REFACTOR IN PROGRESS ///
 
 /obj/effect/spawner/liquids_spawner/acid_puddle

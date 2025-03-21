@@ -55,5 +55,5 @@
 		return
 	var/list/reagent_list = list()
 	reagent_list[reagent_id] = amount
-	parent_turf?.add_liquid_list(reagent_list, FALSE, T20C)
+	parent_turf?.add_liquid_from_list(reagent_list, FALSE, T20C)
 	*/ /// LIQUID REFACTOR IN PROGRESS ///

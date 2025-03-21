@@ -12,5 +12,5 @@
 
 		if(istype(mob.loc,/turf/open))
 			var/turf/open/turf = mob.loc
-			turf.add_liquid_list(list(/datum/reagent/water = 20), TRUE)
+			turf.add_liquid_from_list(list(/datum/reagent/water = 20), TRUE)
 	*/ /// LIQUID REFACTOR IN PROGRESS ///

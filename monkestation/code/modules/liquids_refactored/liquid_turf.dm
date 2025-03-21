@@ -32,14 +32,64 @@
 			liquid_group.copy_reagents_to(copy_to_turf.liquid_group, LIQUID_GET_VOLUME_PER_TURF(liquid_group))
 
 /// Tries to add the given amount of liquid to the turf and returns the amount added, if any.
-/turf/proc/add_liquid(reagent_id, amount, no_react = TRUE)
-	if (!reagent_id || !isnum(amount) || amount <= 0)
+/turf/proc/add_liquid(reagent_type, amount, chem_temp = T20C, no_react = TRUE)
+	if (!reagent_type || !isnum(amount) || amount <= 0 || !LIQUID_CAN_ENTER_TURF_TYPE(src))
 		return 0
 
 	if (!liquid_group)
 		new /datum/liquid_group(src) // This sets our liquid group on init.
 
-	return liquid_group?.reagents.add_reagent(reagent_id, amount, no_react = no_react)
+	return liquid_group?.reagents.add_reagent(reagent_type, amount, reagtemp = chem_temp, no_react = no_react)
+
+/// Adds liquids from an associative list in (reagent_type = volume) format.
+/// Returns the total amount of reagents that were successfully added, if any.
+/turf/proc/add_liquid_from_list(list/reagent_list, chem_temp = T20C, no_react = TRUE)
+	if (!islist(reagent_list) || !length(reagent_list) || !LIQUID_CAN_ENTER_TURF_TYPE(src))
+		return 0
+
+	if (!liquid_group)
+		new /datum/liquid_group(src) // This sets our liquid group on init.
+		if (!liquid_group)
+			return 0
+
+	var/total_incoming_volume = 0
+
+	for (var/reagent_type in reagent_list)
+		total_incoming_volume += reagent_list[reagent_type]
+
+	if (total_incoming_volume <= 0)
+		return 0
+
+	var/available_volume = liquid_group.reagents.maximum_volume - liquid_group.reagents.total_volume
+
+	if (available_volume <= 0)
+		return 0
+
+	var/incoming_volume_multiplier = min(1, available_volume / total_incoming_volume)
+
+	for (var/reagent_type in reagent_list)
+		. += liquid_group.reagents.add_reagent(reagent_type, amount = reagent_list[reagent_type] * incoming_volume_multiplier, reagtemp = chem_temp, no_react = no_react)
+
+/// Adds liquids from a reagent holder. If amount or chem temp are null, they are pulled from the holder.
+/// Returns the total amount of reagents that were successfully added, if any.
+/turf/proc/add_liquid_from_reagents(datum/reagents/source, amount = null, chem_temp = null, no_react = TRUE)
+	if (!istype(source))
+		return 0
+
+	if (isnull(amount))
+		amount = source.total_volume
+
+	if (!isnum(amount) || amount <= 0)
+		return 0
+
+	if (isnull(chem_temp))
+		chem_temp = source.chem_temp
+
+	var/reagent_list = list() // Assoc list (reagent type = volume)
+	for (var/datum/reagent/reagent as anything in source.reagent_list)
+		reagent_list[reagent] = reagent.volume
+
+	. += add_liquid_from_list(reagent_list)
 
 /// Tries to remove the given amount of liquid from the turf and returns the amount removed, if any.
 /// This will not clear the liquids from the turf.
