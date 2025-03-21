@@ -57,6 +57,8 @@
 #define TRAIT_ZOMBIE_CONSUMED "zombie_consumed"
 /// Mob can't be fed from by vampires.
 #define TRAIT_FEED_PROTECTION "feed_protection"
+/// Mob is a vampire in a frenzy.
+#define TRAIT_VAMPIRE_FRENZY "vampire_frenzy"
 /// Mob is a vampire exposed to starlight.
 #define TRAIT_VAMPIRE_STARLIT "vampire_starlit"
 /// Superficial gene analysis will report genes even if the mob has none.

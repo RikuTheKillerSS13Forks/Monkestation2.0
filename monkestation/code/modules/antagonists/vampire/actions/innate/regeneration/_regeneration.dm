@@ -7,7 +7,7 @@
 	is_active = TRUE
 
 	check_flags = NONE
-	vampire_check_flags = NONE
+	vampire_check_flags = NONE // Regeneration is a special boy that doesn't toggle off even when you can't use it. (because I'd tear my hair out if I had to keep toggling it every time)
 
 /datum/action/cooldown/vampire/regeneration/toggle_on()
 	. = ..()
@@ -39,7 +39,7 @@
 		regen_rate *= 0.5
 
 	if (HAS_TRAIT(user, TRAIT_VAMPIRE_STARLIT))
-		regen_rate *= 0.7
+		regen_rate *= 0.7 // Don't completely stop regen, otherwise vamps can be round removed without using stakes by just chucking them in space.
 
 	var/total_cost = 0
 	total_cost += handle_limb_regen(regen_rate)

@@ -19,7 +19,7 @@
 	var/is_active = FALSE
 
 	/// These are defined in 'code/_DEFINES/monkestation~/vampires.dm'
-	var/vampire_check_flags = VAMPIRE_AC_LIFEFORCE | VAMPIRE_AC_FRENZY | VAMPIRE_AC_MASQUERADE
+	var/vampire_check_flags = VAMPIRE_AC_LIFEFORCE | VAMPIRE_AC_FRENZY | VAMPIRE_AC_MASQUERADE | VAMPIRE_AC_THIRST
 
 	/// The amount of lifeforce this costs to activate.
 	var/lifeforce_cost = 0
@@ -45,12 +45,15 @@
 		else
 			is_active = FALSE
 
+	RegisterSignal(user, SIGNAL_ADDTRAIT(TRAIT_VAMPIRE_FRENZY), PROC_REF(on_frenzy_added))
 	RegisterSignal(user, SIGNAL_ADDTRAIT(TRAIT_VAMPIRE_STARLIT), PROC_REF(on_starlit_added))
 	RegisterSignal(user, COMSIG_MOB_STATCHANGE, PROC_REF(on_stat_changed), override = TRUE) // This overrides the default stat change check.
 
 /datum/action/cooldown/vampire/Remove(mob/removed_from)
 	if (is_active)
 		toggle_off()
+
+	UnregisterSignal(user, list(SIGNAL_ADDTRAIT(TRAIT_VAMPIRE_FRENZY), SIGNAL_ADDTRAIT(TRAIT_VAMPIRE_STARLIT)))
 
 	. = ..()
 	user = null
@@ -69,7 +72,7 @@
 		if (feedback)
 			user.balloon_alert(user, "not while in masquerade!")
 		return FALSE
-	if ((vampire_check_flags & VAMPIRE_AC_FRENZY) && antag_datum.current_lifeforce <= 0)
+	if ((vampire_check_flags & VAMPIRE_AC_FRENZY) && HAS_TRAIT(user, TRAIT_VAMPIRE_FRENZY))
 		if (feedback)
 			user.balloon_alert(user, "not while in a frenzy!")
 		return FALSE
@@ -108,13 +111,19 @@
 
 /datum/action/cooldown/vampire/proc/on_lifeforce_changed(datum/source, new_amount, old_amount)
 	SIGNAL_HANDLER
-	if ((vampire_check_flags & VAMPIRE_AC_FRENZY) && new_amount <= 0 && is_toggleable && is_active)
+	if ((vampire_check_flags & VAMPIRE_AC_THIRST) && new_amount <= 0 && is_toggleable && is_active)
+		toggle_off()
+	build_all_button_icons(UPDATE_BUTTON_STATUS)
+
+/datum/action/cooldown/vampire/proc/on_frenzy_added(datum/source)
+	SIGNAL_HANDLER
+	if ((vampire_check_flags & VAMPIRE_AC_THIRST) && is_toggleable && is_active)
 		toggle_off()
 	build_all_button_icons(UPDATE_BUTTON_STATUS)
 
 /datum/action/cooldown/vampire/proc/on_starlit_added(datum/source)
 	SIGNAL_HANDLER
-	if ((vampire_check_flags & VAMPIRE_AC_STARLIT) && HAS_TRAIT(user, TRAIT_VAMPIRE_STARLIT) && is_toggleable && is_active)
+	if ((vampire_check_flags & VAMPIRE_AC_STARLIT) && is_toggleable && is_active)
 		toggle_off()
 	build_all_button_icons(UPDATE_BUTTON_STATUS)
 
