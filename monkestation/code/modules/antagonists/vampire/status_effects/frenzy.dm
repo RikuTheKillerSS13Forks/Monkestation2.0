@@ -14,7 +14,7 @@
 	user.add_actionspeed_modifier(/datum/actionspeed_modifier/vampire_frenzy)
 
 	user.visible_message(
-		message = span_danger("[user] looks exhausted, yet renewed as they succumb to a frenzy!"),
+		message = span_danger("[user] looks exhausted, yet renewed as they enter a frenzy!"),
 		self_message = span_warning("You succumb to your vampiric thirst, entering a frenzy!"),
 	)
 
