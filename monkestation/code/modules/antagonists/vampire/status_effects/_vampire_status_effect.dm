@@ -2,8 +2,11 @@
 	icon = 'monkestation/icons/vampires/vampire_actions.dmi'
 	alerttooltipstyle = "cult"
 
+	var/background_icon = 'monkestation/icons/vampires/vampire_actions.dmi'
+	var/background_icon_state = "status_effect_bg"
+
 /atom/movable/screen/alert/status_effect/vampire/Initialize(mapload, datum/hud/hud_owner)
-	var/image/underlay = image(icon = 'monkestation/icons/vampires/vampire_actions.dmi', icon_state = "status_effect_bg")
+	var/image/underlay = image(icon = background_icon, icon_state = background_icon_state)
 
 	if(clickable_glow)
 		underlay.add_filter("clickglow", 2, outline_filter(color = COLOR_GOLD, size = 1))

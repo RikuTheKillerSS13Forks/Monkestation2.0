@@ -20,10 +20,10 @@
 	else if (HAS_TRAIT(user, TRAIT_VAMPIRE_FRENZY))
 		user.remove_status_effect(/datum/status_effect/vampire/frenzy)
 
-	/* Replace with a thirst status effect.
-	if (current_lifeforce <= 0 && !HAS_TRAIT(user, TRAIT_NODEATH)) // Has to be before adjusting lifeforce in case 'lifeforce_per_second' is positive.
-		user.death(gibbed = FALSE, cause_of_death = "vampiric malnutrition") // Replace this with frenzy later.
-		return
-	*/
+	if (current_lifeforce <= 0)
+		if (!HAS_TRAIT(user, TRAIT_VAMPIRE_THIRST))
+			user.apply_status_effect(/datum/status_effect/vampire/thirst)
+	else if (HAS_TRAIT(user, TRAIT_VAMPIRE_THIRST))
+		user.remove_status_effect(/datum/status_effect/vampire/thirst)
 
-	adjust_lifeforce(lifeforce_per_second * DELTA_WORLD_TIME(SSprocessing)) // Even a 5% difference could make your lifeforce last several minutes more or less.
+	adjust_lifeforce(lifeforce_per_second * DELTA_WORLD_TIME(SSprocessing)) // Even a 5% difference could make your lifeforce last several minutes more or less, so we use delta time.

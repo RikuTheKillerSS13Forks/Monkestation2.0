@@ -6598,6 +6598,7 @@
 #include "monkestation\code\modules\antagonists\vampire\status_effects\_vampire_status_effect.dm"
 #include "monkestation\code\modules\antagonists\vampire\status_effects\frenzy.dm"
 #include "monkestation\code\modules\antagonists\vampire\status_effects\starlit.dm"
+#include "monkestation\code\modules\antagonists\vampire\status_effects\thirst.dm"
 #include "monkestation\code\modules\antagonists\vampire\status_effects\torpor.dm"
 #include "monkestation\code\modules\antagonists\vampire\wounds\vampire_bite_mark.dm"
 #include "monkestation\code\modules\antagonists\wizard\wizard.dm"

@@ -45,6 +45,7 @@
 		else
 			is_active = FALSE
 
+	RegisterSignal(user, SIGNAL_ADDTRAIT(TRAIT_VAMPIRE_THIRST), PROC_REF(on_thirst_added))
 	RegisterSignal(user, SIGNAL_ADDTRAIT(TRAIT_VAMPIRE_FRENZY), PROC_REF(on_frenzy_added))
 	RegisterSignal(user, SIGNAL_ADDTRAIT(TRAIT_VAMPIRE_STARLIT), PROC_REF(on_starlit_added))
 	RegisterSignal(user, COMSIG_MOB_STATCHANGE, PROC_REF(on_stat_changed), override = TRUE) // This overrides the default stat change check.
@@ -53,7 +54,7 @@
 	if (is_active)
 		toggle_off()
 
-	UnregisterSignal(user, list(SIGNAL_ADDTRAIT(TRAIT_VAMPIRE_FRENZY), SIGNAL_ADDTRAIT(TRAIT_VAMPIRE_STARLIT)))
+	UnregisterSignal(user, list(SIGNAL_ADDTRAIT(TRAIT_VAMPIRE_THIRST), SIGNAL_ADDTRAIT(TRAIT_VAMPIRE_FRENZY), SIGNAL_ADDTRAIT(TRAIT_VAMPIRE_STARLIT)))
 
 	. = ..()
 	user = null
@@ -71,6 +72,10 @@
 	if ((vampire_check_flags & VAMPIRE_AC_MASQUERADE) && antag_datum.masquerade_enabled)
 		if (feedback)
 			user.balloon_alert(user, "not while in masquerade!")
+		return FALSE
+	if ((vampire_check_flags & VAMPIRE_AC_THIRST) && HAS_TRAIT(user, TRAIT_VAMPIRE_THIRST))
+		if (feedback)
+			user.balloon_alert(user, "not without lifeforce!")
 		return FALSE
 	if ((vampire_check_flags & VAMPIRE_AC_FRENZY) && HAS_TRAIT(user, TRAIT_VAMPIRE_FRENZY))
 		if (feedback)
@@ -115,9 +120,15 @@
 		toggle_off()
 	build_all_button_icons(UPDATE_BUTTON_STATUS)
 
-/datum/action/cooldown/vampire/proc/on_frenzy_added(datum/source)
+/datum/action/cooldown/vampire/proc/on_thirst_added(datum/source)
 	SIGNAL_HANDLER
 	if ((vampire_check_flags & VAMPIRE_AC_THIRST) && is_toggleable && is_active)
+		toggle_off()
+	build_all_button_icons(UPDATE_BUTTON_STATUS)
+
+/datum/action/cooldown/vampire/proc/on_frenzy_added(datum/source)
+	SIGNAL_HANDLER
+	if ((vampire_check_flags & VAMPIRE_AC_FRENZY) && is_toggleable && is_active)
 		toggle_off()
 	build_all_button_icons(UPDATE_BUTTON_STATUS)
 
