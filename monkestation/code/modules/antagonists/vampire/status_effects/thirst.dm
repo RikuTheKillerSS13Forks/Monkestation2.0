@@ -27,6 +27,6 @@
 	if (SPT_PROB(10, seconds_per_tick))
 		user.emote("shiver")
 	if (duration < world.time)
-		duration = max(duration, world.time) // The status effect never actually expires on its own.
+		duration = world.time // The status effect never actually expires on its own.
 		if (!HAS_TRAIT(user, TRAIT_NODEATH))
 			user.death(gibbed = FALSE, cause_of_death = "vampiric malnutrition")
