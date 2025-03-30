@@ -7,8 +7,7 @@
 /atom/movable/screen/alert/status_effect/vampire/torpor/Click(location, control, params)
 	. = ..()
 	if (!.)
-		return
-	qdel(attached_effect)
+		qdel(attached_effect)
 
 /datum/status_effect/vampire/torpor
 	id = "vampire_torpor"
@@ -18,10 +17,8 @@
 /datum/status_effect/vampire/torpor/on_apply()
 	. = ..()
 	if (!.)
-		return
-
-	ADD_TRAIT(user, TRAIT_KNOCKEDOUT, REF(src))
+		ADD_TRAIT(user, TRAIT_KNOCKEDOUT, TRAIT_STATUS_EFFECT(id))
 
 /datum/status_effect/vampire/torpor/on_remove()
-	REMOVE_TRAITS_IN(user, REF(src))
+	REMOVE_TRAITS_IN(user, TRAIT_STATUS_EFFECT(id))
 	user.Sleeping(5 SECONDS)

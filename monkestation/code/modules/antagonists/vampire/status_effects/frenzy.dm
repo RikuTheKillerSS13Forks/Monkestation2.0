@@ -10,7 +10,7 @@
 
 /datum/status_effect/vampire/frenzy/on_apply()
 	. = ..()
-	ADD_TRAIT(user, TRAIT_VAMPIRE_FRENZY, REF(src)) // Still uses a trait for faster checks and the access to signals it gives you.
+	ADD_TRAIT(user, TRAIT_VAMPIRE_FRENZY, TRAIT_STATUS_EFFECT(id)) // Still uses a trait for faster checks and the access to signals it gives you.
 	user.add_actionspeed_modifier(/datum/actionspeed_modifier/vampire_frenzy)
 
 	user.visible_message(
@@ -19,7 +19,7 @@
 	)
 
 /datum/status_effect/vampire/frenzy/on_remove()
-	REMOVE_TRAIT(user, TRAIT_VAMPIRE_FRENZY, REF(src))
+	REMOVE_TRAIT(user, TRAIT_VAMPIRE_FRENZY, TRAIT_STATUS_EFFECT(id))
 	user.remove_actionspeed_modifier(/datum/actionspeed_modifier/vampire_frenzy)
 
 	user.visible_message(

@@ -10,7 +10,7 @@
 
 /datum/status_effect/vampire/starlit/on_apply()
 	. = ..()
-	ADD_TRAIT(user, TRAIT_VAMPIRE_STARLIT, REF(src)) // Still uses a trait for faster checks and the access to signals it gives you.
+	ADD_TRAIT(user, TRAIT_VAMPIRE_STARLIT, TRAIT_STATUS_EFFECT(id)) // Still uses a trait for faster checks and the access to signals it gives you.
 	user.add_movespeed_modifier(/datum/movespeed_modifier/vampire_starlit)
 	user.add_actionspeed_modifier(/datum/actionspeed_modifier/vampire_starlit)
 	user.physiology?.brute_mod *= 1.5
@@ -23,7 +23,7 @@
 	)
 
 /datum/status_effect/vampire/starlit/on_remove()
-	REMOVE_TRAIT(user, TRAIT_VAMPIRE_STARLIT, REF(src))
+	REMOVE_TRAIT(user, TRAIT_VAMPIRE_STARLIT, TRAIT_STATUS_EFFECT(id))
 	user.remove_movespeed_modifier(/datum/movespeed_modifier/vampire_starlit)
 	user.remove_actionspeed_modifier(/datum/actionspeed_modifier/vampire_starlit)
 	user.physiology?.brute_mod /= 1.5
