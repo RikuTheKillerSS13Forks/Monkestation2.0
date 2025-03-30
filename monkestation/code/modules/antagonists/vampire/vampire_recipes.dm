@@ -47,10 +47,9 @@
 	category = CAT_STRUCTURE
 	always_available = FALSE // Vampire only.
 
-/*
-/datum/crafting_recipe/vassalrack
+/datum/crafting_recipe/persuasion_rack
 	name = "Persuasion Rack"
-	result = /obj/structure/bloodsucker/vassalrack
+	result = /obj/structure/persuasion_rack
 	tool_behaviors = list(TOOL_WELDER, TOOL_WRENCH)
 	reqs = list(
 		/obj/item/stack/sheet/mineral/wood = 3,
@@ -61,7 +60,7 @@
 	category = CAT_STRUCTURE
 	always_available = FALSE
 
-
+/*
 /datum/crafting_recipe/candelabrum
 	name = "Candelabrum"
 	result = /obj/structure/bloodsucker/candelabrum

@@ -3,7 +3,7 @@
 		/datum/crafting_recipe/meatcoffin,
 		/datum/crafting_recipe/metalcoffin,
 		/datum/crafting_recipe/securecoffin,
-		//datum/crafting_recipe/vassalrack,
+		/datum/crafting_recipe/persuasion_rack,
 		//datum/crafting_recipe/candelabrum,
 		//datum/crafting_recipe/bloodthrone,
 	)
