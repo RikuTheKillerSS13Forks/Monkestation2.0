@@ -14,6 +14,7 @@
 		TRAIT_RESISTCOLD, // Otherwise you can chuck vamps into space to permanently kill them, and they also get massive debuffs in space to compensate for this.
 		TRAIT_RESISTLOWPRESSURE, // Ditto.
 		TRAIT_NO_ORGAN_DECAY,
+		TRAIT_NO_ZOMBIFY, // Can't zombify what's already undead.
 	)
 
 	/// Traits that vampires only have while out of masquerade.
