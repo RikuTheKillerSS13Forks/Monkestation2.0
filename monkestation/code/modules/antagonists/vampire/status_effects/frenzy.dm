@@ -13,6 +13,13 @@
 	ADD_TRAIT(user, TRAIT_VAMPIRE_FRENZY, TRAIT_STATUS_EFFECT(id)) // Still uses a trait for faster checks and the access to signals it gives you.
 	user.add_actionspeed_modifier(/datum/actionspeed_modifier/vampire_frenzy)
 
+	user.add_filter(id, 1, list("type" = "outline", "color" = "#FF0000", "alpha" = 100, "size" = 1))
+
+	var/filter = user.get_filter(id)
+
+	animate(filter, time = 0.5 SECONDS, loop = -1, easing = SINE_EASING, flags = ANIMATION_PARALLEL, alpha = 200, size = 1.5)
+	animate(time = 0.5 SECONDS, easing = SINE_EASING, alpha = 100, size = 1)
+
 	user.visible_message(
 		message = span_danger("[user] looks exhausted, yet renewed as they enter a frenzy!"),
 		self_message = span_warning("You succumb to your vampiric thirst, entering a frenzy!"),
@@ -21,6 +28,9 @@
 /datum/status_effect/vampire/frenzy/on_remove()
 	REMOVE_TRAIT(user, TRAIT_VAMPIRE_FRENZY, TRAIT_STATUS_EFFECT(id))
 	user.remove_actionspeed_modifier(/datum/actionspeed_modifier/vampire_frenzy)
+
+	user.remove_filter(id)
+
 
 	user.visible_message(
 		message = span_danger("[user] calms down from their frenzy."),

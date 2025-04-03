@@ -227,6 +227,9 @@
 	var/delta_time = DELTA_WORLD_TIME(SSmobs)
 	var/feed_rate = delta_time / (is_neck_feed ? 30 : 60) // Amount to take per second as a 0-1 percentage.
 
+	if (HAS_TRAIT(user, TRAIT_VAMPIRE_FRENZY))
+		feed_rate *= 2
+
 	if (victim_antag_datum)
 		handle_lifeforce_feed(feed_rate, victim_antag_datum)
 	else
