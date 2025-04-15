@@ -13,6 +13,7 @@
 		"comp_comparison",
 		"comp_concat",
 		"comp_concat_list",
+		"comp_container_interface"
 		"comp_decimal_convert",
 		"comp_delay",
 		"comp_direction",
