@@ -451,6 +451,11 @@
 	id = "comp_container_interface"
 	build_path = /obj/item/circuit_component/variable/container_interface
 
+/datum/design/component/container_information
+	name = "Container Information"
+	id = "comp_container_information"
+	build_path = /obj/item/circuit_component/variable/container_information
+
 /datum/design/compact_remote_shell
 	name = "Compact Remote Shell"
 	desc = "A handheld shell with one big button."
