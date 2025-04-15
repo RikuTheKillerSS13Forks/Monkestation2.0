@@ -23,6 +23,7 @@
 	)
 
 /obj/item/integrated_circuit/module
+	max_reagent_containers = 0
 	var/obj/item/circuit_component/module/attached_module
 
 /obj/item/integrated_circuit/module/ui_host(mob/user)
@@ -227,7 +228,7 @@
 
 /obj/item/circuit_component/module/ui_static_data(mob/user)
 	. = list()
-	.["global_port_types"] = GLOB.wiremod_basic_types
+	.["global_port_types"] = GLOB.wiremod_variable_types
 
 /obj/item/circuit_component/module/attackby(obj/item/I, mob/living/user, params)
 	if(istype(I, /obj/item/circuit_component))

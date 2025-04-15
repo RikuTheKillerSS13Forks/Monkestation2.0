@@ -74,9 +74,4 @@
 	after_work_call()
 
 /obj/item/circuit_component/chem/internal_tank/after_work_call()
-	clear_all_temp_ports()
-
-/obj/item/circuit_component/chem/internal_tank/clear_all_temp_ports()
-	chemical_output.value = null
-	for(var/datum/port/input/input as anything in chemical_inputs)
-		input.value = null
+	//clear_all_temp_ports()

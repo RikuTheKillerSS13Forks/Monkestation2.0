@@ -58,9 +58,4 @@
 	reagent_holder.clear_reagents()
 
 /obj/item/circuit_component/chem/mixer/after_work_call()
-	clear_all_temp_ports()
-
-/obj/item/circuit_component/chem/mixer/clear_all_temp_ports()
-	for(var/datum/port/input/input as anything in chemical_inputs)
-		input.value = null
-	output.value = null
+	//clear_all_temp_ports()

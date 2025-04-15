@@ -70,9 +70,4 @@
 	chemical_output.set_output(weighted_output)
 
 /obj/item/circuit_component/chem/weighted_splitter/after_work_call()
-	clear_all_temp_ports()
-
-/obj/item/circuit_component/chem/weighted_splitter/clear_all_temp_ports()
-	chemical_output.value = null
-	non_weighted_output.value = null
-	chemical_input.value = null
+	//clear_all_temp_ports()

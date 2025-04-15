@@ -94,9 +94,5 @@
 	chemical_tank.after_reagent_add()
 
 /obj/item/circuit_component/chem/output/after_work_call()
-	clear_all_temp_ports()
-
-/obj/item/circuit_component/chem/output/clear_all_temp_ports()
-	for(var/datum/port/input/input as anything in chemical_inputs)
-		input.value = null
+	//clear_all_temp_ports()
 

@@ -343,7 +343,7 @@ GLOBAL_LIST_EMPTY_TYPED(integrated_circuits, /obj/item/integrated_circuit)
 
 /obj/item/integrated_circuit/ui_static_data(mob/user)
 	. = list()
-	.["global_basic_types"] = GLOB.wiremod_basic_types
+	.["global_basic_types"] = GLOB.wiremod_variable_types
 	.["screen_x"] = screen_x
 	.["screen_y"] = screen_y
 
@@ -616,7 +616,7 @@ GLOBAL_LIST_EMPTY_TYPED(integrated_circuits, /obj/item/integrated_circuit)
 			if(variable_identifier == "")
 				return TRUE
 			var/variable_datatype = params["variable_datatype"]
-			if(!(variable_datatype in GLOB.wiremod_basic_types))
+			if(!(variable_datatype in GLOB.wiremod_variable_types))
 				return
 			if(params["is_list"])
 				variable_datatype = PORT_TYPE_LIST(variable_datatype)

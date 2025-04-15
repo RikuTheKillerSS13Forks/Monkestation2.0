@@ -140,8 +140,4 @@
 	chemical_tank.reagents.add_reagent_list(chemical_list, temperature = sane_heat)
 
 /obj/item/circuit_component/chem/output_manufacturer/after_work_call()
-	clear_all_temp_ports()
-
-/obj/item/circuit_component/chem/output_manufacturer/clear_all_temp_ports()
-	for(var/datum/port/input/input as anything in chemical_inputs)
-		input.value = null
+	//clear_all_temp_ports()

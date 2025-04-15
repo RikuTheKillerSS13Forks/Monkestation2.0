@@ -27,7 +27,4 @@
 
 
 /obj/item/circuit_component/chem/bci/bloodstream/after_work_call()
-	clear_all_temp_ports()
-
-/obj/item/circuit_component/chem/bci/bloodstream/clear_all_temp_ports()
-	input_reagents.value = null
+	//clear_all_temp_ports()

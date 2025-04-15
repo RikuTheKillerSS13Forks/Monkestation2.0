@@ -91,8 +91,4 @@
 	reagent_holder.remove_all(10000)
 
 /obj/item/circuit_component/chem/input/after_work_call()
-	clear_all_temp_ports()
-
-/obj/item/circuit_component/chem/input/clear_all_temp_ports()
-	chemical_output.value = null
-	chem_heat.value = null
+	//clear_all_temp_ports()

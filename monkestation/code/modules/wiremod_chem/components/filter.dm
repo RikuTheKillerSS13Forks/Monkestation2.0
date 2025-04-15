@@ -49,9 +49,4 @@
 	filtered_output.set_output(output_reagents)
 
 /obj/item/circuit_component/chem/filter/after_work_call()
-	clear_all_temp_ports()
-
-/obj/item/circuit_component/chem/filter/clear_all_temp_ports()
-	chemical_input.value = null
-	filtered_output.value = null
-	junk_output.value = null
+	//clear_all_temp_ports()

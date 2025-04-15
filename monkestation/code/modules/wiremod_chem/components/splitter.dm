@@ -46,9 +46,4 @@
 
 
 /obj/item/circuit_component/chem/splitter/after_work_call()
-	clear_all_temp_ports()
-
-/obj/item/circuit_component/chem/splitter/clear_all_temp_ports()
-	for(var/datum/port/output/output as anything in splitter_outputs)
-		output.value = null
-	chemical_input.value = null
+	//clear_all_temp_ports()

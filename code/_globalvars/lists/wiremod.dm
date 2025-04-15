@@ -6,6 +6,16 @@ GLOBAL_LIST_INIT(wiremod_basic_types, list(
 	PORT_TYPE_SIGNAL,
 	PORT_TYPE_STRING,
 	PORT_TYPE_TABLE,
+))
+
+/// All types that can be made into variables
+GLOBAL_LIST_INIT(wiremod_variable_types, list(
+	PORT_TYPE_ANY,
+	PORT_TYPE_ATOM,
+	PORT_TYPE_NUMBER,
+	PORT_TYPE_SIGNAL,
+	PORT_TYPE_STRING,
+	PORT_TYPE_TABLE,
 	PORT_TYPE_CONTAINER,
 ))
 
