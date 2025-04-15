@@ -6,6 +6,7 @@ GLOBAL_LIST_INIT(wiremod_basic_types, list(
 	PORT_TYPE_SIGNAL,
 	PORT_TYPE_STRING,
 	PORT_TYPE_TABLE,
+	PORT_TYPE_CONTAINER,
 ))
 
 /// The fundamental datatypes of the byond game engine.

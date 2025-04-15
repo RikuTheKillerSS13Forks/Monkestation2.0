@@ -89,7 +89,7 @@ export class VariableMenu extends Component {
                             fluid
                             onMouseDown={(e) => handleMouseDownSetter(e, val)}
                             color={val.color}
-                            disabled={!!val.is_list}
+                            disabled={!!val.is_list || !!val.is_container}
                             tooltip={multiline`
                             Drag me onto the circuit's grid
                             to make a setter for this variable`}

@@ -47,6 +47,10 @@
 /// Datum datatype
 #define PORT_TYPE_DATUM "datum"
 
+// Chemistry datatypes
+/// Reagent container datatype, remember that these should be limited to variables-only
+/// One medical circuit should only have like 10 or so of these, normal circuits should have maybe 2
+#define PORT_TYPE_CONTAINER "container"
 
 /// The maximum range between a port and an atom
 #define PORT_ATOM_MAX_RANGE 7

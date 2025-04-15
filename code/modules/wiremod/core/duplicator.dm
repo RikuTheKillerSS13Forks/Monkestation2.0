@@ -195,6 +195,7 @@ GLOBAL_LIST_INIT(circuit_dupe_whitelisted_types, list(
 			new_data["is_list"] = TRUE
 		else
 			new_data["is_list"] = FALSE
+		new_data["is_container"] = variable.datatype == PORT_TYPE_CONTAINER ? TRUE : FALSE
 		variables += list(new_data)
 	general_data["variables"] = variables
 

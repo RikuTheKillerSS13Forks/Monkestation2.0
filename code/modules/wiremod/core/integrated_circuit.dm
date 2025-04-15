@@ -59,6 +59,12 @@ GLOBAL_LIST_EMPTY_TYPED(integrated_circuits, /obj/item/integrated_circuit)
 	/// List variables stored on this integrated circuit, with a `variable_name = value` structure
 	var/list/datum/circuit_variable/list_variables = list()
 
+	/// Reagent container variables stored on this integrated circuit, with a 'variable_name = value' structure
+	var/list/datum/circuit_variable/reagent_container_variables = list()
+
+	/// The maximum number of reagent containers this integrated circuit can hold.
+	var/max_reagent_containers = 2
+
 	/// The maximum amount of setters and getters a circuit can have
 	var/max_setters_and_getters = 30
 
@@ -399,6 +405,7 @@ GLOBAL_LIST_EMPTY_TYPED(integrated_circuits, /obj/item/integrated_circuit)
 		variable_data["color"] = variable.color
 		if(islist(variable.value))
 			variable_data["is_list"] = TRUE
+		variable_data["is_container"] = variable.datatype == PORT_TYPE_CONTAINER ? TRUE : FALSE
 		.["variables"] += list(variable_data)
 
 	.["display_name"] = display_name
@@ -613,10 +620,17 @@ GLOBAL_LIST_EMPTY_TYPED(integrated_circuits, /obj/item/integrated_circuit)
 				return
 			if(params["is_list"])
 				variable_datatype = PORT_TYPE_LIST(variable_datatype)
+			if(variable_datatype == PORT_TYPE_CONTAINER && (params["is_list"] || length(reagent_container_variables) >= max_reagent_containers))
+				return
 			var/datum/circuit_variable/variable = new /datum/circuit_variable(variable_identifier, variable_datatype)
 			if(params["is_list"])
 				variable.set_value(list())
 				list_variables[variable_identifier] = variable
+			else if(variable_datatype == PORT_TYPE_CONTAINER)
+				var/datum/reagents/reagent_holder = new(500)
+				reagent_holder.my_atom = src
+				variable.set_value(reagent_holder)
+				reagent_container_variables[variable_identifier] = variable
 			else
 				modifiable_circuit_variables[variable_identifier] = variable
 			circuit_variables[variable_identifier] = variable
@@ -631,6 +645,7 @@ GLOBAL_LIST_EMPTY_TYPED(integrated_circuits, /obj/item/integrated_circuit)
 			circuit_variables -= variable_identifier
 			list_variables -= variable_identifier
 			modifiable_circuit_variables -= variable_identifier
+			reagent_container_variables -= variable_identifier
 			qdel(variable)
 			. = TRUE
 		if("add_setter_or_getter")
