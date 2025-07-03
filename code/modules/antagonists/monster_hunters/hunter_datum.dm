@@ -309,7 +309,7 @@
 	to_chat(owner.current, span_userdanger("You have identified a monster, your objective list has been updated!"))
 	owner.current?.log_message("identified one of their targets, [key_name(target.current)].", LOG_GAME)
 	target.current?.log_message("was identified by [key_name(owner.current)], a Monster Hunter.", LOG_GAME, log_globally = FALSE)
-	RegisterSignals(target, COMSIG_HERETIC_PATH_CHOSEN, TYPE_PROC_REF(/datum/objective, update_explanation_text))
+	RegisterSignal(target, COMSIG_HERETIC_PATH_CHOSEN, TYPE_PROC_REF(/datum/objective, update_explanation_text))
 
 /datum/objective/hunter/check_completion()
 	return completed || !considered_alive(target)
