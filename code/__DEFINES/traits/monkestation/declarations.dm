@@ -1,6 +1,18 @@
 // BEGIN TRAIT DEFINES
 
 // /mob/living
+// Genetics start
+/// Removes tackle and throwing debuffs from dwarfs
+#define TRAIT_STABLE_DWARF "stable_dwarf"
+/// Makes you heal from radiation received
+#define TRAIT_RADHEALING "radiation_healing"
+/// Makes embed-able projectiles have an additional 50% chance at not embedding when hitting the target
+#define TRAIT_EMBED_RESISTANCE "embed_resistance"
+/// Makes you not leave fingerprints (you still leave fibers though)
+#define TRAIT_NO_FINGERPRINTS "no_fingerprints"
+/// Gives you a coinflip chance when eating disliked food to actually like its taste
+#define TRAIT_STABILIZED_EATER "stabilized_eater"
+// Genetics end
 /// Monkeys are friendly/neutral to this mob by defaulot.
 #define TRAIT_MONKEYFRIEND 	"monkeyfriend"
 /// User's stamina is over the STAMINA_EXHAUSTION_THRESHOLD.
@@ -55,6 +67,10 @@
 #define TRAIT_CONVERSION_FLASHED "conversion_flashed"
 /// For when a mob has been consumed by a zombie
 #define TRAIT_ZOMBIE_CONSUMED "zombie_consumed"
+/// Applied when blight is cured. Prevents getting blight again while present.
+#define TRAIT_REVENANT_BLIGHT_PROTECTION "revenant_blight_protection"
+/// Bypasses any cyberlink-related checks, allowing the user to use implants regardless.
+#define TRAIT_BYPASS_CYBERLINK "bypass_cyberlink"
 /// Mob can't be fed from by vampires.
 #define TRAIT_FEED_PROTECTION "feed_protection"
 /// Mob is a vampire about to die from thirst.
@@ -75,6 +91,8 @@
 #define TRAIT_CANT_SIGN_SPELLS	"cant_sign_spells"
 /// You have special interactions with vampires and the occult.
 #define TRAIT_OCCULTIST			"occultist"
+/// Cannot be turned into a borg or AI under any circumstances (outside of adminbus I guess).
+#define TRAIT_UNBORGABLE	"unborgable"
 /// Mindshielded victim who has had their will broken and can be enthralled by a vampire.
 #define TRAIT_MIND_BREAK		"mind_break"
 
@@ -129,8 +147,6 @@
 #define TRAIT_HIDDEN_EXPORT_VALUE	"hiddenexportvalue"
 
 // /obj/item
-/// Applied to a satchel that is being worn on the belt.
-#define TRAIT_BELT_SATCHEL 			"belt_satchel"
 /// Whether a storage item can be compressed by the bluespace compression kit, without the usual storage limitation.
 #define TRAIT_BYPASS_COMPRESS_CHECK	"can_compress_anyways"
 /// This item is considered "trash" (and will be eaten by cleaner slimes)

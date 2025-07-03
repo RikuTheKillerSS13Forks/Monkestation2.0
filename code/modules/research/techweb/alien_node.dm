@@ -3,7 +3,7 @@
 	display_name = "Alien Technology"
 	description = "Things used by the greys."
 	prereq_ids = list("biotech","engineering")
-	boost_item_paths = list(
+	required_items_to_unlock = list(
 		/obj/item/abductor,
 		/obj/item/cautery/alien,
 		/obj/item/circuitboard/machine/abductor,
@@ -25,7 +25,7 @@
 	design_ids = list(
 		"alienalloy",
 	)
-	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = 5000)
+	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = TECHWEB_TIER_2_POINTS)
 	hidden = TRUE
 
 /datum/techweb_node/alientech/on_research() //Unlocks the Zeta shuttle for purchase
@@ -45,7 +45,7 @@
 		"alien_scalpel",
 	)
 
-	boost_item_paths = list(
+	required_items_to_unlock = list(
 		/obj/item/abductor,
 		/obj/item/cautery/alien,
 		/obj/item/circuitboard/machine/abductor,
@@ -67,8 +67,8 @@
 		// Monkestation edit End: Removing Alien tools from biotech
 	)
 
-	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = 12500)
-	discount_experiments = list(/datum/experiment/scanning/points/slime/hard = 10000)
+	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = TECHWEB_TIER_5_POINTS)
+	discount_experiments = list(/datum/experiment/scanning/points/slime/hard = TECHWEB_TIER_4_POINTS)
 	hidden = TRUE
 
 /datum/techweb_node/alien_engi
@@ -86,7 +86,7 @@
 		"alien_wrench",
 	)
 
-	boost_item_paths = list(
+	required_items_to_unlock = list(
 		/obj/item/abductor,
 		/obj/item/circuitboard/machine/abductor,
 		/obj/item/crowbar/abductor,
@@ -99,5 +99,5 @@
 		/obj/item/wrench/abductor,
 	)
 
-	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = 2500)
+	research_costs = list(TECHWEB_POINT_TYPE_GENERIC = TECHWEB_TIER_1_POINTS)
 	hidden = TRUE

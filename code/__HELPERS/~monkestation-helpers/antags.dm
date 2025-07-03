@@ -1,7 +1,7 @@
 /// List of antagonists that can be considered prey by monster hunters.
 GLOBAL_LIST_INIT(monster_hunter_prey_antags, typecacheof(list(
 	/datum/antagonist/changeling,
-	/datum/antagonist/heretic
+	/datum/antagonist/heretic,
 )))
 
 /proc/is_monster_hunter_prey(datum/mind/victim)

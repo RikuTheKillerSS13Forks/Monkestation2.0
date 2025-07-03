@@ -3,7 +3,7 @@
 
 /obj/item/organ/internal/cyberimp
 	var/hacked = FALSE
-
+	organ_flags = ORGAN_ROBOTIC
 	var/list/encode_info = AUGMENT_NO_REQ
 
 	///are we a visual implant
@@ -126,6 +126,10 @@
  * If it fails to meet that criteria, than it is incompatible and this proc returns FALSE. If it is compatibile returns TRUE
  */
 /obj/item/organ/internal/cyberimp/proc/check_compatibility()
+	if(QDELETED(owner))
+		return FALSE
+	if(HAS_TRAIT(owner, TRAIT_BYPASS_CYBERLINK))
+		return TRUE
 	var/obj/item/organ/internal/cyberimp/cyberlink/link = owner.get_organ_slot(ORGAN_SLOT_LINK)
 
 	for(var/info in encode_info)
@@ -161,6 +165,7 @@
 	w_class = WEIGHT_CLASS_TINY
 	var/obj/item/cyberlink_connector/connector
 	var/extended = FALSE
+	organ_flags = ORGAN_ROBOTIC
 
 /obj/item/organ/internal/cyberimp/cyberlink/Insert(mob/living/carbon/user, special, drop_if_replaced)
 	for(var/obj/item/organ/internal/cyberimp/cyber in user.organs)

@@ -1,5 +1,3 @@
-/datum/config_entry/string/regular_mentorhelp_webhook_url
-
 /datum/config_entry/string/mentorhelp_webhook_pfp
 
 /datum/config_entry/string/mentorhelp_webhook_name
@@ -34,6 +32,8 @@
 //Endpoint for Github Issues, the `owner/repo` part.
 /datum/config_entry/string/issue_slug
 	protection = CONFIG_ENTRY_LOCKED
+
+/datum/config_entry/flag/mentor_legacy_system
 
 /datum/config_entry/flag/looc_enabled
 

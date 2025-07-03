@@ -129,6 +129,12 @@
 		QDEL_NULL(keyslot)
 	return ..()
 
+/obj/item/radio/on_saboteur(datum/source, disrupt_duration)
+	. = ..()
+	if(broadcasting) //no broadcasting but it can still be used to send radio messages.
+		set_broadcasting(FALSE)
+		return TRUE
+
 /obj/item/radio/proc/set_frequency(new_frequency)
 	SEND_SIGNAL(src, COMSIG_RADIO_NEW_FREQUENCY, args)
 	remove_radio(src, frequency)
@@ -420,7 +426,8 @@
 				return TRUE
 	return FALSE
 
-/obj/item/radio/proc/on_recieve_message()
+/obj/item/radio/proc/on_recieve_message(list/data)
+	SEND_SIGNAL(src, COMSIG_RADIO_RECEIVE_MESSAGE, data)
 	flick_overlay_view(overlay_speaker_active, 5 SECONDS)
 
 /obj/item/radio/ui_state(mob/user)

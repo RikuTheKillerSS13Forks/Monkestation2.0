@@ -1,4 +1,3 @@
-
 //Current rate: 135000 research points in 90 minutes
 
 //Base Nodes
@@ -146,6 +145,7 @@
 		"universal_scanner",
 		"voice_analyzer",
 		"watering_can",
+		"modlink_scryer", // monkestation addition
 	)
 
 /datum/techweb_node/basic_tools
@@ -202,6 +202,7 @@
 		"bonesetter",
 		"cautery",
 		"circular_saw",
+		"cybernetic_ears",
 		"cybernetic_eyes",
 		"cybernetic_heart",
 		"cybernetic_liver",

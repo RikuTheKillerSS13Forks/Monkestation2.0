@@ -148,7 +148,10 @@
 		GLOB.nuke_disk_list -= src
 	return ..()
 /obj/item/disk/nuclear/proc/spawn_op()
-	force_event(/datum/round_event_control/junior_lone_operative, "the nuke disk being unsecured for [round(unsecured_time/60, 1)] minutes")
+	if(prob(50))
+		force_event(/datum/round_event_control/junior_lone_operative, "the nuke disk being unsecured for [round(unsecured_time/60, 1)] minutes")
+	else
+		force_event(/datum/round_event_control/operative, "the nuke disk being unsecured for [round(unsecured_time/60, 1)] minutes")
 //MONKESTATION EDIT STOP
 
 /obj/item/disk/nuclear/fake
@@ -157,3 +160,11 @@
 /obj/item/disk/nuclear/fake/obvious
 	name = "cheap plastic imitation of the nuclear authentication disk"
 	desc = "How anyone could mistake this for the real thing is beyond you."
+
+/obj/item/disk/nuclear/nukie
+	name = "improvised nuclear authentication disk"
+	desc = "Better keep this safeish."
+	icon_state = "nukiedisk"
+	max_integrity = 250
+	armor_type = /datum/armor/disk_nuclear
+	fake = TRUE

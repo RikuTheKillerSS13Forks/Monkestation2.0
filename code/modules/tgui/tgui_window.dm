@@ -11,6 +11,7 @@
 	var/is_browser = FALSE
 	var/status = TGUI_WINDOW_CLOSED
 	var/locked = FALSE
+	var/visible = FALSE
 	var/datum/tgui/locked_by
 	var/datum/subscriber_object
 	var/subscriber_delegate
@@ -77,9 +78,11 @@
 		inline_html = "",
 		inline_js = "",
 		inline_css = "")
+#ifdef EXTENDED_DEBUG_LOGGING
 	log_tgui(client,
 		context = "[id]/initialize",
 		window = src)
+#endif
 	if(QDELETED(client))
 		return
 	src.initial_fancy = fancy
@@ -237,16 +240,22 @@
 	if(mouse_event_macro_set)
 		remove_mouse_macro()
 	if(can_be_suspended && can_be_suspended())
+#ifdef EXTENDED_DEBUG_LOGGING
 		log_tgui(client,
 			context = "[id]/close (suspending)",
 			window = src)
+#endif
+		visible = FALSE
 		status = TGUI_WINDOW_READY
 		send_message("suspend")
 		return
+#ifdef EXTENDED_DEBUG_LOGGING
 	log_tgui(client,
 		context = "[id]/close",
 		window = src)
+#endif
 	release_lock()
+	visible = FALSE
 	status = TGUI_WINDOW_CLOSED
 	message_queue = null
 	// Do not close the window to give user some time
@@ -378,6 +387,9 @@
 	switch(type)
 		if("ping")
 			send_message("ping/reply", payload)
+		if("visible")
+			visible = TRUE
+			SEND_SIGNAL(src, COMSIG_TGUI_WINDOW_VISIBLE, client)
 		if("suspend")
 			close(can_be_suspended = TRUE)
 		if("close")

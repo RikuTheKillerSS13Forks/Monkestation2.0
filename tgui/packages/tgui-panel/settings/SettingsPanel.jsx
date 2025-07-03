@@ -36,6 +36,7 @@ import {
   updateHighlightSetting,
 } from './actions';
 import { SETTINGS_TABS, FONTS, WARN_AFTER_HIGHLIGHT_AMT } from './constants';
+import { setEditPaneSplitters } from './scaling';
 import {
   selectActiveTab,
   selectSettings,
@@ -84,12 +85,13 @@ export const SettingsPanel = (props, context) => {
 };
 
 export const SettingsGeneral = (props, context) => {
-  const { theme, fontFamily, fontSize, lineHeight } = useSelector(
+  const { theme, fontFamily, coloredNames, fontSize, lineHeight } = useSelector(
     context,
     selectSettings,
   );
   const dispatch = useDispatch(context);
   const [freeFont, setFreeFont] = useLocalState('freeFont', false);
+  const [editingPanes, setEditingPanes] = useLocalState('freeFont', false);
 
   return (
     <Section>
@@ -110,6 +112,20 @@ export const SettingsGeneral = (props, context) => {
               }
             />
           ))}
+        </LabeledList.Item>
+        <LabeledList.Item label="UI sizes">
+          <Button
+            onClick={() =>
+              setEditingPanes((val) => {
+                setEditPaneSplitters(!val);
+                return !val;
+              })
+            }
+            color={editingPanes ? 'red' : undefined}
+            icon={editingPanes ? 'save' : undefined}
+          >
+            {editingPanes ? 'Save' : 'Adjust UI Sizes'}
+          </Button>
         </LabeledList.Item>
         <LabeledList.Item label="Font style">
           <Stack.Item>
@@ -170,6 +186,19 @@ export const SettingsGeneral = (props, context) => {
               </Stack>
             )}
           </Stack.Item>
+        </LabeledList.Item>
+        <LabeledList.Item label="High Contrast">
+          <Button.Checkbox
+            content="Colored Names"
+            checked={coloredNames}
+            onClick={() =>
+              dispatch(
+                updateSettings({
+                  coloredNames: !coloredNames,
+                }),
+              )
+            }
+          />
         </LabeledList.Item>
         <LabeledList.Item label="Font size" verticalAlign="middle">
           <Stack textAlign="center">

@@ -117,7 +117,7 @@
 				'monkestation/code/modules/emotes/sound/claponce2.ogg')
 
 /datum/emote/living/clap1/can_run_emote(mob/living/carbon/user, status_check = TRUE , intentional)
-	if(user.usable_hands < 2)
+	if(!iscarbon(user) || user.usable_hands < 2)
 		return FALSE
 	return ..()
 
@@ -243,6 +243,8 @@
 	message_param = "barks at %t!"
 	emote_type = EMOTE_AUDIBLE
 	audio_cooldown = 1.5 SECONDS
+	falloff_exponent = 10
+	extra_range = MEDIUM_RANGE_SOUND_EXTRARANGE
 
 /datum/emote/living/bark/can_run_emote(mob/user, status_check = TRUE, intentional = FALSE)
 	return ..() && HAS_TRAIT(user, TRAIT_ANIME)
@@ -291,6 +293,8 @@
 	message_mime = "squeals silently!"
 	emote_type = EMOTE_AUDIBLE
 	vary = TRUE
+	falloff_exponent = 10
+	extra_range = MEDIUM_RANGE_SOUND_EXTRARANGE
 
 /datum/emote/living/squeal/get_sound(mob/living/user)
 	return 'monkestation/sound/voice/lizard/squeal.ogg' //This is from Bay
@@ -498,6 +502,8 @@
 	mob_type_blacklist_typecache = list(/mob/living/brain)
 	audio_cooldown = 2 SECONDS
 	vary = TRUE
+	falloff_exponent = 10
+	extra_range = SHORT_RANGE_SOUND_EXTRARANGE
 
 /datum/emote/spin/speen/get_sound(mob/living/user)
 	return 'monkestation/sound/voice/speen.ogg'
